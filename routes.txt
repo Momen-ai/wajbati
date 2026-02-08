@@ -1,0 +1,107 @@
+
+  GET|HEAD        / home  ???
+  GET|HEAD        cart car???
+  POST            cart/add cart.add ??? Front\CartController@ad???
+  POST            cart/remove cart.remove ??? Front\CartController@re???
+  PATCH           cart/update cart.update ??? Front\CartController@up???
+  GET|HEAD        chef/dashboard chef.dashboard ??? Chef\DashboardControlle???
+  GET|HEAD        chef/meals chef.meals.index ??? Chef\MealController@in???
+  POST            chef/meals chef.meals.store ??? Chef\MealController@st???
+  GET|HEAD        chef/meals/create chef.meals.create ??? Chef\MealControl???
+  GET|HEAD        chef/meals/{meal} chef.meals.show ??? Chef\MealContr???
+  PUT|PATCH       chef/meals/{meal} chef.meals.update ??? Chef\MealControl???
+  DELETE          chef/meals/{meal} chef.meals.destroy ??? Chef\MealControll???
+  GET|HEAD        chef/meals/{meal}/edit chef.meals.edit ??? Chef\Meal???
+  GET|HEAD        chef/orders chef.orders.index ??? Chef\OrderController@i???
+  GET|HEAD        chef/orders/{order} chef.orders.show ??? Chef\OrderCon???
+  PATCH           chef/orders/{order}/status chef.orders.update-status ??? Chef\OrderCont???
+  GET|HEAD        chefs ch???
+  GET|HEAD        chefs/{id} chefs.show ??? Front\ChefController@s???
+  GET|HEAD        confirm-password password.confirm ??? Auth\ConfirmablePasswordContro???
+  POST            confirm-password Auth\ConfirmablePasswordControl???
+  GET|HEAD        contact ???
+  POST            contact ???
+  GET|HEAD        dashboard dashboa???
+  GET|HEAD        dashboard/cart dashboard.cart.index ??? Dashboard\CartControlle???
+  POST            dashboard/cart dashboard.cart.store ??? Dashboard\CartControlle???
+  GET|HEAD        dashboard/cart/create dashboard.cart.create ??? Dashboard\CartCon???
+  GET|HEAD        dashboard/cart/{cart} dashboard.cart.show ??? Dashboard\CartC???
+  PUT|PATCH       dashboard/cart/{cart} dashboard.cart.update ??? Dashboard\CartCon???
+  DELETE          dashboard/cart/{cart} dashboard.cart.destroy ??? Dashboard\CartCont???
+  GET|HEAD        dashboard/cart/{cart}/edit dashboard.cart.edit ??? Dashboard\???
+  GET|HEAD        dashboard/category dashboard.category.index ??? Dashboard\CategoryContr???
+  POST            dashboard/category dashboard.category.store ??? Dashboard\CategoryContr???
+  GET|HEAD        dashboard/category/create dashboard.category.create ??? Dashboard\Categor???
+  GET|HEAD        dashboard/category/{category} dashboard.category.show ??? Dashboard\C???
+  PUT|PATCH       dashboard/category/{category} dashboard.category.update ??? Dashboard\Cat???
+  DELETE          dashboard/category/{category} dashboard.category.destroy ??? Dashboard\Cate???
+  GET|HEAD        dashboard/category/{category}/edit dashboard.category.edit ??? Dashbo???
+  GET|HEAD        dashboard/contacts dashboard.contacts.index ??? Dashboard\ContactContr???
+  POST            dashboard/contacts dashboard.contacts.store ??? Dashboard\ContactContr???
+  GET|HEAD        dashboard/contacts/create dashboard.contacts.create ??? Dashboard\Contac???
+  GET|HEAD        dashboard/contacts/{contact} dashboard.contacts.show ??? Dashboard\C???
+  PUT|PATCH       dashboard/contacts/{contact} dashboard.contacts.update ??? Dashboard\Con???
+  DELETE          dashboard/contacts/{contact} dashboard.contacts.destroy ??? Dashboard\Cont???
+  GET|HEAD        dashboard/contacts/{contact}/edit dashboard.contacts.edit ??? Dashbo???
+  GET|HEAD        dashboard/favourites dashboard.favourites.index ??? Dashboard\FavouriteCon???
+  POST            dashboard/favourites dashboard.favourites.store ??? Dashboard\FavouriteCon???
+  GET|HEAD        dashboard/favourites/create dashboard.favourites.create ??? Dashboard\Favour???
+  GET|HEAD        dashboard/favourites/{favourite} dashboard.favourites.show ??? Dashboard???
+  PUT|PATCH       dashboard/favourites/{favourite} dashboard.favourites.update ??? Dashboard\F???
+  DELETE          dashboard/favourites/{favourite} dashboard.favourites.destroy ??? Dashboard\Fa???
+  GET|HEAD        dashboard/favourites/{favourite}/edit dashboard.favourites.edit ??? Dash???
+  GET|HEAD        dashboard/meals dashboard.meals.index ??? Dashboard\MealControll???
+  POST            dashboard/meals dashboard.meals.store ??? Dashboard\MealControll???
+  GET|HEAD        dashboard/meals/create dashboard.meals.create ??? Dashboard\MealCo???
+  GET|HEAD        dashboard/meals/{meal} dashboard.meals.show ??? Dashboard\Meal???
+  PUT|PATCH       dashboard/meals/{meal} dashboard.meals.update ??? Dashboard\MealCo???
+  DELETE          dashboard/meals/{meal} dashboard.meals.destroy ??? Dashboard\MealCon???
+  GET|HEAD        dashboard/meals/{meal}/edit dashboard.meals.edit ??? Dashboard???
+  GET|HEAD        dashboard/orders dashboard.orders.index ??? Dashboard\OrderControl???
+  POST            dashboard/orders dashboard.orders.store ??? Dashboard\OrderControl???
+  GET|HEAD        dashboard/orders/create dashboard.orders.create ??? Dashboard\OrderC???
+  GET|HEAD        dashboard/orders/{order} dashboard.orders.show ??? Dashboard\Ord???
+  PUT|PATCH       dashboard/orders/{order} dashboard.orders.update ??? Dashboard\Order???
+  DELETE          dashboard/orders/{order} dashboard.orders.destroy ??? Dashboard\OrderC???
+  GET|HEAD        dashboard/orders/{order}/edit dashboard.orders.edit ??? Dashboar???
+  GET|HEAD        dashboard/ratings dashboard.ratings.index ??? Dashboard\RatingContro???
+  POST            dashboard/ratings dashboard.ratings.store ??? Dashboard\RatingContro???
+  GET|HEAD        dashboard/ratings/create dashboard.ratings.create ??? Dashboard\Rating???
+  GET|HEAD        dashboard/ratings/{rating} dashboard.ratings.show ??? Dashboard\Ra???
+  PUT|PATCH       dashboard/ratings/{rating} dashboard.ratings.update ??? Dashboard\Rati???
+  DELETE          dashboard/ratings/{rating} dashboard.ratings.destroy ??? Dashboard\Ratin???
+  GET|HEAD        dashboard/ratings/{rating}/edit dashboard.ratings.edit ??? Dashboa???
+  GET|HEAD        dashboard/users dashboard.users.index ??? Dashboard\UsersControll???
+  POST            dashboard/users dashboard.users.store ??? Dashboard\UsersControll???
+  GET|HEAD        dashboard/users/create dashboard.users.create ??? Dashboard\UsersCo???
+  GET|HEAD        dashboard/users/{user} dashboard.users.show ??? Dashboard\Users???
+  PUT|PATCH       dashboard/users/{user} dashboard.users.update ??? Dashboard\UsersCo???
+  DELETE          dashboard/users/{user} dashboard.users.destroy ??? Dashboard\UsersCon???
+  GET|HEAD        dashboard/users/{user}/edit dashboard.users.edit ??? Dashboard\???
+  POST            email/verification-notification verification.send ??? Auth\EmailVerificationNoti???
+  GET|HEAD        forgot-password password.request ??? Auth\PasswordResetLinkControlle???
+  POST            forgot-password password.email ??? Auth\PasswordResetLinkControll???
+  GET|HEAD        login lo???
+  POST            login Au???
+  POST            logout l???
+  GET|HEAD        meals me???
+  GET|HEAD        meals/{id} meals.show ??? Front\MealController@s???
+  POST            meals/{id}/rate meals.rate ??? Front\MealControl???
+  GET|HEAD        orders o???
+  POST            orders o???
+  GET|HEAD        orders/{id} orders.show ??? Front\OrderController@???
+  PUT             password password.update ??? Auth\PasswordController@updat???
+  GET|HEAD        profile ???
+  PATCH           profile ???
+  DELETE          profile ???
+  GET|HEAD        register register ??? Auth\RegisteredUserController@creat???
+  POST            register Auth\RegisteredUserController@stor???
+  POST            reset-password password.store ??? Auth\NewPasswordControlle???
+  GET|HEAD        reset-password/{token} password.reset ??? Auth\NewPasswordCo???
+  GET|HEAD        storage/{path} storag???
+  GET|HEAD        up ...... 
+  GET|HEAD        verify-email verification.notice ??? Auth\EmailVerificationPromptContr???
+  GET|HEAD        verify-email/{id}/{hash} verification.verify ??? Auth\Veri???
+
+       Showing [103] routes
+
