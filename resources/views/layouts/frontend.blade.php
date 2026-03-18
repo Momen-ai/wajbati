@@ -7,6 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Wajbati') }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('assets/images/logo.png') }}">
 
     <!-- Styles -->
     @if(app()->getLocale() == 'ar')
@@ -28,14 +29,15 @@
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
-                <div class="rounded-circle bg-primary-custom d-flex align-items-center justify-content-center text-white me-2"
+                <div class="rounded-circle bg-primary-custom d-flex align-items-center justify-content-center text-light me-2"
                     style="width:40px;height:40px">
                     <i class="fas fa-utensils"></i>
                 </div>
                 <span class="brand-text">Wajbati</span>
             </a>
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-                <span class="navbar-toggler-icon"></span>
+            <button class="navbar-toggler border-0 p-2 shadow-none" type="button"
+                data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon-custom"></span>
             </button>
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
@@ -64,7 +66,7 @@
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-globe me-1"></i> {{ app()->getLocale() == 'ar' ? 'العربية' : 'English' }}
                         </a>
-                        <ul class="dropdown-menu border-0 shadow-sm">
+                        <ul class="dropdown-menu dropdown-menu-dark border border-secondary border-opacity-10 shadow">
                             <li><a class="dropdown-item" href="{{ route('lang.switch', 'en') }}">English</a></li>
                             <li><a class="dropdown-item" href="{{ route('lang.switch', 'ar') }}">العربية</a></li>
                         </ul>
@@ -73,14 +75,14 @@
                     @guest
                         <li class="nav-item d-flex gap-2">
                             <a href="{{ route('login') }}" class="btn btn-outline-primary btn-sm px-3">{{ __('Login') }}</a>
-                            <a href="{{ route('register') }}" class="btn btn-primary btn-sm px-3 shadow-sm">{{ __('Register') }}</a>
+                            <a href="{{ route('register') }}" class="btn btn-primary btn-sm px-3 shadow">{{ __('Register') }}</a>
                         </li>
                     @else
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 {{ Auth::user()->name }}
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm">
+                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end border border-secondary border-opacity-10 shadow">
                                 <li><a class="dropdown-item" href="{{ route('orders.index') }}">{{ __('My Orders') }}</a></li>
                                 <li><a class="dropdown-item" href="{{ route('profile.edit') }}">{{ __('Profile') }}</a></li>
                                 @if (Auth::user()->role == 'admin')
@@ -90,7 +92,7 @@
                                     <li><a class="dropdown-item fw-bold text-primary" href="{{ route('chef.dashboard') }}"><i class="fas fa-chart-line me-2"></i>{{ __('Chef Dashboard') }}</a></li>
                                 @endif
                                 <li>
-                                    <hr class="dropdown-divider">
+                                    <hr class="dropdown-divider border-secondary border-opacity-50">
                                 </li>
                                 <li>
                                     <form method="POST" action="{{ route('logout') }}">
@@ -135,47 +137,47 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-top pt-5 pb-3 mt-5">
+    <footer class="bg-darker text-light border-top border-secondary border-secondary pt-5 pb-3 mt-5">
         <div class="container">
             <div class="row g-4 mb-4">
                 <div class="col-md-4">
-                    <a class="navbar-brand d-flex align-items-center mb-3 text-dark" href="#">
+                    <a class="navbar-brand d-flex align-items-center mb-3 text-light" href="#">
                         <i class="fas fa-utensils text-primary-custom me-2 fa-lg"></i>
                         <span class="fw-bold h4 m-0">Wajbati</span>
                     </a>
-                    <p class="text-muted small">Connecting food lovers with home chefs. Experience the taste of home
+                    <p class="text-light small">Connecting food lovers with home chefs. Experience the taste of home
                         anywhere.</p>
                 </div>
                 <div class="col-md-2 col-6">
                     <h6 class="fw-bold mb-3">Links</h6>
-                    <ul class="list-unstyled small text-muted">
+                    <ul class="list-unstyled small text-light">
                         <li class="mb-2"><a href="{{ route('home') }}"
-                                class="text-decoration-none text-muted">Home</a></li>
+                                class="text-decoration-none text-light">Home</a></li>
                         <li class="mb-2"><a href="{{ route('meals.index') }}"
-                                class="text-decoration-none text-muted">Meals</a></li>
+                                class="text-decoration-none text-light">Meals</a></li>
                         <li class="mb-2"><a href="{{ route('chefs.index') }}"
-                                class="text-decoration-none text-muted">Chefs</a></li>
+                                class="text-decoration-none text-light">Chefs</a></li>
                     </ul>
                 </div>
                 <div class="col-md-2 col-6">
                     <h6 class="fw-bold mb-3">Legal</h6>
-                    <ul class="list-unstyled small text-muted">
-                        <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Privacy
+                    <ul class="list-unstyled small text-light">
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-light">Privacy
                                 Policy</a></li>
-                        <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Terms of
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-light">Terms of
                                 Service</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4">
                     <h6 class="fw-bold mb-3">Stay Updated</h6>
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Email address">
+                        <input type="text" class="form-control bg-secondary text-light border-secondary" placeholder="Email address">
                         <button class="btn btn-primary" type="button"><i class="fas fa-paper-plane"></i></button>
                     </div>
                 </div>
             </div>
-            <div class="border-top pt-3 text-center small text-muted">
-                &copy; {{ date('Y') }} Wajbati. All rights reserved. | Contact: contact@wajbati.com
+            <div class="border-top border-secondary border-secondary pt-3 text-center small text-light">
+                &copy; {{ date('Y') }} Wajbati. All rights reserved. | Contact: mumenrami1411@gmail.com
             </div>
         </div>
     </footer>

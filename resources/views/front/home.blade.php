@@ -6,15 +6,15 @@
         <div class="hero-section text-center text-lg-start">
             <div class="row align-items-center">
                 <div class="col-lg-6 mb-4 mb-lg-0">
-                    <span class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill fw-bold"><i
+                    <span class="badge bg-warning text-light mb-3 px-3 py-2 rounded-pill fw-bold"><i
                             class="fas fa-star me-1"></i> #1 Homemade Food App</span>
                     <h1 class="hero-title pt-2">{{ __('Delicious Homemade Meals') }},<br><span class="text-primary-custom">{{ __('brought to your doorstep.') }}</span></h1>
-                    <p class="lead text-muted mb-4">{{ __("Order healthy, fresh, and authentic food from local home kitchens.") }}</p>
+                    <p class="lead text-light mb-4">{{ __("Order healthy, fresh, and authentic food from local home kitchens.") }}</p>
                     <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
-                        <a href="{{ route('meals.index') }}" class="btn btn-primary btn-lg shadow-sm">
+                        <a href="{{ route('meals.index') }}" class="btn btn-primary btn-lg shadow">
                             <i class="fas fa-search me-2"></i> {{ __('Browse Meals') }}
                         </a>
-                        <a href="{{ route('register', ['role' => 'chef']) }}" class="btn btn-outline-secondary btn-lg bg-white">
+                        <a href="{{ route('register', ['role' => 'chef']) }}" class="btn btn-outline-secondary btn-lg bg-darker text-light">
                             {{ __('Join as a Chef') }}
                         </a>
                     </div>
@@ -54,13 +54,12 @@
             @foreach ($categories as $category)
                 <div class="col-6 col-md-3">
                     <a href="{{ route('meals.index', ['category' => $category->id]) }}" class="text-decoration-none">
-                        <div class="card shadow-card border-0 text-center p-4 h-100 hover-lift">
-                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-3 text-primary"
-                                style="width:70px; height:70px; font-size: 1.5rem;">
-                                <i class="fas fa-utensils"></i> <!-- Or category icon if exists -->
+                        <div class="card shadow-card bg-secondary text-center p-4 h-100 hover-lift border border-secondary border-opacity-10">
+                            <div class="category-icon text-primary mb-3">
+                                <i class="fas fa-utensils fa-2x"></i> <!-- Or category icon if exists -->
                             </div>
-                            <h6 class="fw-bold text-dark">{{ $category->name }}</h6>
-                            <small class="text-muted">{{ $category->meals_count }} Meals</small>
+                            <h6 class="fw-bold text-light">{{ $category->name }}</h6>
+                            <small class="text-light opacity-75">{{ $category->meals_count }} Meals</small>
                         </div>
                     </a>
                 </div>
@@ -73,7 +72,7 @@
         <div class="d-flex justify-content-between align-items-end mb-4">
             <div>
                 <h2 class="mb-1">{{ __('Popular Meals') }}</h2>
-                <p class="text-muted mb-0">{{ __("Our customers' favorites this week") }}</p>
+                <p class="text-light mb-0">{{ __("Our customers' favorites this week") }}</p>
             </div>
             <a href="{{ route('meals.index') }}" class="btn btn-link text-decoration-none fw-bold">{{ __('View All') }} <i
                     class="fas fa-arrow-right ms-1"></i></a>
@@ -81,8 +80,8 @@
 
         <div class="row g-4">
             @foreach ($popularMeals as $meal)
-                <div class="col-md-6 col-lg-4">
-                    <div class="card shadow-card border-0 h-100 meal-card">
+                <div class="col-6 col-lg-4">
+                    <div class="card shadow-card border border-secondary border-opacity-10 h-100 meal-card">
                         <div class="meal-card-img-wrapper">
                             @if ($meal->image)
                                 <img src="{{ asset('storage/' . $meal->image->image_path) }}" alt="{{ $meal->name }}">
@@ -96,19 +95,19 @@
                                 <h5 class="fw-bold mb-0 text-truncate">{{ $meal->name }}</h5>
                                 <span class="fw-bold text-primary">${{ $meal->price }}</span>
                             </div>
-                            <p class="text-muted small mb-1 text-truncate">{{ Str::limit($meal->description, 60) }}</p>
+                            <p class="text-light small mb-1 text-truncate">{{ Str::limit($meal->description, 60) }}</p>
                             <div class="mb-3 text-warning small">
                                 @php $avg = $meal->averageRating(); @endphp
                                 @for ($i = 1; $i <= 5; $i++)
                                     <i class="{{ $i <= $avg ? 'fas' : 'far' }} fa-star"></i>
                                 @endfor
-                                <span class="text-muted ms-1" style="font-size: 0.7rem;">({{ $meal->ratings_count ?? $meal->ratings->count() }})</span>
+                                <span class="text-light ms-1" style="font-size: 0.7rem;">({{ $meal->ratings_count ?? $meal->ratings->count() }})</span>
                             </div>
 
-                            <div class="d-flex align-items-center justify-content-between border-top pt-3 mt-auto">
+                            <div class="d-flex align-items-center justify-content-between border-top border-secondary border-secondary pt-3 mt-auto">
                                 <div class="d-flex align-items-center">
-                                    <i class="fas fa-user-circle fa-lg text-muted me-2"></i>
-                                    <small class="fw-bold text-muted">{{ $meal->chef->name ?? 'Chef' }}</small>
+                                    <i class="fas fa-user-circle fa-lg text-light me-2"></i>
+                                    <small class="fw-bold text-light">{{ $meal->chef->name ?? 'Chef' }}</small>
                                 </div>
                                 <a href="{{ route('meals.show', $meal->id) }}"
                                     class="btn btn-sm btn-outline-primary rounded-pill px-3">View</a>
@@ -125,7 +124,7 @@
         <div class="d-flex justify-content-between align-items-end mb-4">
             <div>
                 <h2 class="mb-1">{{ __('Meet Our Talented Chefs') }}</h2>
-                <p class="text-muted mb-0">{{ __('Local families sharing their culinary heritage') }}</p>
+                <p class="text-light mb-0">{{ __('Local families sharing their culinary heritage') }}</p>
             </div>
             <a href="{{ route('chefs.index') }}" class="btn btn-link text-decoration-none fw-bold">{{ __('View All') }} <i
                     class="fas fa-arrow-right ms-1"></i></a>
@@ -134,18 +133,18 @@
         <div class="row g-4">
             @foreach ($chefs as $chef)
                 <div class="col-6 col-md-3">
-                    <div class="card shadow-card border-0 text-center p-4 h-100 hover-lift">
+                    <div class="card shadow-card border border-secondary border-opacity-10 text-center p-4 h-100 hover-lift">
                         <div class="position-relative mx-auto mb-3">
                             @if($chef->image)
-                                <img src="{{ asset('storage/' . $chef->image->image_path) }}" class="rounded-circle shadow-sm object-fit-cover" style="width:100px; height:100px;" alt="{{ $chef->name }}">
+                                <img src="{{ asset('storage/' . $chef->image->image_path) }}" class="rounded-circle shadow object-fit-cover" style="width:100px; height:100px;" alt="{{ $chef->name }}">
                             @else
-                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto shadow-sm" style="width:100px; height:100px;">
-                                    <i class="fas fa-user-chef fa-2x text-secondary"></i>
+                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mx-auto shadow" style="width:100px; height:100px;">
+                                    <i class="fas fa-user-chef fa-2x text-light"></i>
                                 </div>
                             @endif
                         </div>
-                        <h6 class="fw-bold mb-1 text-dark">{{ $chef->kitchen_name ?? $chef->name }}</h6>
-                        <small class="text-muted d-block mb-3">{{ $chef->address ?? 'Local Chef' }}</small>
+                        <h6 class="fw-bold mb-1 text-light">{{ $chef->kitchen_name ?? $chef->name }}</h6>
+                        <small class="text-light d-block mb-3">{{ $chef->address ?? 'Local Chef' }}</small>
                         <a href="{{ route('chefs.show', $chef->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">View Kitchen</a>
                     </div>
                 </div>

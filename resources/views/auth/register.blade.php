@@ -5,28 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Wajbati') }} - {{ __('Register') }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('assets/images/logo.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
-    <style>
-        .bg-primary-custom {
-            background-color: #ff6b6b;
-        }
-
-        .text-primary {
-            color: #ff6b6b !important;
-        }
-
-        .btn-primary {
-            background-color: #ff6b6b;
-            border-color: #ff6b6b;
-        }
-
-        .btn-primary:hover {
-            background-color: #fa5252;
-            border-color: #fa5252;
-        }
-    </style>
 </head>
 
 <body>
@@ -39,19 +21,19 @@
             </div>
             <div class="position-absolute top-0 start-0 w-100 h-100"
                 style="background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.6));"></div>
-            <div class="position-absolute bottom-0 start-0 p-5 text-white">
-                <h2 class="display-4 fw-bold text-white mb-3">{{ __('Join Our Community') }}</h2>
+            <div class="position-absolute bottom-0 start-0 p-5 text-light">
+                <h2 class="display-4 fw-bold text-light mb-3">{{ __('Join Our Community') }}</h2>
                 <p class="lead mb-0">
                     {{ __('Discover authentic homemade flavors or start your own kitchen journey with us.') }}</p>
             </div>
         </div>
 
         <!-- Right Side: Form -->
-        <div class="col-lg-6 d-flex align-items-center justify-content-center bg-white">
+        <div class="col-lg-6 d-flex align-items-center justify-content-center bg-darker text-light">
             <div class="p-4 p-md-5 w-100" style="max-width: 500px;">
                 <div class="d-flex align-items-center mb-5">
-                    <a href="{{ route('home') }}" class="text-decoration-none d-flex align-items-center text-dark">
-                        <div class="rounded-circle bg-primary-custom d-flex align-items-center justify-content-center text-white me-2"
+                    <a href="{{ route('home') }}" class="text-decoration-none d-flex align-items-center text-light">
+                        <div class="rounded-circle bg-primary-custom d-flex align-items-center justify-content-center text-light me-2"
                             style="width:32px;height:32px">
                             <i class="fas fa-utensils small"></i>
                         </div>
@@ -61,7 +43,7 @@
 
                 <div class="mb-4">
                     <h3 class="fw-bold">{{ __('Create Account') }}</h3>
-                    <p class="text-muted">{{ __('Fill in your details to get started.') }}</p>
+                    <p class="text-light">{{ __('Fill in your details to get started.') }}</p>
                 </div>
 
                 <form method="POST" action="{{ route('register') }}">
@@ -121,11 +103,11 @@
                         <label for="roleSelect">{{ __('I want to join as') }}</label>
                     </div>
 
-                    <button class="btn btn-primary w-100 py-3 mb-4 shadow-sm text-white"
+                    <button class="btn btn-primary w-100 py-3 mb-4 shadow text-light"
                         type="submit">{{ __('Sign Up') }}</button>
 
                     <div class="text-center">
-                        <span class="text-muted">{{ __('Already have an account?') }}</span>
+                        <span class="text-light">{{ __('Already have an account?') }}</span>
                         <a href="{{ route('login') }}"
                             class="text-primary fw-bold text-decoration-none ms-1">{{ __('Login') }}</a>
                     </div>

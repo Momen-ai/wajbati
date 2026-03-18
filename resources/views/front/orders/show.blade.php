@@ -4,25 +4,25 @@
 <div class="container py-5">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-muted">Home</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('orders.index') }}" class="text-decoration-none text-muted">My Orders</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Order #{{ $order->id }}</li>
+            <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-light">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('orders.index') }}" class="text-decoration-none text-light">My Orders</a></li>
+            <li class="breadcrumb-item active text-light" aria-current="page">Order #{{ $order->id }}</li>
         </ol>
     </nav>
 
     <div class="row g-4">
         <div class="col-lg-8">
-            <div class="card shadow-card border-0 mb-4">
+            <div class="card shadow-card border border-secondary border-opacity-10 mb-4">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="fw-bold mb-0">Order Items</h4>
-                        <span class="text-muted">Placed on {{ $order->created_at->format('M d, Y H:i') }}</span>
+                        <h4 class="fw-bold mb-0 text-light">Order Items</h4>
+                        <span class="text-light">Placed on {{ $order->created_at->format('M d, Y H:i') }}</span>
                     </div>
 
                     <div class="table-responsive">
-                        <table class="table align-middle">
+                        <table class="table table-dark align-middle">
                             <thead>
-                                <tr class="text-muted small text-uppercase">
+                                <tr class="text-light small text-uppercase">
                                     <th class="border-0 ps-0">Meal</th>
                                     <th class="border-0 text-center">Price</th>
                                     <th class="border-0 text-center">Qty</th>
@@ -37,13 +37,13 @@
                                             @if($item->meal->image)
                                                 <img src="{{ asset('storage/' . $item->meal->image->image_path) }}" class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
                                             @else
-                                                <div class="rounded bg-light me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                                                    <i class="fas fa-utensils text-muted"></i>
+                                                <div class="rounded bg-secondary me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                    <i class="fas fa-utensils text-light"></i>
                                                 </div>
                                             @endif
                                             <div>
-                                                <h6 class="mb-0 fw-bold">{{ $item->meal->name }}</h6>
-                                                <small class="text-muted">{{ $order->chef->name ?? 'Chef' }}</small>
+                                                <h6 class="mb-0 fw-bold text-light">{{ $item->meal->name }}</h6>
+                                                <small class="text-light">{{ $order->chef->name ?? 'Chef' }}</small>
                                             </div>
                                         </div>
                                     </td>
@@ -58,17 +58,17 @@
                 </div>
             </div>
 
-            <div class="card shadow-card border-0">
+            <div class="card shadow-card border border-secondary border-opacity-10">
                 <div class="card-body p-4">
-                    <h5 class="fw-bold mb-3">Delivery Information</h5>
+                    <h5 class="fw-bold mb-3 text-light">Delivery Information</h5>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="text-muted small d-block">Address</label>
-                            <span class="fw-bold">{{ $order->address }}</span>
+                            <label class="text-light small d-block">Address</label>
+                            <span class="fw-bold text-light">{{ $order->address }}</span>
                         </div>
                         <div class="col-md-6">
-                            <label class="text-muted small d-block">Phone Number</label>
-                            <span class="fw-bold">{{ $order->phone ?? $order->user->phone }}</span>
+                            <label class="text-light small d-block">Phone Number</label>
+                            <span class="fw-bold text-light">{{ $order->phone ?? $order->user->phone }}</span>
                         </div>
                     </div>
                 </div>
@@ -76,26 +76,26 @@
         </div>
 
         <div class="col-lg-4">
-            <div class="card shadow-card border-0 mb-4">
+            <div class="card shadow-card border border-secondary border-opacity-10 mb-4">
                 <div class="card-body p-4">
-                    <h5 class="fw-bold mb-4">Order Summary</h5>
+                    <h5 class="fw-bold mb-4 text-light">Order Summary</h5>
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Subtotal</span>
-                        <span class="fw-bold">${{ $order->total - 3 }}</span>
+                        <span class="text-light">Subtotal</span>
+                        <span class="fw-bold text-light">${{ $order->total - 3 }}</span>
                     </div>
                     <div class="d-flex justify-content-between mb-3">
-                        <span class="text-muted">Delivery Fee</span>
-                        <span class="fw-bold">$3.00</span>
+                        <span class="text-light">Delivery Fee</span>
+                        <span class="fw-bold text-light">$3.00</span>
                     </div>
-                    <hr class="opacity-25">
+                    <hr class="opacity-25 text-light">
                     <div class="d-flex justify-content-between mb-4">
-                        <span class="fw-bold h5 mb-0">Total</span>
+                        <span class="fw-bold h5 mb-0 text-light">Total</span>
                         <span class="fw-bold h5 text-primary mb-0">${{ $order->total }}</span>
                     </div>
 
-                    <div class="bg-light rounded p-3 mb-3">
+                    <div class="bg-secondary text-light rounded p-3 mb-3">
                         <div class="d-flex justify-content-between mb-2 small">
-                            <span class="text-muted">Order Status</span>
+                            <span class="text-light">Order Status</span>
                             @php
                                 $statusColor = match($order->status) {
                                     'pending' => 'warning',
@@ -108,8 +108,8 @@
                             <span class="badge bg-{{ $statusColor }} text-uppercase">{{ $order->status }}</span>
                         </div>
                         <div class="d-flex justify-content-between small">
-                            <span class="text-muted">Payment Method</span>
-                            <span class="badge bg-secondary text-uppercase">{{ $order->payment_method }}</span>
+                            <span class="text-light">Payment Method</span>
+                            <span class="badge bg-dark text-uppercase">{{ $order->payment_method }}</span>
                         </div>
                     </div>
 
@@ -122,7 +122,7 @@
             </div>
 
             <div class="d-grid mt-3">
-                <a href="{{ route('orders.index') }}" class="btn btn-outline-secondary">
+                <a href="{{ route('orders.index') }}" class="btn btn-outline-primary">
                     <i class="fas fa-arrow-left me-2"></i> Back to My Orders
                 </a>
             </div>

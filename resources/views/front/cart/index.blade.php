@@ -3,19 +3,19 @@
 @section('content')
 <div class="container py-5">
   <div class="d-flex align-items-center mb-4">
-      <h2 class="fw-bold mb-0 me-3">Shopping Cart</h2>
-      <span class="badge bg-light text-dark rounded-pill border">{{ count($cart) }} items</span>
+      <h2 class="fw-bold mb-0 me-3 text-light">Shopping Cart</h2>
+      <span class="badge bg-secondary text-light rounded-pill border">{{ count($cart) }} items</span>
   </div>
 
   @if(count($cart) > 0)
   <div class="row g-4">
     <!-- Cart Items -->
     <div class="col-lg-8">
-      <div class="card shadow-card border-0 mb-4">
+      <div class="card shadow-card border border-secondary border-opacity-10 mb-4">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light">
+                <table class="table table-dark table-hover align-middle mb-0">
+                    <thead class="bg-secondary">
                         <tr>
                             <th class="border-0 p-3 ps-4" style="width: 40%;">Product</th>
                             <th class="border-0 p-3">Price</th>
@@ -35,15 +35,15 @@
                                     <img src="https://placehold.co/60?text=Food" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
                                     @endif
                                     <div>
-                                        <h6 class="mb-0 fw-bold">{{ $details['name'] }}</h6>
-                                        <small class="text-muted">{{ $details['chef'] }}</small>
+                                        <h6 class="mb-0 fw-bold text-light">{{ $details['name'] }}</h6>
+                                        <small class="text-light">{{ $details['chef'] }}</small>
                                     </div>
                                 </div>
                             </td>
                             <td class="p-3 fw-bold price">${{ $details['price'] }}</td>
                             <td class="p-3">
                                 <div class="input-group input-group-sm" style="width: 120px;">
-                                    <input type="number" value="{{ $details['quantity'] }}" min="1" class="form-control text-center border-secondary quantity-input">
+                                    <input type="number" value="{{ $details['quantity'] }}" min="1" class="form-control bg-secondary text-light border-secondary text-center quantity-input">
                                 </div>
                             </td>
                             <td class="p-3 text-end pe-4 fw-bold row-total">${{ $details['price'] * $details['quantity'] }}</td>
@@ -58,7 +58,7 @@
         </div>
       </div>
       <div class="d-flex justify-content-between">
-          <a href="{{ route('meals.index') }}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i> Continue Shopping</a>
+          <a href="{{ route('meals.index') }}" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i> Continue Shopping</a>
       </div>
     </div>
 
@@ -66,45 +66,45 @@
     <div class="col-lg-4">
       <form action="{{ route('orders.store') }}" method="POST">
       @csrf
-      <div class="card shadow-card border-0 p-4 position-sticky" style="top: 90px;">
-          <h5 class="fw-bold mb-4">Order Summary</h5>
+      <div class="card shadow-card border border-secondary border-opacity-10 p-4 position-sticky" style="top: 90px; background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(10px);">
+          <h5 class="fw-bold mb-4 text-light">Order Summary</h5>
           
-          <div class="d-flex justify-content-between mb-2 text-muted">
+          <div class="d-flex justify-content-between mb-2 text-light">
               <span>Subtotal</span>
               <span id="cart-total">${{ $total }}</span>
           </div>
-          <div class="d-flex justify-content-between mb-2 text-muted">
+          <div class="d-flex justify-content-between mb-2 text-light">
               <span>Delivery Fee</span>
               <span>$3.00</span>
           </div>
-          <hr class="text-muted opacity-25">
+          <hr class="text-light opacity-25">
           <div class="d-flex justify-content-between mb-4">
-              <span class="fw-bold h5 mb-0">Total</span>
+              <span class="fw-bold h5 mb-0 text-light">Total</span>
               <span class="fw-bold h5 text-primary mb-0" id="grand-total">${{ $total + 3 }}</span>
           </div>
 
           <div class="mb-3">
-              <label class="form-label small fw-bold">Delivery Address</label>
-              <input type="text" name="address" class="form-control" required placeholder="Street, Building, Apartment...">
+              <label class="form-label small fw-bold text-light">Delivery Address</label>
+              <input type="text" name="address" class="form-control bg-secondary text-light border border-secondary border-opacity-10" required placeholder="Street, Building, Apartment...">
           </div>
           
           <div class="mb-3">
-              <label class="form-label small fw-bold">Phone Number</label>
-              <input type="text" name="phone" class="form-control" required placeholder="05xxxxxxxx">
+              <label class="form-label small fw-bold text-light">Phone Number</label>
+              <input type="text" name="phone" class="form-control bg-secondary text-light border border-secondary border-opacity-10" required placeholder="05xxxxxxxx">
           </div>
 
           <div class="mb-4">
-              <label class="form-label small fw-bold">Payment Method</label>
+              <label class="form-label small fw-bold text-light">Payment Method</label>
               <div class="d-flex gap-2">
                   <div class="w-50">
                       <input type="radio" class="btn-check" name="payment_method" id="cash" value="cash" checked>
-                      <label class="btn btn-outline-secondary w-100" for="cash">
+                      <label class="btn btn-outline-primary w-100" for="cash">
                           <i class="fas fa-money-bill-wave me-1"></i> Cash
                       </label>
                   </div>
                   <div class="w-50">
                       <input type="radio" class="btn-check" name="payment_method" id="card" value="card">
-                      <label class="btn btn-outline-secondary w-100" for="card">
+                      <label class="btn btn-outline-primary w-100" for="card">
                           <i class="fas fa-credit-card me-1"></i> Card
                       </label>
                   </div>
@@ -116,7 +116,7 @@
           </button>
           
           <div class="text-center">
-              <span class="text-muted small"><i class="fas fa-lock me-1"></i> Secure Checkout</span>
+              <span class="text-light small"><i class="fas fa-lock me-1"></i> Secure Checkout</span>
           </div>
       </div>
       </form>
@@ -124,9 +124,9 @@
   </div>
   @else
   <div class="col-12 text-center py-5">
-      <div class="mb-3 text-muted"><i class="fas fa-shopping-basket fa-4x opacity-50"></i></div>
-      <h3>Your cart is empty</h3>
-      <p class="text-muted mb-4">Looks like you haven't added any meals yet.</p>
+      <div class="mb-3 text-light"><i class="fas fa-shopping-basket fa-4x opacity-50"></i></div>
+      <h3 class="text-light">Your cart is empty</h3>
+      <p class="text-light mb-4">Looks like you haven't added any meals yet.</p>
       <a href="{{ route('meals.index') }}" class="btn btn-primary px-4 py-2">Discover Meals</a>
   </div>
   @endif
