@@ -10,12 +10,23 @@
                             class="fas fa-star me-1"></i> #1 Homemade Food App</span>
                     <h1 class="hero-title pt-2">{{ __('Delicious Homemade Meals') }},<br><span class="text-primary-custom">{{ __('brought to your doorstep.') }}</span></h1>
                     <p class="lead text-light mb-4">{{ __("Order healthy, fresh, and authentic food from local home kitchens.") }}</p>
+                    
+                    <form action="{{ route('meals.index') }}" method="GET" class="mb-4">
+                        <div class="input-group input-group-lg bg-darker rounded-pill p-1 shadow-lg border border-secondary border-opacity-10" style="max-width: 500px;">
+                            <span class="input-group-text bg-transparent border-0 text-secondary ps-4">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" name="search" class="form-control bg-transparent border-0 text-light shadow-none" placeholder="{{ __('Search for meals, kitchens...') }}">
+                            <button class="btn btn-primary rounded-pill px-4 fw-bold" type="submit">{{ __('Search') }}</button>
+                        </div>
+                    </form>
+
                     <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
-                        <a href="{{ route('meals.index') }}" class="btn btn-primary btn-lg shadow">
-                            <i class="fas fa-search me-2"></i> {{ __('Browse Meals') }}
+                        <a href="{{ route('meals.index') }}" class="btn btn-outline-primary btn-lg rounded-pill px-4">
+                             {{ __('Browse All') }}
                         </a>
-                        <a href="{{ route('register', ['role' => 'chef']) }}" class="btn btn-outline-secondary btn-lg bg-darker text-light">
-                            {{ __('Join as a Chef') }}
+                        <a href="{{ route('register', ['role' => 'chef']) }}" class="btn btn-link text-light text-decoration-none d-flex align-items-center">
+                            {{ __('Join as a Chef') }} <i class="fas fa-chevron-right ms-2 small"></i>
                         </a>
                     </div>
                 </div>

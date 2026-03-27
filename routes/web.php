@@ -58,6 +58,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // Address management
+    Route::post('/profile/address', [ProfileController::class, 'addAddress'])->name('profile.address.store');
+    Route::delete('/profile/address/{address}', [ProfileController::class, 'deleteAddress'])->name('profile.address.destroy');
 });
 Route::middleware(['auth', 'role:chef'])->prefix('chef')->name('chef.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Chef\DashboardController::class, 'index'])->name('dashboard');
@@ -69,6 +73,15 @@ Route::middleware(['auth', 'role:chef'])->prefix('chef')->name('chef.')->group(f
 
 
 
+
+Route::post('/newsletter', [ContactController::class, 'subscribe'])->name('newsletter.subscribe');
+
+Route::middleware('auth')->group(function () {
+    Route::post('/notifications/mark-as-read', function () {
+        auth()->user()->unreadNotifications->markAsRead();
+        return back();
+    })->name('notifications.mark-as-read');
+});
 
 require __DIR__ . '/auth.php';
 require __DIR__ . '/admin.php';

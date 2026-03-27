@@ -198,10 +198,25 @@
             </div>
         </div>
 
+        <div class="row g-4 mb-5">
+            <!-- Chart Container -->
+            <div class="col-xl-12 animate-fade-in" style="animation-delay: 0.5s">
+                <div class="premium-card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-700 m-0">Revenue Analytics (Last 6 Months)</h5>
+                        <div class="text-secondary small fw-600">Earnings in USD</div>
+                    </div>
+                    <div style="height: 300px;">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Content Row -->
         <div class="row g-4">
             <!-- Recent Orders -->
-            <div class="col-xl-8 animate-fade-in" style="animation-delay: 0.5s">
+            <div class="col-xl-8 animate-fade-in" style="animation-delay: 0.6s">
                 <div class="premium-card h-100">
                     <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
                         <h5 class="fw-700 m-0">Recent Transactions</h5>
@@ -246,7 +261,7 @@
             </div>
 
             <!-- Newest Users -->
-            <div class="col-xl-4 animate-fade-in" style="animation-delay: 0.6s">
+            <div class="col-xl-4 animate-fade-in" style="animation-delay: 0.7s">
                 <div class="premium-card h-100">
                     <div class="p-4 border-bottom">
                         <h5 class="fw-700 m-0">New Registrations</h5>
@@ -274,4 +289,55 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            
+            // Create Gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(99, 102, 241, 0.2)');
+            gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {!! json_encode($chartData['labels']) !!},
+                    datasets: [{
+                        label: 'Monthly Revenue',
+                        data: {!! json_encode($chartData['values']) !!},
+                        borderColor: '#6366f1',
+                        borderWidth: 3,
+                        backgroundColor: gradient,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#6366f1',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.03)' },
+                            ticks: { font: { size: 11 } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 11 } }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </x-app-layout>

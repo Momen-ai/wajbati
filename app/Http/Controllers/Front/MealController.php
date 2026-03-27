@@ -12,30 +12,55 @@ class MealController extends Controller
 {
     public function home()
     {
-        $meals = Meal::with('image')->latest()->take(6)->get();
+        $meals = Meal::with(['image', 'category', 'chef'])
+            ->withAvg('ratings', 'star')
+            ->withCount('ratings')
+            ->latest()
+            ->take(6)
+            ->get();
 
         return view('front.home', compact('meals'));
     }
 
     public function index(Request $request)
     {
-        $query = Meal::with(['image', 'chef', 'category', 'ratings']);
+        $query = Meal::with(['image', 'chef', 'category'])
+            ->withAvg('ratings', 'star')
+            ->withCount('ratings');
 
-        if ($request->has('category')) {
+        if ($request->has('category') && $request->category != '') {
             $query->where('category_id', $request->category);
         }
 
-        if ($request->has('chef')) {
+        if ($request->has('chef') && $request->chef != '') {
             $query->where('chef_id', $request->chef);
         }
 
-        if ($request->has('search')) {
+        if ($request->has('search') && $request->search != '') {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        $meals = $query->latest()->paginate(9);
+        if ($request->has('min_price') && $request->min_price != '') {
+            $query->where('price', '>=', $request->min_price);
+        }
 
-        return view('front.meals.index', compact('meals'));
+        if ($request->has('max_price') && $request->max_price != '') {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        if ($request->has('sort')) {
+            if ($request->sort == 'price_low') $query->orderBy('price', 'asc');
+            elseif ($request->sort == 'price_high') $query->orderBy('price', 'desc');
+            elseif ($request->sort == 'top_rated') $query->orderBy('ratings_avg_star', 'desc');
+            else $query->latest();
+        } else {
+            $query->latest();
+        }
+
+        $meals = $query->paginate(9);
+        $categories = \App\Models\Category::all();
+
+        return view('front.meals.index', compact('meals', 'categories'));
     }
 
     public function show($id)

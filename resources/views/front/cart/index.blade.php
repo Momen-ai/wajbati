@@ -83,10 +83,25 @@
               <span class="fw-bold h5 text-primary mb-0" id="grand-total">${{ $total + 3 }}</span>
           </div>
 
+          @auth
+          @if(auth()->user()->addresses->count() > 0)
           <div class="mb-3">
-              <label class="form-label small fw-bold text-light">Delivery Address</label>
-              <input type="text" name="address" class="form-control bg-secondary text-light border border-secondary border-opacity-10" required placeholder="Street, Building, Apartment...">
+              <label class="form-label small fw-bold text-light">Choose Saved Address</label>
+              <select name="address_id" id="address_select" class="form-select bg-secondary text-light border border-secondary border-opacity-10 py-2">
+                  <option value="">-- Use New Address --</option>
+                  @foreach(auth()->user()->addresses as $addr)
+                      <option value="{{ $addr->id }}">{{ ucfirst($addr->type) }}: {{ $addr->address }}</option>
+                  @endforeach
+              </select>
           </div>
+          @endif
+          @endauth
+
+          <div class="mb-3" id="manual_address_box">
+              <label class="form-label small fw-bold text-light">Delivery Address</label>
+              <textarea name="address" id="manual_address" class="form-control bg-secondary text-light border border-secondary border-opacity-10" placeholder="Street, Building, Apartment..." rows="2"></textarea>
+          </div>
+          
           
           <div class="mb-3">
               <label class="form-label small fw-bold text-light">Phone Number</label>
@@ -168,6 +183,24 @@
             }
         });
     });
+
+    // Address selection logic
+    const addressSelect = document.getElementById('address_select');
+    const manualAddress = document.getElementById('manual_address');
+    
+    if(addressSelect) {
+        addressSelect.addEventListener('change', function() {
+            if(this.value !== "") {
+                manualAddress.removeAttribute('required');
+                document.getElementById('manual_address_box').style.opacity = '0.5';
+            } else {
+                manualAddress.setAttribute('required', 'required');
+                document.getElementById('manual_address_box').style.opacity = '1';
+            }
+        });
+    } else {
+        if(manualAddress) manualAddress.setAttribute('required', 'required');
+    }
 </script>
 @endpush
 @endsection

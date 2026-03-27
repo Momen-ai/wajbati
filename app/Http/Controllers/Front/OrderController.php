@@ -24,7 +24,8 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'address' => 'required|string',
+            'address_id' => 'nullable|exists:addresses,id',
+            'address' => 'required_without:address_id|string|max:255',
             'phone' => 'required|string',
             'payment_method' => 'required|in:cash,card',
         ]);
@@ -33,6 +34,14 @@ class OrderController extends Controller
 
         if (empty($cart)) {
             return back()->with('error', 'Your cart is empty.');
+        }
+
+        $address = $request->address;
+        if ($request->address_id) {
+            $savedAddress = \App\Models\Address::find($request->address_id);
+            if ($savedAddress && $savedAddress->user_id == Auth::id()) {
+                $address = $savedAddress->address . ($savedAddress->city ? ', ' . $savedAddress->city : '');
+            }
         }
 
         $chefOrders = [];
@@ -56,7 +65,7 @@ class OrderController extends Controller
                     'user_id' => Auth::id(),
                     'chef_id' => $chefId,
                     'total' => $total + 3, // + fixed delivery fee
-                    'address' => $request->address,
+                    'address' => $address,
                     'phone' => $request->phone,
                     'payment_method' => $request->payment_method,
                     'payment_status' => $request->payment_method == 'card' ? 'paid' : 'pending',

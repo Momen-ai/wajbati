@@ -85,4 +85,27 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    public function addAddress(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'address' => 'required|string|max:255',
+            'city' => 'nullable|string|max:100',
+            'type' => 'required|in:home,work,other',
+        ]);
+
+        $request->user()->addresses()->create($request->all());
+
+        return back()->with('success', 'Address added successfully!');
+    }
+
+    public function deleteAddress(\App\Models\Address $address): RedirectResponse
+    {
+        if ($address->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $address->delete();
+        return back()->with('success', 'Address deleted successfully!');
+    }
 }

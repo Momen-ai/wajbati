@@ -13,38 +13,55 @@
     <div class="row g-4 mb-5">
         <div class="col-md-3">
             <div class="card shadow-card border border-secondary border-opacity-10 rounded-4 p-3 text-center hover-lift">
-                <div class="rounded-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                    <i class="fas fa-utensils fa-lg"></i>
+                <div class="rounded-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                    <i class="fas fa-utensils"></i>
                 </div>
                 <h3 class="fw-bold mb-0 text-light">{{ $totalMeals }}</h3>
-                <small class="text-light">Total Meals</small>
+                <small class="text-light opacity-50 small text-uppercase fw-600">Total Meals</small>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card shadow-card border border-secondary border-opacity-10 rounded-4 p-3 text-center hover-lift">
-                <div class="rounded-circle bg-warning bg-opacity-10 text-warning mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                    <i class="fas fa-shopping-bag fa-lg"></i>
+                <div class="rounded-circle bg-warning bg-opacity-10 text-warning mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                    <i class="fas fa-shopping-bag"></i>
                 </div>
                 <h3 class="fw-bold mb-0 text-light">{{ $totalOrders }}</h3>
-                <small class="text-light">Total Orders</small>
+                <small class="text-light opacity-50 small text-uppercase fw-600">Total Orders</small>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card shadow-card border border-secondary border-opacity-10 rounded-4 p-3 text-center hover-lift">
-                <div class="rounded-circle bg-info bg-opacity-10 text-info mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                    <i class="fas fa-clock fa-lg"></i>
+                <div class="rounded-circle bg-success bg-opacity-10 text-success mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                    <i class="fas fa-wallet"></i>
                 </div>
-                <h3 class="fw-bold mb-0 text-light">{{ $pendingOrders }}</h3>
-                <small class="text-light">Pending Orders</small>
+                <div class="d-flex align-items-center justify-content-center">
+                    <h3 class="fw-bold mb-0 text-light me-2">{{ $growth['revenue'] }}</h3>
+                </div>
+                <small class="text-light opacity-50 small text-uppercase fw-600">Revenue Growth</small>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card shadow-card border border-secondary border-opacity-10 rounded-4 p-3 text-center hover-lift">
-                <div class="rounded-circle bg-success bg-opacity-10 text-success mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                    <i class="fas fa-check-circle fa-lg"></i>
+                <div class="rounded-circle bg-info bg-opacity-10 text-info mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                    <i class="fas fa-check-circle"></i>
                 </div>
                 <h3 class="fw-bold mb-0 text-light">{{ $completedOrders }}</h3>
-                <small class="text-light">Completed</small>
+                <small class="text-light opacity-50 small text-uppercase fw-600">Completed Orders</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-card border border-secondary border-opacity-10 rounded-4 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold text-light m-0">Monthly Earnings ($)</h5>
+                    <div class="text-muted small">Real-time revenue tracking</div>
+                </div>
+                <div style="height: 250px;">
+                    <canvas id="chefRevenueChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
@@ -127,4 +144,43 @@
         </div>
     </div>
 </div>
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('chefRevenueChart').getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 250);
+        gradient.addColorStop(0, 'rgba(255, 122, 24, 0.2)');
+        gradient.addColorStop(1, 'rgba(255, 122, 24, 0)');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {!! json_encode($chartData['labels']) !!},
+                datasets: [{
+                    label: 'Earnings',
+                    data: {!! json_encode($chartData['values']) !!},
+                    borderColor: '#ff7a18',
+                    borderWidth: 3,
+                    backgroundColor: gradient,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#ff7a18',
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    });
+</script>
+@endpush
 @endsection
