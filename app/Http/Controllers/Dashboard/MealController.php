@@ -8,10 +8,12 @@ use App\Models\Category;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\File;
+use App\Traits\HandlesImageUploads;
 
 class MealController extends Controller
 {
+    use HandlesImageUploads;
+
     /**
      * Display a listing of the resource.
      */
@@ -38,7 +40,7 @@ class MealController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'chef_id'     => 'required|exists:users,id',
+            'chef_id'     => 'required|exists:users,id,role,chef',
             'category_id' => 'nullable|exists:categories,id',
             'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -46,19 +48,12 @@ class MealController extends Controller
             'image'       => 'required|image|mimes:jpg,jpeg,png,webp',
         ]);
 
-        // رفع الصورة
-        if ($request->file('image')) {
+        $meal = Meal::create(Arr::except($validated, ['image']));
 
-            $image = $request->file('image');
-            $path =  $image->store('meals', 'public');
+        if ($request->hasFile('image')) {
+            $path = $this->uploadImage($request->file('image'), 'meals');
+            $meal->image()->create(['image_path' => $path]);
         }
-
-        $validated = Arr::except($validated, ['image']);
-        $meal = Meal::create($validated);
-
-        $meal->image()->create([
-            'image_path' => $path
-        ]);
 
         return redirect()
             ->route('dashboard.meals.index')
@@ -92,7 +87,7 @@ class MealController extends Controller
     public function update(Request $request, Meal $meal)
     {
         $validated = $request->validate([
-            'chef_id'     => 'required|exists:users,id',
+            'chef_id'     => 'required|exists:users,id,role,chef',
             'category_id' => 'nullable|exists:categories,id',
             'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -100,43 +95,17 @@ class MealController extends Controller
             'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp',
         ]);
 
-        // صورة جديدة
+        // Bug Fix: previously used public_path('image/...') which resolves to the wrong path.
+        // Now uses Storage::disk('public') via HandlesImageUploads::replaceImage() consistently.
         if ($request->hasFile('image')) {
-
-            $newImage = $request->file('image');
-            $newPath  = $newImage->store('meals', 'public');
-
-            if ($meal->image) {
-
-                $oldPath = public_path('image/' . $meal->image->image_path);
-
-                if (File::exists($oldPath)) {
-                    File::delete($oldPath);
-                }
-
-                $meal->image->update([
-                    'image_path' => $newPath
-                ]);
-            } else {
-                $meal->image()->create([
-                    'image_path' => $newPath
-                ]);
-            }
+            $this->replaceImage($meal, $request->file('image'), 'meals');
         }
 
-
-        if ($request->has('remove_image') && $meal->image) {
-
-            $oldPath = storage_path('app/public/' . $meal->image->image_path);
-
-            if (File::exists($oldPath)) {
-                File::delete($oldPath);
-            }
-
-            $meal->image->delete();
+        if ($request->has('remove_image')) {
+            $this->deleteImage($meal);
         }
 
-        $meal->update($validated);
+        $meal->update(Arr::except($validated, ['image']));
 
         return redirect()
             ->route('dashboard.meals.index')
@@ -149,7 +118,7 @@ class MealController extends Controller
      */
     public function destroy(Meal $meal)
     {
-
+        $this->deleteImage($meal);
         $meal->delete();
 
         return redirect()

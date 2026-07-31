@@ -36,21 +36,19 @@ class RegisteredUserController extends Controller
             'phone' => ['required', 'string', 'unique:users,phone'],
         ]);
 
+        // Role is intentionally hardcoded — never read from $request.
+        // Only admins (via Dashboard\UsersController with role:admin middleware) can create chef/admin accounts.
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
-            'role' => $request->role ?? 'user',
+            'role' => 'user',
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
-
-        if ($user->role === 'admin') {
-            return redirect(route('dashboard', absolute: false));
-        }
 
         return redirect(route('home', absolute: false));
     }

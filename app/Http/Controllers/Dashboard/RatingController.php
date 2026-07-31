@@ -30,7 +30,7 @@ class RatingController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'chef_id' => 'required|exists:users,id',
+            'chef_id' => 'required|exists:users,id,role,chef',
             'star'    => 'required|integer|min:1|max:5',
             'body'    => 'nullable|string',
         ]);
@@ -55,7 +55,7 @@ class RatingController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'chef_id' => 'required|exists:users,id',
+            'chef_id' => 'required|exists:users,id,role,chef',
             'star'    => 'required|integer|min:1|max:5',
             'body'    => 'nullable|string',
         ]);

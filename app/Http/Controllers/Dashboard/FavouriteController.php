@@ -30,7 +30,7 @@ class FavouriteController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'chef_id' => 'required|exists:users,id',
+            'chef_id' => 'required|exists:users,id,role,chef',
         ]);
 
         // منع التكرار
@@ -53,7 +53,7 @@ class FavouriteController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'chef_id' => 'required|exists:users,id',
+            'chef_id' => 'required|exists:users,id,role,chef',
         ]);
 
         $favourite->update($validated);

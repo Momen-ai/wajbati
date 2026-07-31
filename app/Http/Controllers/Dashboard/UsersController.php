@@ -6,11 +6,13 @@ use App\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Traits\HandlesImageUploads;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\File;
 
 class UsersController extends Controller
 {
+    use HandlesImageUploads;
+
 
     public function index(Request $request)
     {
@@ -42,18 +44,12 @@ class UsersController extends Controller
         $validated['password'] = Hash::make($validated['password']);
 
 
-        if ($request->file('image')) {
+        $user = User::create(Arr::except($validated, ['image']));
 
-            $image = $request->file('image');
-            $path =  $image->store('users', 'public');
+        if ($request->hasFile('image')) {
+            $path = $this->uploadImage($request->file('image'), 'users');
+            $user->image()->create(['image_path' => $path]);
         }
-
-        $validated = Arr::except($validated, ['image']);
-        $user = User::create($validated);
-
-        $user->image()->create([
-            'image_path' => $path
-        ]);
 
         return redirect()->route('dashboard.users.index')
             ->with('success', 'User created successfully');
@@ -83,38 +79,11 @@ class UsersController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-
-            $newImage = $request->file('image');
-            $newPath  = $newImage->store('users', 'public');
-
-            if ($user->image) {
-
-                $oldPath = storage_path('app/public/' . $user->image->image_path);
-
-                if (File::exists($oldPath)) {
-                    File::delete($oldPath);
-                }
-
-                $user->image->update([
-                    'image_path' => $newPath
-                ]);
-            } else {
-                $user->image()->create([
-                    'image_path' => $newPath
-                ]);
-            }
+            $this->replaceImage($user, $request->file('image'), 'users');
         }
 
-
-        if ($request->has('remove_image') && $user->image) {
-
-            $oldPath = storage_path('app/public/' . $user->image->image_path);
-
-            if (File::exists($oldPath)) {
-                File::delete($oldPath);
-            }
-
-            $user->image->delete();
+        if ($request->has('remove_image')) {
+            $this->deleteImage($user);
         }
 
         $user->update($validated);

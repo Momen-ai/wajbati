@@ -88,7 +88,11 @@ class OrderController extends Controller
     public function update(Request $request, Order $order)
     {
         $validated = $request->validate([
-            'status' => 'required',
+            // Admin intentionally bypasses the OrderStatusService state machine.
+            // This allows manual correction of orders without transition restrictions.
+            // If you want to enforce the state machine for admins too, use:
+            //   OrderStatusService::canTransitionTo($order->status, $request->status)
+            'status'  => 'required|in:pending,accepted,rejected,preparing,prepared,delivered,completed,cancelled',
             'address' => 'nullable|string',
         ]);
 

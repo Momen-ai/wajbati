@@ -5,13 +5,15 @@ namespace App\Http\Controllers\Chef;
 use App\Http\Controllers\Controller;
 use App\Models\Meal;
 use App\Models\Category;
+use App\Traits\HandlesImageUploads;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Gate;
 
 class MealController extends Controller
 {
+    use HandlesImageUploads;
+
     public function index()
     {
         $meals = Meal::where('chef_id', Auth::id())->with('category')->orderBy('id', 'desc')->paginate(10);
@@ -27,26 +29,20 @@ class MealController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
+            'name'        => 'required|string|max:255',
+            'price'       => 'required|numeric|min:0',
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
-            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image'       => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         $validated['chef_id'] = Auth::id();
 
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $path = $image->store('meals', 'public');
-        }
-
         $meal = Meal::create($validated);
 
-        if (isset($path)) {
-            $meal->image()->create([
-                'image_path' => $path
-            ]);
+        if ($request->hasFile('image')) {
+            $path = $this->uploadImage($request->file('image'), 'meals');
+            $meal->image()->create(['image_path' => $path]);
         }
 
         return redirect()->route('chef.meals.index')->with('success', 'Meal created successfully.');
@@ -54,9 +50,7 @@ class MealController extends Controller
 
     public function edit(Meal $meal)
     {
-        if ($meal->chef_id !== Auth::id()) {
-            abort(403);
-        }
+        Gate::authorize('update', $meal);
 
         $categories = Category::all();
         return view('front.chef.meals.edit', compact('meal', 'categories'));
@@ -64,31 +58,18 @@ class MealController extends Controller
 
     public function update(Request $request, Meal $meal)
     {
-        if ($meal->chef_id !== Auth::id()) {
-            abort(403);
-        }
+        Gate::authorize('update', $meal);
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
+            'name'        => 'required|string|max:255',
+            'price'       => 'required|numeric|min:0',
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
-            // Delete old image
-            if ($meal->image) {
-                Storage::disk('public')->delete($meal->image->image_path);
-                $meal->image()->delete();
-            }
-
-            $image = $request->file('image');
-            $path = $image->store('meals', 'public');
-
-            $meal->image()->create([
-                'image_path' => $path
-            ]);
+            $this->replaceImage($meal, $request->file('image'), 'meals');
         }
 
         $meal->update($validated);
@@ -98,15 +79,9 @@ class MealController extends Controller
 
     public function destroy(Meal $meal)
     {
-        if ($meal->chef_id !== Auth::id()) {
-            abort(403);
-        }
+        Gate::authorize('delete', $meal);
 
-        if ($meal->image) {
-            Storage::disk('public')->delete($meal->image->image_path);
-            $meal->image()->delete();
-        }
-
+        $this->deleteImage($meal);
         $meal->delete();
 
         return redirect()->route('chef.meals.index')->with('success', 'Meal deleted successfully.');
