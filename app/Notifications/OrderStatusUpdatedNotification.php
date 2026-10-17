@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -37,9 +36,9 @@ class OrderStatusUpdatedNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Order Update! #' . $this->order->id)
-            ->greeting('Hello ' . $notifiable->name)
-            ->line('The status of your order #' . $this->order->id . ' has been updated to: ' . strtoupper($this->order->status))
+            ->subject('Order Update! #'.$this->order->id)
+            ->greeting('Hello '.$notifiable->name)
+            ->line('The status of your order #'.$this->order->id.' has been updated to: '.strtoupper($this->order->status))
             ->action('View Order Status', route('orders.show', $this->order->id))
             ->line('Enjoy your delicious meal from Wajbati!');
     }
@@ -54,7 +53,7 @@ class OrderStatusUpdatedNotification extends Notification
         return [
             'order_id' => $this->order->id,
             'status' => $this->order->status,
-            'message' => 'Your order #' . $this->order->id . ' is now ' . $this->order->status,
+            'message' => 'Your order #'.$this->order->id.' is now '.$this->order->status,
         ];
     }
 }

@@ -2,77 +2,81 @@
 
 namespace App\Http\Controllers\Front;
 
-use App\Models\Meal;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Session;
-
+use App\Http\Requests\AddToCartRequest;
+use App\Http\Requests\RemoveFromCartRequest;
+use App\Http\Requests\UpdateCartRequest;
+use App\Services\CartService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class CartController extends Controller
 {
-    public function index()
+    public function __construct(
+        protected CartService $cartService
+    ) {}
+
+    public function index(): View
     {
-        $cart = Session::get('cart', []);
-        $total = 0;
+        $details = $this->cartService->detailed();
 
-        foreach ($cart as $id => $details) {
-            $total += $details['price'] * $details['quantity'];
-        }
-
-        return view('front.cart.index', compact('cart', 'total'));
+        return view('front.cart.index', [
+            'byChef' => $details['by_chef'],
+            'subtotal' => $details['subtotal'],
+            'totalDeliveryFee' => $details['total_delivery_fee'],
+            'total' => $details['grand_total'],
+            'count' => $details['count'],
+            'cart' => $this->cartService->get(),
+        ]);
     }
 
-    public function add(Request $request)
+    public function add(AddToCartRequest $request): JsonResponse|RedirectResponse
     {
+        $cart = $this->cartService->add(
+            (int) $request->validated('meal_id'),
+            (int) $request->validated('quantity')
+        );
 
-        // Fetch the meal along with its related image in a single query
-        $meal = Meal::with('image')->findOrFail($request->meal_id);
-
-        
-        $cart = Session::get('cart', []);
-        $id = $meal->id;
-        $quantity = $request->input('quantity', 1);
-
-        if (isset($cart[$id])) {
-            $cart[$id]['quantity'] += $quantity;
-        } else {
-            $cart[$id] = [
-                "name" => $meal->name,
-                "quantity" => $quantity,
-                "price" => $meal->price,
-                "image" => $meal->image ? $meal->image->image_path : null,
-                "chef" => $meal->chef->name ?? 'Chef'
-            ];
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'count' => count($cart),
+                'message' => __('Meal added to cart successfully.'),
+            ]);
         }
 
-        Session::put('cart', $cart);
-
-        if ($request->ajax()) {
-            return response()->json(['success' => true, 'count' => count($cart), 'message' => 'Added to cart']);
-        }
-
-        return redirect()->back()->with('success', 'Meal added to cart successfully!');
+        return redirect()->back()->with('success', __('Meal added to cart successfully.'));
     }
 
-    public function update(Request $request)
+    public function update(UpdateCartRequest $request): JsonResponse|RedirectResponse
     {
-        if ($request->id && $request->quantity) {
-            $cart = Session::get('cart');
-            $cart[$request->id]["quantity"] = $request->quantity;
-            Session::put('cart', $cart);
-            return response()->json(['success' => true]);
+        $cart = $this->cartService->update(
+            (int) $request->validated('id'),
+            (int) $request->validated('quantity')
+        );
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => __('Cart updated successfully.'),
+            ]);
         }
+
+        return redirect()->back()->with('success', __('Cart updated successfully.'));
     }
 
-    public function remove(Request $request)
+    public function remove(RemoveFromCartRequest $request): JsonResponse|RedirectResponse
     {
-        if ($request->id) {
-            $cart = Session::get('cart');
-            if (isset($cart[$request->id])) {
-                unset($cart[$request->id]);
-                Session::put('cart', $cart);
-            }
-            return response()->json(['success' => true]);
+        $this->cartService->remove((int) $request->validated('id'));
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => __('Meal removed from cart.'),
+            ]);
         }
+
+        return redirect()->back()->with('success', __('Meal removed from cart.'));
     }
 }

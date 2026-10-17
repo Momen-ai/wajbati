@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Front;
 
+use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Meal;
 use App\Models\User;
-use App\Models\Category;
-use App\Http\Controllers\Controller;
 
 class HomeController extends Controller
 {
@@ -21,8 +21,6 @@ class HomeController extends Controller
 
         $categories = Category::withCount('meals')->get();
 
-
-        return view('front.home', compact('popularMeals','categories', 'chefs'));
+        return view('front.home', compact('popularMeals', 'categories', 'chefs'));
     }
 }
-

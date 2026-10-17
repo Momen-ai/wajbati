@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\Controller;
 use App\Models\Favourite;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class FavouriteController extends Controller
 {
@@ -72,4 +72,3 @@ class FavouriteController extends Controller
             ->with('success', 'Favourite deleted successfully');
     }
 }
-

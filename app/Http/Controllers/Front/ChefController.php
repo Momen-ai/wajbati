@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\Front;
 
-use App\Models\User;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\User;
 
 class ChefController extends Controller
 {

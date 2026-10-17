@@ -3,12 +3,9 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Meal;
 use App\Models\Order;
-use App\Models\Contact;
-use App\Models\Category;
-use Illuminate\Http\Request;
+use App\Models\User;
 
 class DashboardController extends Controller
 {
@@ -18,10 +15,10 @@ class DashboardController extends Controller
         $chefsCount = User::where('role', 'chef')->count();
         $mealsCount = Meal::count();
         $ordersCount = Order::count();
-        
+
         $totalRevenue = Order::where('payment_status', 'paid')->sum('total');
         $pendingOrdersCount = Order::where('status', 'pending')->count();
-        
+
         $latestUsers = User::latest()->take(6)->get();
         $latestOrders = Order::with(['user', 'chef'])->latest()->take(6)->get();
 
@@ -47,15 +44,15 @@ class DashboardController extends Controller
         $usrGrowth = $lastMonthUsers > 0 ? (($currMonthUsers - $lastMonthUsers) / $lastMonthUsers) * 100 : ($currMonthUsers > 0 ? 100 : 0);
 
         $growth = [
-            'revenue' => ($revGrowth >= 0 ? '+' : '') . number_format($revGrowth, 1) . '%',
-            'orders' => ($ordGrowth >= 0 ? '+' : '') . number_format($ordGrowth, 1) . '%',
-            'users' => ($usrGrowth >= 0 ? '+' : '') . number_format($usrGrowth, 1) . '%'
+            'revenue' => ($revGrowth >= 0 ? '+' : '').number_format($revGrowth, 1).'%',
+            'orders' => ($ordGrowth >= 0 ? '+' : '').number_format($ordGrowth, 1).'%',
+            'users' => ($usrGrowth >= 0 ? '+' : '').number_format($usrGrowth, 1).'%',
         ];
 
         // Chart Data (Last 6 Months)
         $chartData = [
             'labels' => [],
-            'values' => []
+            'values' => [],
         ];
         for ($i = 5; $i >= 0; $i--) {
             $month = $now->copy()->subMonths($i);

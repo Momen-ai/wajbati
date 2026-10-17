@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Front;
 
-use App\Models\Contact;
 use App\Http\Controllers\Controller;
+use App\Models\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,8 +23,8 @@ class ContactController extends Controller
             'message' => 'required|string',
         ]);
 
-        // Mapping subject to title if we want to stick to model, 
-        // OR we can update the model/migration. 
+        // Mapping subject to title if we want to stick to model,
+        // OR we can update the model/migration.
         // Let's stick to title for now as its standard in the model I saw.
         Contact::create([
             'user_id' => Auth::id(),
@@ -46,7 +46,7 @@ class ContactController extends Controller
         Contact::create([
             'user_id' => Auth::id(),
             'title' => 'Newsletter Subscription',
-            'message' => 'New subscription from: ' . $request->email,
+            'message' => 'New subscription from: '.$request->email,
         ]);
 
         return back()->with('success', 'Thank you for subscribing to our newsletter!');

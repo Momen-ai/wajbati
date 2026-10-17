@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -37,10 +36,10 @@ class NewOrderNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('New Order Received! #' . $this->order->id)
-            ->greeting('Hello ' . $notifiable->name)
+            ->subject('New Order Received! #'.$this->order->id)
+            ->greeting('Hello '.$notifiable->name)
             ->line('You have received a new order for your kitchen items.')
-            ->line('Order Total: $' . $this->order->total)
+            ->line('Order Total: $'.$this->order->total)
             ->action('View Order Details', route('chef.orders.show', $this->order->id))
             ->line('Thank you for being part of Wajbati!');
     }
@@ -56,7 +55,7 @@ class NewOrderNotification extends Notification
             'order_id' => $this->order->id,
             'customer_name' => $this->order->user->name,
             'total' => $this->order->total,
-            'message' => 'New order received from ' . $this->order->user->name,
+            'message' => 'New order received from '.$this->order->user->name,
         ];
     }
 }

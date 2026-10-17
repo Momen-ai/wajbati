@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Models\Cart;
-use App\Models\User;
-use App\Models\Meal;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Cart;
+use App\Models\Meal;
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
     public function index()
     {
         $carts = Cart::with(['user', 'meal'])->latest()->paginate(10);
+
         return view('admin.cart.index', compact('carts'));
     }
 
@@ -71,4 +72,3 @@ class CartController extends Controller
             ->with('success', 'Cart item deleted successfully');
     }
 }
-

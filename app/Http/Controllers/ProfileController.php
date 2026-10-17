@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
+use App\Traits\HandlesImageUploads;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +11,8 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+    use HandlesImageUploads;
+
     /**
      * Display the user's profile form.
      */
@@ -27,31 +29,25 @@ class ProfileController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $user = $request->user();
-        
+
         $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'phone' => ['nullable', 'string', 'max:20'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ];
 
         if ($user->role === 'chef') {
             $rules['kitchen_name'] = ['nullable', 'string', 'max:255'];
             $rules['bio'] = ['nullable', 'string', 'max:1000'];
             $rules['address'] = ['nullable', 'string', 'max:255'];
-            $rules['image'] = ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'];
         }
 
         $validated = $request->validate($rules);
 
         if ($request->hasFile('image')) {
-            // Delete old image
-            if ($user->image) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->image->image_path);
-                $user->image()->delete();
-            }
-
-            $path = $request->file('image')->store('chefs', 'public');
-            $user->image()->create(['image_path' => $path]);
+            $folder = $user->role === 'chef' ? 'chefs' : 'users';
+            $this->replaceImage($user, $request->file('image'), $folder);
         }
 
         $user->fill(\Illuminate\Support\Arr::except($validated, ['image']));
@@ -75,8 +71,40 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
+        $userRole = $user->role ?? 'user';
+
+        // Last Admin Guard: Cannot delete self if last admin
+        if ($userRole === 'admin') {
+            $adminCount = User::where('role', 'admin')->count();
+            if ($adminCount <= 1) {
+                return back()->withErrors(['userDeletion' => __('Cannot delete the last remaining administrator account.')]);
+            }
+        }
+
+        // Active Orders Guard for chefs
+        if ($userRole === 'chef') {
+            $hasActiveOrders = \App\Models\Order::where('chef_id', $user->id)
+                ->whereNotIn('status', ['completed', 'delivered', 'rejected', 'cancelled'])
+                ->exists();
+
+            if ($hasActiveOrders) {
+                return back()->withErrors(['userDeletion' => __('Cannot delete chef account while having active pending orders.')]);
+            }
+
+            // Soft-delete chef meals
+            $user->meals()->delete();
+        }
 
         Auth::logout();
+
+        // Customer anonymization to preserve order history
+        if ($userRole === 'user') {
+            $user->update([
+                'name' => 'Deleted User',
+                'email' => 'deleted_'.$user->id.'_'.uniqid().'@wajbati.local',
+                'phone' => null,
+            ]);
+        }
 
         $user->delete();
 
@@ -106,6 +134,7 @@ class ProfileController extends Controller
         }
 
         $address->delete();
+
         return back()->with('success', 'Address deleted successfully!');
     }
 }

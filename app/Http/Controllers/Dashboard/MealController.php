@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Meal;
 use App\Models\User;
-use App\Models\Category;
-use Illuminate\Support\Arr;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Traits\HandlesImageUploads;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class MealController extends Controller
 {
@@ -20,6 +20,7 @@ class MealController extends Controller
     public function index()
     {
         $meals = Meal::with(['chef', 'category'])->orderBy('id', 'desc')->paginate(15);
+
         return view('admin.meals.index', compact('meals'));
     }
 
@@ -40,12 +41,12 @@ class MealController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'chef_id'     => 'required|exists:users,id,role,chef',
+            'chef_id' => 'required|exists:users,id,role,chef',
             'category_id' => 'nullable|exists:categories,id',
-            'name'        => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price'       => 'required|numeric',
-            'image'       => 'required|image|mimes:jpg,jpeg,png,webp',
+            'price' => 'required|numeric',
+            'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $meal = Meal::create(Arr::except($validated, ['image']));
@@ -60,13 +61,13 @@ class MealController extends Controller
             ->with('success', 'Meal created successfully');
     }
 
-
     /**
      * Display the specified resource.
      */
     public function show(Meal $meal)
     {
         $meal->load('image', 'chef', 'category');
+
         return view('admin.meals.show', compact('meal'));
     }
 
@@ -87,12 +88,12 @@ class MealController extends Controller
     public function update(Request $request, Meal $meal)
     {
         $validated = $request->validate([
-            'chef_id'     => 'required|exists:users,id,role,chef',
+            'chef_id' => 'required|exists:users,id,role,chef',
             'category_id' => 'nullable|exists:categories,id',
-            'name'        => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price'       => 'required|numeric',
-            'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp',
+            'price' => 'required|numeric',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         // Bug Fix: previously used public_path('image/...') which resolves to the wrong path.
@@ -111,7 +112,6 @@ class MealController extends Controller
             ->route('dashboard.meals.index')
             ->with('success', 'Meal updated successfully');
     }
-
 
     /**
      * Remove the specified resource from storage.

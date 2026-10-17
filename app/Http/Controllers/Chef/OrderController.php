@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Chef;
 
-use App\Models\Order;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Gate;
+use App\Models\Order;
 use App\Notifications\OrderStatusUpdatedNotification;
 use App\Services\OrderStatusService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class OrderController extends Controller
 {
@@ -17,6 +17,7 @@ class OrderController extends Controller
             ->with(['user', 'items.meal'])
             ->orderBy('id', 'desc')
             ->paginate(15);
+
         return view('front.chef.orders.index', compact('orders'));
     }
 
@@ -25,11 +26,11 @@ class OrderController extends Controller
         Gate::authorize('update', $order);
 
         $validated = $request->validate([
-            'status' => 'required|in:' . implode(',', array_keys(OrderStatusService::TRANSITIONS)),
+            'status' => 'required|in:'.implode(',', array_keys(OrderStatusService::TRANSITIONS)),
         ]);
 
         $currentStatus = $order->status;
-        $newStatus     = $validated['status'];
+        $newStatus = $validated['status'];
 
         if (! OrderStatusService::canTransitionTo($currentStatus, $newStatus)) {
             $allowed = implode(', ', OrderStatusService::getAllowedStatuses($currentStatus));
@@ -42,6 +43,9 @@ class OrderController extends Controller
 
         $order->update(['status' => $newStatus]);
 
+        // Update payment status lifecycle (COD paid on delivery, etc.)
+        app(\App\Services\OrderPaymentService::class)->handleStatusTransition($order, $newStatus);
+
         // Notify the customer about the status change
         $order->user->notify(new OrderStatusUpdatedNotification($order));
 
@@ -53,6 +57,7 @@ class OrderController extends Controller
         Gate::authorize('view', $order);
 
         $order->load(['user', 'items.meal']);
+
         return view('front.chef.orders.show', compact('order'));
     }
 }

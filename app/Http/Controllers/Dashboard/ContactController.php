@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\Controller;
 use App\Models\Contact;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class ContactController extends Controller
@@ -35,16 +35,16 @@ class ContactController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title'   => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'message' => 'required|string',
-            'type'    => 'required|in:contact,complaint,support',
+            'type' => 'required|in:contact,complaint,support',
         ]);
 
         Contact::create([
             'user_id' => Auth::id(),
-            'title'   => $validated['title'],
+            'title' => $validated['title'],
             'message' => $validated['message'],
-            'type'    => $validated['type'],
+            'type' => $validated['type'],
         ]);
 
         return redirect()

@@ -12,6 +12,7 @@ class Favourite extends Model
     {
         return $this->belongsTo(User::class);
     }
+
     public function chef()
     {
         return $this->belongsTo(User::class, 'chef_id');

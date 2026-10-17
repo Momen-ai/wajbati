@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Front;
 
+use App\Http\Controllers\Controller;
 use App\Models\Meal;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-
 use Illuminate\Support\Facades\Auth;
 
 class MealController extends Controller
@@ -37,7 +36,7 @@ class MealController extends Controller
         }
 
         if ($request->has('search') && $request->search != '') {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like', '%'.$request->search.'%');
         }
 
         if ($request->has('min_price') && $request->min_price != '') {
@@ -49,10 +48,15 @@ class MealController extends Controller
         }
 
         if ($request->has('sort')) {
-            if ($request->sort == 'price_low') $query->orderBy('price', 'asc');
-            elseif ($request->sort == 'price_high') $query->orderBy('price', 'desc');
-            elseif ($request->sort == 'top_rated') $query->orderBy('ratings_avg_star', 'desc');
-            else $query->latest();
+            if ($request->sort == 'price_low') {
+                $query->orderBy('price', 'asc');
+            } elseif ($request->sort == 'price_high') {
+                $query->orderBy('price', 'desc');
+            } elseif ($request->sort == 'top_rated') {
+                $query->orderBy('ratings_avg_star', 'desc');
+            } else {
+                $query->latest();
+            }
         } else {
             $query->latest();
         }
@@ -66,7 +70,7 @@ class MealController extends Controller
     public function show($id)
     {
         $meal = Meal::with(['image', 'chef', 'category', 'ratings.user'])->findOrFail($id);
-        
+
         $relatedMeals = Meal::where('category_id', $meal->category_id)
             ->where('id', '!=', $meal->id)
             ->with(['image', 'category', 'chef'])
@@ -95,4 +99,3 @@ class MealController extends Controller
         return back()->with('success', 'Thank you for your rating!');
     }
 }
-

@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class CategoryController extends Controller
 {
     public function index()
     {
         $categories = Category::orderBy('id', 'desc')->paginate(15);
+
         return view('admin.category.index', compact('categories'));
     }
 
@@ -39,7 +40,7 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+            'name' => 'required|string|max:255|unique:categories,name,'.$category->id,
         ]);
 
         $category->update($request->only('name'));
@@ -56,4 +57,3 @@ class CategoryController extends Controller
             ->with('success', 'Category deleted successfully');
     }
 }
-

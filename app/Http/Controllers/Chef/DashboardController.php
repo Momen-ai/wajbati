@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Chef;
 use App\Http\Controllers\Controller;
 use App\Models\Meal;
 use App\Models\Order;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -17,7 +16,7 @@ class DashboardController extends Controller
         $totalOrders = Order::where('chef_id', $chefId)->count();
         $pendingOrders = Order::where('chef_id', $chefId)->where('status', 'pending')->count();
         $completedOrders = Order::where('chef_id', $chefId)->where('status', 'completed')->count();
-        
+
         $recentOrders = Order::where('chef_id', $chefId)->with('user')->latest()->take(5)->get();
 
         // Growth Calculation
@@ -31,13 +30,13 @@ class DashboardController extends Controller
         $revGrowth = $lastMonthRevenue > 0 ? (($currMonthRevenue - $lastMonthRevenue) / $lastMonthRevenue) * 100 : ($currMonthRevenue > 0 ? 100 : 0);
 
         $growth = [
-            'revenue' => ($revGrowth >= 0 ? '+' : '') . number_format($revGrowth, 1) . '%'
+            'revenue' => ($revGrowth >= 0 ? '+' : '').number_format($revGrowth, 1).'%',
         ];
 
         // Chart Data (Last 6 Months)
         $chartData = [
             'labels' => [],
-            'values' => []
+            'values' => [],
         ];
         for ($i = 5; $i >= 0; $i--) {
             $month = $now->copy()->subMonths($i);
@@ -50,12 +49,12 @@ class DashboardController extends Controller
         }
 
         return view('front.chef.dashboard', compact(
-            'totalMeals', 
-            'totalOrders', 
-            'pendingOrders', 
-            'completedOrders', 
-            'recentOrders', 
-            'growth', 
+            'totalMeals',
+            'totalOrders',
+            'pendingOrders',
+            'completedOrders',
+            'recentOrders',
+            'growth',
             'chartData'
         ));
     }

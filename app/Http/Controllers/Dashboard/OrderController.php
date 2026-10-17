@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Meal;
 use App\Models\Order;
 use App\Models\User;
-use App\Models\Meal;
+use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-
     public function index()
     {
         $orders = Order::with(['user', 'chef'])
@@ -35,8 +34,8 @@ class OrderController extends Controller
             'user_id' => 'required|exists:users,id',
             'chef_id' => 'required|exists:users,id',
             'address' => 'nullable|string',
-            'status'  => 'required',
-            'items'   => 'required|array',
+            'status' => 'required',
+            'items' => 'required|array',
             'items.*.meal_id' => 'required|exists:meals,id',
             'items.*.quantity' => 'required|integer|min:1',
         ]);
@@ -51,9 +50,9 @@ class OrderController extends Controller
         $order = Order::create([
             'user_id' => $request->user_id,
             'chef_id' => $request->chef_id,
-            'total'   => $total,
+            'total' => $total,
             'address' => $request->address,
-            'status'  => $request->status,
+            'status' => $request->status,
         ]);
 
         foreach ($request->items as $item) {
@@ -74,6 +73,7 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         $order->load(['user', 'chef', 'items.meal']);
+
         return view('admin.orders.show', compact('order'));
     }
 
@@ -92,7 +92,7 @@ class OrderController extends Controller
             // This allows manual correction of orders without transition restrictions.
             // If you want to enforce the state machine for admins too, use:
             //   OrderStatusService::canTransitionTo($order->status, $request->status)
-            'status'  => 'required|in:pending,accepted,rejected,preparing,prepared,delivered,completed,cancelled',
+            'status' => 'required|in:pending,accepted,rejected,preparing,prepared,delivered,completed,cancelled',
             'address' => 'nullable|string',
         ]);
 
@@ -113,5 +113,4 @@ class OrderController extends Controller
     }
 }
 
-    //
-
+//

@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Models\User;
-use Illuminate\Support\Arr;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Traits\HandlesImageUploads;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 
 class UsersController extends Controller
 {
     use HandlesImageUploads;
-
 
     public function index(Request $request)
     {
@@ -38,13 +37,14 @@ class UsersController extends Controller
             'password' => 'required|min:6',
             'phone' => 'required|string|unique:users,phone',
             'role' => 'required|in:admin,chef,user',
-            'image'       => 'required|image|mimes:jpg,jpeg,png,webp',
+            'image' => 'required|image|mimes:jpg,jpeg,png,webp',
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
 
-
-        $user = User::create(Arr::except($validated, ['image']));
+        $user = new User(Arr::except($validated, ['image', 'role']));
+        $user->role = $validated['role'];
+        $user->save();
 
         if ($request->hasFile('image')) {
             $path = $this->uploadImage($request->file('image'), 'users');
@@ -55,14 +55,12 @@ class UsersController extends Controller
             ->with('success', 'User created successfully');
     }
 
-
-
     public function show(User $user)
     {
         $user->load('image');
+
         return view('admin.users.show', compact('user'));
     }
-
 
     public function edit(User $user)
     {
@@ -73,9 +71,10 @@ class UsersController extends Controller
     {
         $validated = $request->validate([
             'name' => 'sometimes',
-            'email' => 'sometimes|email|unique:users,email,' . $user->id,
-            'phone' => 'sometimes|string|unique:users,phone,' . $user->id,
+            'email' => 'sometimes|email|unique:users,email,'.$user->id,
+            'phone' => 'sometimes|string|unique:users,phone,'.$user->id,
             'role' => 'sometimes|in:admin,chef,user',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
@@ -86,9 +85,19 @@ class UsersController extends Controller
             $this->deleteImage($user);
         }
 
-        $user->update($validated);
+        if (isset($validated['role'])) {
+            if ($user->role === 'admin' && $validated['role'] !== 'admin') {
+                $adminCount = User::where('role', 'admin')->count();
+                if ($adminCount <= 1) {
+                    return redirect()->route('dashboard.users.index')
+                        ->with('error', __('Cannot demote the last remaining administrator account.'));
+                }
+            }
+            $user->role = $validated['role'];
+        }
 
-        // $user->update($request->only('name', 'email', 'role'));
+        $user->fill(Arr::except($validated, ['role', 'image']));
+        $user->save();
 
         return redirect()->route('dashboard.users.index')
             ->with('success', 'User updated successfully');
@@ -97,7 +106,11 @@ class UsersController extends Controller
     public function destroy(User $user)
     {
         if ($user->role === 'admin') {
-            abort(403);
+            $adminCount = User::where('role', 'admin')->count();
+            if ($adminCount <= 1) {
+                return redirect()->route('dashboard.users.index')
+                    ->with('error', __('Cannot delete the last remaining administrator account.'));
+            }
         }
 
         $user->delete();
@@ -107,4 +120,4 @@ class UsersController extends Controller
     }
 }
 
-    //
+//
