@@ -11,14 +11,11 @@ use App\Http\Controllers\Dashboard\UsersController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'role:admin'])->prefix('dashboard')->name('dashboard.')->group(function () {
-
-    Route::resource('category', CategoryController::class);
+    Route::resource('category', CategoryController::class)->except(['show']);
     Route::resource('users', UsersController::class);
     Route::resource('meals', MealController::class);
     Route::resource('orders', OrderController::class);
-    Route::resource('cart', CartController::class);
-    Route::resource('favourites', FavouriteController::class);
-    Route::resource('ratings', RatingController::class);
-    Route::resource('contacts', ContactController::class);
-
+    Route::resource('ratings', RatingController::class)->only(['index', 'destroy']);
+    Route::resource('contacts', ContactController::class)->only(['index', 'show', 'destroy']);
+    Route::patch('contacts/{contact}/toggle-read', [ContactController::class, 'toggleRead'])->name('contacts.toggle-read');
 });

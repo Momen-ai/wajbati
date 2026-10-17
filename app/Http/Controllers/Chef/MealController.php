@@ -33,12 +33,16 @@ class MealController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'number_persons' => 'nullable|integer|min:1|max:50',
+            'is_available' => 'nullable|boolean',
+            'prep_time_minutes' => 'nullable|integer|min:1|max:1440',
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
             'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         $validated['chef_id'] = Auth::id();
+        $validated['is_available'] = $request->boolean('is_available', true);
 
         $meal = Meal::create($validated);
 
@@ -66,10 +70,15 @@ class MealController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'number_persons' => 'nullable|integer|min:1|max:50',
+            'is_available' => 'nullable|boolean',
+            'prep_time_minutes' => 'nullable|integer|min:1|max:1440',
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
+
+        $validated['is_available'] = $request->boolean('is_available', true);
 
         if ($request->hasFile('image')) {
             $this->replaceImage($meal, $request->file('image'), 'meals');

@@ -75,7 +75,9 @@
             </div>
         </div>
 
-        {{ $contacts->links() }}
+        <div class="mt-4">
+            {{ $contacts->withQueryString()->links() }}
+        </div>
 
     </div>
 </x-app-layout>

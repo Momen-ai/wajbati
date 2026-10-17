@@ -33,20 +33,42 @@ class CartController extends Controller
 
     public function add(AddToCartRequest $request): JsonResponse|RedirectResponse
     {
+        $meal = \App\Models\Meal::findOrFail((int) $request->validated('meal_id'));
+
+        if (! $meal->is_available) {
+            return $this->cartResponse($request, false, __('This meal is currently unavailable.'));
+        }
+
+        $user = $request->user();
+        if ($user) {
+            if ($user->role === 'admin') {
+                return $this->cartResponse($request, false, __('Admin accounts cannot place orders.'));
+            }
+
+            if ($user->role === 'chef' && $user->id === $meal->chef_id) {
+                return $this->cartResponse($request, false, __('Chefs cannot order their own meals.'));
+            }
+        }
+
         $cart = $this->cartService->add(
             (int) $request->validated('meal_id'),
             (int) $request->validated('quantity')
         );
 
+        return $this->cartResponse($request, true, __('Meal added to cart successfully.'), count($cart));
+    }
+
+    protected function cartResponse(Request $request, bool $success, string $message, int $count = 0): JsonResponse|RedirectResponse
+    {
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
-                'success' => true,
-                'count' => count($cart),
-                'message' => __('Meal added to cart successfully.'),
-            ]);
+                'success' => $success,
+                'count' => $count,
+                'message' => $message,
+            ], $success ? 200 : 422);
         }
 
-        return redirect()->back()->with('success', __('Meal added to cart successfully.'));
+        return redirect()->back()->with($success ? 'success' : 'error', $message);
     }
 
     public function update(UpdateCartRequest $request): JsonResponse|RedirectResponse

@@ -91,6 +91,10 @@
             </table>
         </div>
 
+        <div class="mt-4">
+            {{ $users->withQueryString()->links() }}
+        </div>
+
     </div>
 
 </x-app-layout>

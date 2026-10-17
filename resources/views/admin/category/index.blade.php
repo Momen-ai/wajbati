@@ -61,5 +61,9 @@
 
             </table>
         </div>
+
+        <div class="mt-4">
+            {{ $categories->withQueryString()->links() }}
+        </div>
     </div>
 </x-app-layout>

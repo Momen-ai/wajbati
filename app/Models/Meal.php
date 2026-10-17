@@ -10,7 +10,16 @@ class Meal extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['chef_id', 'category_id', 'name', 'description', 'price', 'number_persons'];
+    protected $fillable = [
+        'chef_id',
+        'category_id',
+        'name',
+        'description',
+        'price',
+        'number_persons',
+        'is_available',
+        'prep_time_minutes',
+    ];
 
     public function chef()
     {

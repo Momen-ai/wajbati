@@ -88,19 +88,54 @@ class OrderController extends Controller
     public function update(Request $request, Order $order)
     {
         $validated = $request->validate([
-            // Admin intentionally bypasses the OrderStatusService state machine.
-            // This allows manual correction of orders without transition restrictions.
-            // If you want to enforce the state machine for admins too, use:
-            //   OrderStatusService::canTransitionTo($order->status, $request->status)
             'status' => 'required|in:pending,accepted,rejected,preparing,prepared,delivered,completed,cancelled',
             'address' => 'nullable|string',
+            'force' => 'nullable|boolean',
+            'note' => 'nullable|string|max:500',
         ]);
 
-        $order->update($validated);
+        $fromStatus = $order->status;
+        $toStatus = $validated['status'];
+        $forced = $request->boolean('force');
+
+        if ($fromStatus !== $toStatus) {
+            if (! $forced && ! \App\Services\OrderStatusService::canTransitionTo($fromStatus, $toStatus)) {
+                $allowed = implode(', ', \App\Services\OrderStatusService::getAllowedStatuses($fromStatus));
+
+                return back()->with('error', __(
+                    'Invalid status transition from :from to :to. Allowed: :allowed (check "Force" to override).',
+                    ['from' => $fromStatus, 'to' => $toStatus, 'allowed' => $allowed ?: 'None']
+                ));
+            }
+
+            \App\Models\OrderStatusHistory::create([
+                'order_id' => $order->id,
+                'from_status' => $fromStatus,
+                'to_status' => $toStatus,
+                'user_id' => auth()->id(),
+                'note' => $request->input('note'),
+                'forced' => $forced,
+            ]);
+
+            app(\App\Services\OrderPaymentService::class)->handleStatusTransition($order, $toStatus);
+
+            if ($order->user) {
+                try {
+                    $order->user->notify(new \App\Notifications\OrderStatusUpdatedNotification($order));
+                } catch (\Throwable $e) {
+                    report($e);
+                }
+            }
+        }
+
+        $order->update([
+            'status' => $toStatus,
+            'address' => $validated['address'] ?? $order->address,
+        ]);
 
         return redirect()
             ->route('dashboard.orders.index')
-            ->with('success', 'Order updated successfully');
+            ->with('success', __('Order updated successfully.'));
     }
 
     public function destroy(Order $order)

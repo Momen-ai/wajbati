@@ -41,7 +41,16 @@ class OrderController extends Controller
             return back()->with('error', $message);
         }
 
+        $fromStatus = $order->status;
         $order->update(['status' => $newStatus]);
+
+        \App\Models\OrderStatusHistory::create([
+            'order_id' => $order->id,
+            'from_status' => $fromStatus,
+            'to_status' => $newStatus,
+            'user_id' => auth()->id(),
+            'forced' => false,
+        ]);
 
         // Update payment status lifecycle (COD paid on delivery, etc.)
         app(\App\Services\OrderPaymentService::class)->handleStatusTransition($order, $newStatus);

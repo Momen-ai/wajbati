@@ -57,9 +57,9 @@
             </table>
         </div>
 
-        {{-- <div class="card-footer">
-            {{ $orders->links() }}
-        </div> --}}
+        <div class="mt-4">
+            {{ $ratings->withQueryString()->links() }}
+        </div>
 
     </div>
 </x-app-layout>

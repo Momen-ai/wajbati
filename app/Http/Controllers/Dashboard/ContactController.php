@@ -65,6 +65,13 @@ class ContactController extends Controller
         return view('admin.contacts.show', compact('contact'));
     }
 
+    public function toggleRead(Contact $contact)
+    {
+        $contact->update(['is_read' => ! $contact->is_read]);
+
+        return back()->with('success', __('Message status updated successfully.'));
+    }
+
     /**
      * Remove the specified resource from storage.
      */

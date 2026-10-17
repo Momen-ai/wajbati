@@ -26,24 +26,10 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(Request $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
-
-        $rules = [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,'.$user->id],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
-        ];
-
-        if ($user->role === 'chef') {
-            $rules['kitchen_name'] = ['nullable', 'string', 'max:255'];
-            $rules['bio'] = ['nullable', 'string', 'max:1000'];
-            $rules['address'] = ['nullable', 'string', 'max:255'];
-        }
-
-        $validated = $request->validate($rules);
+        $validated = $request->validated();
 
         if ($request->hasFile('image')) {
             $folder = $user->role === 'chef' ? 'chefs' : 'users';
@@ -116,15 +102,29 @@ class ProfileController extends Controller
 
     public function addAddress(Request $request): RedirectResponse
     {
-        $request->validate([
+        $user = $request->user();
+
+        if ($user->addresses()->count() >= 10) {
+            return back()->with('error', __('You cannot add more than 10 addresses.'));
+        }
+
+        $validated = $request->validate([
             'address' => 'required|string|max:255',
             'city' => 'nullable|string|max:100',
+            'phone' => 'nullable|string|max:25',
             'type' => 'required|in:home,work,other',
+            'is_default' => 'nullable|boolean',
         ]);
 
-        $request->user()->addresses()->create($request->all());
+        $isDefault = $request->boolean('is_default');
+        if ($isDefault || $user->addresses()->count() === 0) {
+            $user->addresses()->update(['is_default' => false]);
+            $validated['is_default'] = true;
+        }
 
-        return back()->with('success', 'Address added successfully!');
+        $user->addresses()->create($validated);
+
+        return back()->with('success', __('Address added successfully!'));
     }
 
     public function deleteAddress(\App\Models\Address $address): RedirectResponse

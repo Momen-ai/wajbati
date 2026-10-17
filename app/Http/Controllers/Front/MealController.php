@@ -82,20 +82,27 @@ class MealController extends Controller
 
     public function rate(Request $request, $id)
     {
+        $meal = Meal::findOrFail($id);
+
+        \Illuminate\Support\Facades\Gate::authorize('create', [Rating::class, $meal]);
+
         $request->validate([
             'star' => 'required|integer|min:1|max:5',
             'body' => 'nullable|string|max:1000',
         ]);
 
-        $meal = Meal::findOrFail($id);
+        Rating::updateOrCreate(
+            [
+                'user_id' => Auth::id(),
+                'meal_id' => $meal->id,
+            ],
+            [
+                'chef_id' => $meal->chef_id,
+                'star' => $request->star,
+                'body' => $request->body,
+            ]
+        );
 
-        $meal->ratings()->create([
-            'user_id' => Auth::id(),
-            'chef_id' => $meal->chef_id,
-            'star' => $request->star,
-            'body' => $request->body,
-        ]);
-
-        return back()->with('success', 'Thank you for your rating!');
+        return back()->with('success', __('Thank you for your rating!'));
     }
 }

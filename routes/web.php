@@ -22,22 +22,22 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/meals', [MealController::class, 'index'])->name('meals.index');
 Route::get('/meals/{id}', [MealController::class, 'show'])->name('meals.show');
-Route::post('/meals/{id}/rate', [MealController::class, 'rate'])->name('meals.rate')->middleware('auth');
+Route::post('/meals/{id}/rate', [MealController::class, 'rate'])->name('meals.rate')->middleware(['auth', 'throttle:rate']);
 
 Route::get('/chefs', [ChefController::class, 'index'])->name('chefs.index');
 Route::get('/chefs/{id}', [ChefController::class, 'show'])->name('chefs.show');
 
 Route::get('/contact', [ContactController::class, 'contact'])->name('contact');
-Route::post('/contact', [ContactController::class, 'submitContact'])->name('contact.submit');
+Route::post('/contact', [ContactController::class, 'submitContact'])->name('contact.submit')->middleware('throttle:contact');
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-Route::patch('/cart/update', [CartController::class, 'update'])->name('cart.update');
-Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add')->middleware('throttle:cart');
+Route::patch('/cart/update', [CartController::class, 'update'])->name('cart.update')->middleware('throttle:cart');
+Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove')->middleware('throttle:cart');
 
 Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
-    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store')->middleware('throttle:checkout');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
 });
 
@@ -55,7 +55,7 @@ Route::middleware('auth')->group(function () {
 });
 Route::middleware(['auth', 'role:chef'])->prefix('chef')->name('chef.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Chef\DashboardController::class, 'index'])->name('dashboard');
-    Route::resource('meals', App\Http\Controllers\Chef\MealController::class);
+    Route::resource('meals', App\Http\Controllers\Chef\MealController::class)->except(['show']);
     Route::get('/orders', [App\Http\Controllers\Chef\OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [App\Http\Controllers\Chef\OrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/status', [App\Http\Controllers\Chef\OrderController::class, 'updateStatus'])->name('orders.update-status');
