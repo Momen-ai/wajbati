@@ -6,14 +6,12 @@ use App\Models\Meal;
 use App\Models\Order;
 use App\Policies\MealPolicy;
 use App\Policies\OrderPolicy;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\ServiceProvider;
-
-use Illuminate\Pagination\Paginator;
-
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {

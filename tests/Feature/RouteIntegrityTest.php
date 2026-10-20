@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use Illuminate\Support\Facades\Route;
 use ReflectionClass;
-use ReflectionMethod;
 use Tests\TestCase;
 
 class RouteIntegrityTest extends TestCase
@@ -26,12 +25,14 @@ class RouteIntegrityTest extends TestCase
 
             if (! class_exists($controller)) {
                 $missingActions[] = "Missing controller: {$controller} for route [{$route->uri()}]";
+
                 continue;
             }
 
             $reflector = new ReflectionClass($controller);
             if (! $reflector->hasMethod($method)) {
                 $missingActions[] = "Missing method: {$controller}@{$method} for route [{$route->uri()}]";
+
                 continue;
             }
 
@@ -43,7 +44,7 @@ class RouteIntegrityTest extends TestCase
 
         $this->assertEmpty(
             $missingActions,
-            "Found broken route actions pointing to non-existent methods:\n" . implode("\n", $missingActions)
+            "Found broken route actions pointing to non-existent methods:\n".implode("\n", $missingActions)
         );
     }
 }

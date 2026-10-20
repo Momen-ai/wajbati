@@ -102,9 +102,10 @@ class CartService
                 continue;
             }
 
+            $quantity = is_array($qty) ? (int) ($qty['quantity'] ?? 1) : (int) $qty;
             $meal = $meals[$mealId];
             $chefId = $meal->chef_id;
-            $lineTotal = (float) $meal->price * (int) $qty;
+            $lineTotal = (float) $meal->price * $quantity;
             $overallSubtotal += $lineTotal;
 
             if (! isset($byChef[$chefId])) {
@@ -119,7 +120,7 @@ class CartService
 
             $byChef[$chefId]['items'][] = [
                 'meal' => $meal,
-                'quantity' => (int) $qty,
+                'quantity' => $quantity,
                 'price' => (float) $meal->price,
                 'line_total' => $lineTotal,
             ];
@@ -130,13 +131,17 @@ class CartService
 
         $totalDeliveryFee = count($byChef) * $deliveryFeePerChef;
         $grandTotal = $overallSubtotal + $totalDeliveryFee;
+        $totalCount = 0;
+        foreach ($cart as $q) {
+            $totalCount += is_array($q) ? (int) ($q['quantity'] ?? 1) : (int) $q;
+        }
 
         return [
             'by_chef' => collect($byChef),
             'subtotal' => $overallSubtotal,
             'total_delivery_fee' => $totalDeliveryFee,
             'grand_total' => $grandTotal,
-            'count' => array_sum($cart),
+            'count' => $totalCount,
         ];
     }
 }

@@ -73,10 +73,11 @@ class OrderService
                 continue;
             }
 
+            $quantity = is_array($qty) ? (int) ($qty['quantity'] ?? 1) : (int) $qty;
             $meal = $meals[$mealId];
             $chefGroups[$meal->chef_id][] = [
                 'meal' => $meal,
-                'quantity' => (int) $qty,
+                'quantity' => $quantity,
                 'price' => (float) $meal->price,
             ];
         }

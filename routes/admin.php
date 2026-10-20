@@ -1,9 +1,7 @@
 <?php
 
-use App\Http\Controllers\Dashboard\CartController;
 use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\ContactController;
-use App\Http\Controllers\Dashboard\FavouriteController;
 use App\Http\Controllers\Dashboard\MealController;
 use App\Http\Controllers\Dashboard\OrderController;
 use App\Http\Controllers\Dashboard\RatingController;

@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\User;
 use App\Services\OrderStatusService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class OrderStatusTest extends TestCase
@@ -28,8 +29,7 @@ class OrderStatusTest extends TestCase
     }
 
     // ─── Allowed transitions ────────────────────────────────────────────────
-
-    /** @dataProvider allowedTransitionsProvider */
+    #[DataProvider('allowedTransitionsProvider')]
     public function test_allowed_transition_succeeds(string $from, string $to): void
     {
         $order = $this->makeOrder($from);
@@ -59,8 +59,7 @@ class OrderStatusTest extends TestCase
     }
 
     // ─── Forbidden transitions ───────────────────────────────────────────────
-
-    /** @dataProvider forbiddenTransitionsProvider */
+    #[DataProvider('forbiddenTransitionsProvider')]
     public function test_forbidden_transition_returns_error(string $from, string $to): void
     {
         $order = $this->makeOrder($from);

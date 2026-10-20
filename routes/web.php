@@ -61,7 +61,7 @@ Route::middleware(['auth', 'role:chef'])->prefix('chef')->name('chef.')->group(f
     Route::patch('/orders/{order}/status', [App\Http\Controllers\Chef\OrderController::class, 'updateStatus'])->name('orders.update-status');
 });
 
-Route::post('/newsletter', [ContactController::class, 'subscribe'])->name('newsletter.subscribe');
+Route::post('/newsletter', [ContactController::class, 'subscribe'])->name('newsletter.subscribe')->middleware('throttle:newsletter');
 
 Route::middleware('auth')->group(function () {
     Route::post('/notifications/mark-as-read', function () {

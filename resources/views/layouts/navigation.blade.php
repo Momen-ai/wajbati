@@ -37,14 +37,6 @@
                         {{ __('Orders') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('dashboard.cart.index')" :active="request()->routeIs('dashboard.cart.*')">
-                        {{ __('Cart') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('dashboard.favourites.index')" :active="request()->routeIs('dashboard.favourites.*')">
-                        {{ __('Favourites') }}
-                    </x-nav-link>
-
                     <x-nav-link :href="route('dashboard.ratings.index')" :active="request()->routeIs('dashboard.ratings.*')">
                         {{ __('Rating') }}
                     </x-nav-link>
