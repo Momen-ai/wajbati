@@ -19,6 +19,80 @@ class OrderService
     ) {}
 
     /**
+     * Compute a live quote for a cart array [meal_id => quantity].
+     * Single source of truth for both cart display and checkout creation.
+     */
+    public function quote(array $cart): Quote
+    {
+        if (empty($cart)) {
+            return new Quote(collect(), 0.0, 0.0, 0.0, 0);
+        }
+
+        $mealIds = array_keys($cart);
+        $meals = Meal::with(['chef', 'image'])->whereIn('id', $mealIds)->get()->keyBy('id');
+
+        if ($meals->isEmpty()) {
+            return new Quote(collect(), 0.0, 0.0, 0.0, 0);
+        }
+
+        $deliveryFeePerChef = (float) config('shop.delivery_fee', 3.00);
+        $byChef = [];
+        $overallSubtotal = 0.0;
+        $totalItemCount = 0;
+
+        foreach ($cart as $mealId => $qty) {
+            if (! isset($meals[$mealId])) {
+                continue;
+            }
+
+            $quantity = is_array($qty) ? (int) ($qty['quantity'] ?? 1) : (int) $qty;
+            if ($quantity <= 0) {
+                continue;
+            }
+
+            $meal = $meals[$mealId];
+            $chefId = $meal->chef_id;
+            $linePrice = (float) $meal->price;
+            $lineTotal = $linePrice * $quantity;
+
+            $overallSubtotal += $lineTotal;
+            $totalItemCount += $quantity;
+
+            if (! isset($byChef[$chefId])) {
+                $byChef[$chefId] = [
+                    'chef' => $meal->chef,
+                    'chef_id' => $chefId,
+                    'items' => [],
+                    'subtotal' => 0.0,
+                    'delivery_fee' => $deliveryFeePerChef,
+                    'total' => 0.0,
+                ];
+            }
+
+            $byChef[$chefId]['items'][] = [
+                'meal' => $meal,
+                'quantity' => $quantity,
+                'price' => $linePrice,
+                'line_total' => $lineTotal,
+            ];
+
+            $byChef[$chefId]['subtotal'] += $lineTotal;
+            $byChef[$chefId]['total'] = $byChef[$chefId]['subtotal'] + $deliveryFeePerChef;
+        }
+
+        $totalDeliveryFee = count($byChef) * $deliveryFeePerChef;
+        $grandTotal = $overallSubtotal + $totalDeliveryFee;
+
+        return new Quote(
+            byChef: collect($byChef),
+            subtotal: $overallSubtotal,
+            deliveryFee: $totalDeliveryFee,
+            grandTotal: $grandTotal,
+            itemCount: $totalItemCount
+        );
+    }
+
+    /**
      * Create orders from the current shopping cart.
      *
      * @throws ValidationException
@@ -32,10 +106,8 @@ class OrderService
             ]);
         }
 
-        $mealIds = array_keys($cart);
-        $meals = Meal::with('chef')->whereIn('id', $mealIds)->get()->keyBy('id');
-
-        if ($meals->isEmpty()) {
+        $quote = $this->quote($cart);
+        if ($quote->isEmpty()) {
             $this->cartService->clear();
             throw ValidationException::withMessages([
                 'cart' => __('None of the items in your cart are currently available.'),
@@ -64,38 +136,17 @@ class OrderService
             ]);
         }
 
-        $deliveryFeePerChef = (float) config('shop.delivery_fee', 3.00);
-
-        // Group items by chef
-        $chefGroups = [];
-        foreach ($cart as $mealId => $qty) {
-            if (! isset($meals[$mealId])) {
-                continue;
-            }
-
-            $quantity = is_array($qty) ? (int) ($qty['quantity'] ?? 1) : (int) $qty;
-            $meal = $meals[$mealId];
-            $chefGroups[$meal->chef_id][] = [
-                'meal' => $meal,
-                'quantity' => $quantity,
-                'price' => (float) $meal->price,
-            ];
-        }
-
         $createdOrders = collect();
 
         DB::beginTransaction();
         try {
-            foreach ($chefGroups as $chefId => $items) {
-                $subtotal = collect($items)->sum(fn ($i) => $i['price'] * $i['quantity']);
-                $total = $subtotal + $deliveryFeePerChef;
-
+            foreach ($quote->byChef as $chefId => $chefGroup) {
                 $order = Order::create([
                     'user_id' => $customer->id,
                     'chef_id' => $chefId,
-                    'subtotal' => $subtotal,
-                    'delivery_fee' => $deliveryFeePerChef,
-                    'total' => $total,
+                    'subtotal' => $chefGroup['subtotal'],
+                    'delivery_fee' => $chefGroup['delivery_fee'],
+                    'total' => $chefGroup['total'],
                     'address' => $addressText,
                     'phone' => $validated['phone'],
                     'payment_method' => $validated['payment_method'],
@@ -103,7 +154,7 @@ class OrderService
                     'status' => 'pending',
                 ]);
 
-                foreach ($items as $item) {
+                foreach ($chefGroup['items'] as $item) {
                     OrderItem::create([
                         'order_id' => $order->id,
                         'meal_id' => $item['meal']->id,

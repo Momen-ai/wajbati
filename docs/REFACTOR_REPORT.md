@@ -3,8 +3,8 @@
 This report tracks the status, implementation details, test additions, and verification evidence for all findings F-01 through F-28 across all project phases.
 
 **Last Test Suite Run:**
-`Tests:    90 passed (242 assertions)`
-`Duration: 59.35s`
+`Tests:    93 passed (271 assertions)`
+`Duration: 29.71s`
 
 ---
 
@@ -16,7 +16,7 @@ This report tracks the status, implementation details, test additions, and verif
 | **F-02** | Card Payments Disablement | **Fixed** | `app/Services/OrderPaymentService.php`, `config/shop.php`, checkout views | None | `tests/Feature/CommerceTest.php` | `CommerceTest > card payment method is disabled and rejected` |
 | **F-03** | Stale Cart Pricing on Checkout | **Fixed** | `app/Services/OrderService.php`, `app/Services/CartService.php` | None | `tests/Feature/CommerceTest.php` | `CommerceTest > checkout recalculates live db price` |
 | **F-04** | Cart Negative / Invalid Quantities | **Fixed** | `app/Services/CartService.php`, `app/Http/Requests/CartAddRequest.php` | None | `tests/Feature/CommerceTest.php` | `CommerceTest > cart add rejects negative or invalid quantity` |
-| **F-05** | Multi-Chef Delivery Fee Calculation & UI | **Partial** | `app/Services/OrderService.php` (backend done; UI breakdown & quote pending in Step 1) | `2026_10_18_200100_add_commerce_fields_to_orders_and_order_items.php` | `tests/Feature/CommerceTest.php` | `CommerceTest > checkout multi chef charges delivery fee per chef` |
+| **F-05** | Multi-Chef Delivery Fee Calculation & UI | **Fixed** | `app/Services/Quote.php`, `app/Services/OrderService.php`, `app/Services/CartService.php`, `resources/views/front/cart/index.blade.php`, `resources/views/front/orders/show.blade.php` | `2026_10_18_200100_add_commerce_fields_to_orders_and_order_items.php` | `tests/Feature/CommerceQuoteTest.php` | `CommerceQuoteTest` (3 passed: single-chef, 2-chef quote vs HTML vs orders sum, live DB price updates) |
 | **F-06** | Cash On Delivery Payment Lifecycle | **Fixed** | `app/Services/OrderPaymentService.php`, `app/Services/OrderStatusService.php` | None | `tests/Feature/CommerceTest.php` | `CommerceTest > cash order payment status lifecycle` |
 | **F-07** | Soft Deletes, FK Cascade, Last Admin Guard | **Fixed** | `app/Models/User.php`, `app/Models/Meal.php`, `app/Models/Order.php`, `ProfileController.php`, `UsersController.php` | `2026_10_18_300100_add_soft_deletes_and_foreign_keys.php` | `tests/Feature/AccountSecurityTest.php` | `AccountSecurityTest` (4 passed) |
 | **F-08** | Seeder Hardening & Demo Credentials | **Partial** | `database/seeders/DatabaseSeeder.php`, `database/seeders/DemoSeeder.php` | None | None | MealSeeder chef removal pending in Step 2 |
@@ -44,4 +44,4 @@ This report tracks the status, implementation details, test additions, and verif
 ---
 
 ## NEXT
-- **STEP 1 — F-05 (UI still wrong; money-critical)**: Implement `OrderService::quote(array $cart): Quote`, update Cart & Order views, write Pest tests.
+- **STEP 2 — Remaining Phase 0/1 leftovers**: F-08 MealSeeder chef removal, F-11 admin cart/favourites dead CRUD check, F-20 meal availability/prep_time/number_persons form inputs and checkout gate, F-17 verified existing users migration follow-up, Red-team + reviewer audit.

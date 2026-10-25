@@ -76,72 +76,10 @@ class CartService
     /**
      * Get detailed, live database representations of the cart items,
      * grouped by chef with subtotal, per-chef delivery fee, and grand total.
+     * Uses OrderService::quote as the single source of truth.
      */
-    public function detailed(): array
+    public function detailed(): Quote
     {
-        $cart = $this->get();
-        if (empty($cart)) {
-            return [
-                'by_chef' => collect(),
-                'subtotal' => 0.0,
-                'total_delivery_fee' => 0.0,
-                'grand_total' => 0.0,
-                'count' => 0,
-            ];
-        }
-
-        $mealIds = array_keys($cart);
-        $meals = Meal::with(['chef', 'image'])->whereIn('id', $mealIds)->get()->keyBy('id');
-
-        $deliveryFeePerChef = (float) config('shop.delivery_fee', 3.00);
-        $byChef = [];
-        $overallSubtotal = 0.0;
-
-        foreach ($cart as $mealId => $qty) {
-            if (! isset($meals[$mealId])) {
-                continue;
-            }
-
-            $quantity = is_array($qty) ? (int) ($qty['quantity'] ?? 1) : (int) $qty;
-            $meal = $meals[$mealId];
-            $chefId = $meal->chef_id;
-            $lineTotal = (float) $meal->price * $quantity;
-            $overallSubtotal += $lineTotal;
-
-            if (! isset($byChef[$chefId])) {
-                $byChef[$chefId] = [
-                    'chef' => $meal->chef,
-                    'items' => [],
-                    'subtotal' => 0.0,
-                    'delivery_fee' => $deliveryFeePerChef,
-                    'total' => 0.0,
-                ];
-            }
-
-            $byChef[$chefId]['items'][] = [
-                'meal' => $meal,
-                'quantity' => $quantity,
-                'price' => (float) $meal->price,
-                'line_total' => $lineTotal,
-            ];
-
-            $byChef[$chefId]['subtotal'] += $lineTotal;
-            $byChef[$chefId]['total'] = $byChef[$chefId]['subtotal'] + $deliveryFeePerChef;
-        }
-
-        $totalDeliveryFee = count($byChef) * $deliveryFeePerChef;
-        $grandTotal = $overallSubtotal + $totalDeliveryFee;
-        $totalCount = 0;
-        foreach ($cart as $q) {
-            $totalCount += is_array($q) ? (int) ($q['quantity'] ?? 1) : (int) $q;
-        }
-
-        return [
-            'by_chef' => collect($byChef),
-            'subtotal' => $overallSubtotal,
-            'total_delivery_fee' => $totalDeliveryFee,
-            'grand_total' => $grandTotal,
-            'count' => $totalCount,
-        ];
+        return app(OrderService::class)->quote($this->get());
     }
 }

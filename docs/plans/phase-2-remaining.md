@@ -9,19 +9,19 @@
 ### Step 1: F-05 Multi-Chef Cart & Checkout UI (Money-Critical)
 **Owns:** `app/Services/OrderService.php`, `resources/views/front/cart/index.blade.php`, `resources/views/front/orders/show.blade.php`, `resources/views/front/checkout/index.blade.php` (if exists), `tests/Feature/CommerceTest.php`.
 
-- [ ] **Step 1.1: RED - Add test for `OrderService::quote()` and Cart UI multi-chef breakdown**
+- [x] **Step 1.1: RED - Add test for `OrderService::quote()` and Cart UI multi-chef breakdown**
   - Assert quote groups by chef with per-chef subtotal, delivery fee, and per-chef total.
   - Assert grand total matches sum of orders created.
   - Assert Cart view displays per-chef breakdown, fees, and no flat $3.00.
-- [ ] **Step 1.2: Implement `OrderService::quote(array $cart): Quote` (or structured array/DTO)**
+- [x] **Step 1.2: Implement `OrderService::quote(array $cart): Quote` (or structured array/DTO)**
   - Group cart items by chef.
   - Query DB live for current meal data (name, price, image, availability).
   - Calculate per-chef subtotal and delivery fee (`config('shop.delivery_fee')`).
   - Calculate grand total.
-- [ ] **Step 1.3: Update Cart & Order Blade views**
+- [x] **Step 1.3: Update Cart & Order Blade views**
   - `front/cart/index.blade.php`: group items by chef, display per-chef subtotal and delivery fee, display grand total.
   - `front/orders/show.blade.php`: display stored `subtotal`, `delivery_fee`, `total`. Remove `$order->total - 3` and any hardcoded 3 / $3.00.
-- [ ] **Step 1.4: GREEN - Verify tests pass and run Pint**
+- [x] **Step 1.4: GREEN - Verify tests pass and run Pint**
 
 ---
 
