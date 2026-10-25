@@ -35,7 +35,7 @@
                         <div class="position-absolute top-50 start-50 translate-middle bg-primary-custom rounded-circle"
                             style="width:300px;height:300px;opacity:0.1;z-index:0;filter:blur(40px)"></div>
                         <img src="{{ asset('assets/images/hero-plate.png') }}"
-                            onerror="this.src='https://placehold.co/500x400/png?text=Delicious+Food'" alt="Delicious Food"
+                            onerror="this.src='{{ asset('assets/images/placeholder.svg') }}'" alt="Delicious Food"
                             class="position-relative"
                             style="z-index:1;max-width:100%;height:auto;filter:drop-shadow(0 20px 30px rgba(0,0,0,0.15))">
 
@@ -97,7 +97,7 @@
                             @if ($meal->image)
                                 <img src="{{ asset('storage/' . $meal->image->image_path) }}" alt="{{ $meal->name }}">
                             @else
-                                <img src="https://placehold.co/600x400?text=No+Image" alt="{{ $meal->name }}">
+                                <img src="{{ asset('assets/images/placeholder.svg') }}" alt="{{ $meal->name }}">
                             @endif
                             <span class="card-badge text-primary-custom">{{ $meal->category->name ?? 'General' }}</span>
                         </div>
@@ -108,11 +108,11 @@
                             </div>
                             <p class="text-light small mb-1 text-truncate">{{ Str::limit($meal->description, 60) }}</p>
                             <div class="mb-3 text-warning small">
-                                @php $avg = $meal->averageRating(); @endphp
+                                @php $avg = round($meal->ratings_avg_star ?? 0); @endphp
                                 @for ($i = 1; $i <= 5; $i++)
                                     <i class="{{ $i <= $avg ? 'fas' : 'far' }} fa-star"></i>
                                 @endfor
-                                <span class="text-light ms-1" style="font-size: 0.7rem;">({{ $meal->ratings_count ?? $meal->ratings->count() }})</span>
+                                <span class="text-light ms-1" style="font-size: 0.7rem;">({{ $meal->ratings_count ?? 0 }})</span>
                             </div>
 
                             <div class="d-flex align-items-center justify-content-between border-top border-secondary border-secondary pt-3 mt-auto">

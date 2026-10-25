@@ -29,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrapFive();
+        \Illuminate\Database\Eloquent\Model::preventLazyLoading(! app()->isProduction());
 
         Gate::policy(Meal::class, MealPolicy::class);
         Gate::policy(Order::class, OrderPolicy::class);

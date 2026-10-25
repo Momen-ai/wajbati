@@ -151,8 +151,8 @@
                         </div>
                         <span class="growth-tag growth-up">{{ $growth['revenue'] }}</span>
                     </div>
-                    <div class="stat-label">Total Revenue</div>
-                    <div class="stat-value">${{ number_format($totalRevenue, 2) }}</div>
+                    <div class="stat-label">{{ __('Total Revenue') }}</div>
+                    <div class="stat-value">{{ money($totalRevenue) }}</div>
                 </div>
             </div>
 
@@ -246,7 +246,7 @@
                                         </div>
                                     </td>
                                     <td class="text-secondary">{{ $order->chef->kitchen_name ?? 'N/A' }}</td>
-                                    <td class="fw-700">${{ number_format($order->total, 2) }}</td>
+                                    <td class="fw-700">{{ money($order->total) }}</td>
                                     <td>
                                         <span class="badge-premium {{ $order->status == 'completed' ? 'bg-success-soft text-success' : 'bg-warning-soft text-warning' }}">
                                             {{ ucfirst($order->status) }}

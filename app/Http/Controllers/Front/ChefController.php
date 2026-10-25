@@ -10,7 +10,8 @@ class ChefController extends Controller
     public function index()
     {
         $chefs = User::where('role', 'chef')
-            ->with(['image', 'meals'])
+            ->with('image')
+            ->withCount('meals')
             ->latest()
             ->paginate(12);
 

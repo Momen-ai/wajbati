@@ -33,11 +33,11 @@ class UsersController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
-            'phone' => 'required|string|unique:users,phone',
+            'email' => 'required|email|max:255|unique:users',
+            'password' => ['required', \Illuminate\Validation\Rules\Password::defaults()],
+            'phone' => 'required|string|max:25|unique:users,phone',
             'role' => 'required|in:admin,chef,user',
-            'image' => 'required|image|mimes:jpg,jpeg,png,webp',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
@@ -70,9 +70,10 @@ class UsersController extends Controller
     public function update(Request $request, User $user)
     {
         $validated = $request->validate([
-            'name' => 'sometimes',
-            'email' => 'sometimes|email|unique:users,email,'.$user->id,
-            'phone' => 'sometimes|string|unique:users,phone,'.$user->id,
+            'name' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|email|max:255|unique:users,email,'.$user->id,
+            'phone' => 'sometimes|required|string|max:25|unique:users,phone,'.$user->id,
+            'password' => ['nullable', \Illuminate\Validation\Rules\Password::defaults()],
             'role' => 'sometimes|in:admin,chef,user',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
