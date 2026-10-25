@@ -7,6 +7,7 @@ use App\Models\Meal;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use RuntimeException;
 
 class DemoSeeder extends Seeder
@@ -20,13 +21,20 @@ class DemoSeeder extends Seeder
         $chef = User::where('role', 'chef')->first();
 
         if (! $chef) {
+            $demoPassword = env('DEMO_PASSWORD');
+            if (empty($demoPassword)) {
+                $demoPassword = Str::random(16);
+                $this->command?->warn("Generated random demo chef password: {$demoPassword}");
+            }
+
             $chef = new User([
                 'name' => 'Chef Ali',
                 'email' => 'chef@example.com',
-                'password' => Hash::make('secret123456'),
+                'password' => Hash::make($demoPassword),
                 'phone' => '0599123456',
                 'kitchen_name' => 'Ali Kitchen',
                 'address' => 'Gaza, Palestine',
+                'email_verified_at' => now(),
             ]);
             $chef->role = 'chef';
             $chef->save();
@@ -41,6 +49,8 @@ class DemoSeeder extends Seeder
                 'description' => 'A famous Palestinian dish with rice, chicken, and vegetables.',
                 'price' => 15.50,
                 'number_persons' => 4,
+                'is_available' => true,
+                'prep_time_minutes' => 45,
             ]
         );
 
@@ -51,6 +61,8 @@ class DemoSeeder extends Seeder
                 'description' => 'Creamy hummus topped with roasted spiced meat.',
                 'price' => 8.00,
                 'number_persons' => 2,
+                'is_available' => true,
+                'prep_time_minutes' => 20,
             ]
         );
     }

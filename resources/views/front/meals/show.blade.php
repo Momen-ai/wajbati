@@ -20,7 +20,7 @@
                         <img src="{{ asset('storage/' . $meal->image->image_path) }}" class="w-100 h-100 object-fit-cover"
                             alt="{{ $meal->name }}">
                     @else
-                        <img src="https://placehold.co/800x600?text=No+Image" class="w-100 h-100 object-fit-cover"
+                        <img src="{{ asset('assets/images/placeholder.svg') }}" class="w-100 h-100 object-fit-cover"
                             alt="{{ $meal->name }}">
                     @endif
                 </div>
@@ -30,15 +30,24 @@
             <div class="col-lg-6">
                 <div class="ps-lg-3">
                     <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h1 class="display-6 fw-bold mb-0">{{ $meal->name }}</h1>
+                        <h1 class="display-6 fw-bold mb-0 text-light">{{ $meal->name }}</h1>
                         <div class="text-end">
-                            <h3 class="text-primary fw-bold mb-0">${{ $meal->price }}</h3>
-                            <small class="text-light">per order</small>
+                            <h3 class="text-primary fw-bold mb-0">{{ money($meal->price) }}</h3>
+                            <small class="text-light opacity-75">{{ __('per order') }}</small>
                         </div>
                     </div>
 
-                    <div class="d-flex align-items-center mb-4">
-                        <span class="badge bg-secondary text-light border ms-0">{{ $meal->category->name ?? 'General' }}</span>
+                    <div class="d-flex align-items-center gap-2 mb-4">
+                        <span class="badge bg-secondary text-light border ms-0">{{ $meal->category->name ?? __('General') }}</span>
+                        @if($meal->number_persons)
+                            <span class="badge bg-secondary text-light border"><i class="fas fa-users me-1 text-primary"></i>{{ $meal->number_persons }} {{ __('persons') }}</span>
+                        @endif
+                        @if($meal->prep_time_minutes)
+                            <span class="badge bg-secondary text-light border"><i class="fas fa-clock me-1 text-primary"></i>{{ $meal->prep_time_minutes }} {{ __('min') }}</span>
+                        @endif
+                        @if(! $meal->is_available)
+                            <span class="badge bg-danger text-light">{{ __('Currently Unavailable') }}</span>
+                        @endif
                     </div>
 
                     <!-- Chef Info -->
@@ -83,9 +92,15 @@
                             </div>
 
                             <div class="d-grid">
-                                <button class="btn btn-primary btn-lg shadow-sm">
-                                    <i class="fas fa-cart-plus me-2"></i> Add to Cart
+                                @if($meal->is_available)
+                                <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                                    <i class="fas fa-cart-plus me-2"></i> {{ __('Add to Cart') }}
                                 </button>
+                                @else
+                                <button type="button" class="btn btn-secondary btn-lg shadow-sm" disabled>
+                                    <i class="fas fa-ban me-2"></i> {{ __('Currently Unavailable') }}
+                                </button>
+                                @endif
                             </div>
                         </form>
                     </div>

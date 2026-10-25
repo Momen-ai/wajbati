@@ -106,3 +106,26 @@ test('price changed after add-to-cart is reflected in quote and cart html', func
     $content = $response->getContent();
     expect($content)->toContain(money(48.00));
 });
+
+test('checkout double submit is blocked by atomic user lock', function () {
+    $chef = User::factory()->create(['role' => 'chef']);
+    $customer = User::factory()->create(['role' => 'user']);
+    $meal = Meal::factory()->create(['chef_id' => $chef->id, 'price' => 20]);
+
+    $this->actingAs($customer);
+    session(['cart' => [$meal->id => 1]]);
+
+    // Simulate concurrent lock held by another in-flight checkout request
+    $lock = \Illuminate\Support\Facades\Cache::lock('checkout_user_'.$customer->id, 10);
+    $lock->get();
+
+    $response = $this->post(route('orders.store'), [
+        'address' => 'Main St',
+        'phone' => '0599111222',
+        'payment_method' => 'cash',
+    ]);
+
+    $response->assertSessionHasErrors('cart');
+
+    $lock->release();
+});

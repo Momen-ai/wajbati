@@ -9,6 +9,7 @@ use App\Models\OrderItem;
 use App\Models\User;
 use App\Notifications\NewOrderNotification;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -99,92 +100,114 @@ class OrderService
      */
     public function createOrdersFromCart(User $customer, array $validated): Collection
     {
-        $cart = $this->cartService->get();
-        if (empty($cart)) {
+        $lock = Cache::lock('checkout_user_'.$customer->id, 10);
+        if (! $lock->get()) {
             throw ValidationException::withMessages([
-                'cart' => __('Your cart is empty.'),
+                'cart' => __('An order is already being processed. Please wait.'),
             ]);
         }
 
-        $quote = $this->quote($cart);
-        if ($quote->isEmpty()) {
-            $this->cartService->clear();
-            throw ValidationException::withMessages([
-                'cart' => __('None of the items in your cart are currently available.'),
-            ]);
-        }
-
-        // Resolve delivery address
-        $addressText = $validated['address'] ?? null;
-        if (! empty($validated['address_id'])) {
-            $savedAddress = Address::where('id', $validated['address_id'])
-                ->where('user_id', $customer->id)
-                ->first();
-
-            if (! $savedAddress) {
+        try {
+            $cart = $this->cartService->get();
+            if (empty($cart)) {
                 throw ValidationException::withMessages([
-                    'address_id' => __('The selected delivery address does not belong to your account.'),
+                    'cart' => __('Your cart is empty.'),
                 ]);
             }
 
-            $addressText = $savedAddress->address.($savedAddress->city ? ', '.$savedAddress->city : '');
-        }
-
-        if (empty($addressText)) {
-            throw ValidationException::withMessages([
-                'address' => __('Delivery address is required.'),
-            ]);
-        }
-
-        $createdOrders = collect();
-
-        DB::beginTransaction();
-        try {
-            foreach ($quote->byChef as $chefId => $chefGroup) {
-                $order = Order::create([
-                    'user_id' => $customer->id,
-                    'chef_id' => $chefId,
-                    'subtotal' => $chefGroup['subtotal'],
-                    'delivery_fee' => $chefGroup['delivery_fee'],
-                    'total' => $chefGroup['total'],
-                    'address' => $addressText,
-                    'phone' => $validated['phone'],
-                    'payment_method' => $validated['payment_method'],
-                    'payment_status' => 'pending',
-                    'status' => 'pending',
+            $quote = $this->quote($cart);
+            if ($quote->isEmpty()) {
+                $this->cartService->clear();
+                throw ValidationException::withMessages([
+                    'cart' => __('None of the items in your cart are currently available.'),
                 ]);
+            }
 
+            // Reject checkout if any meal in cart is unavailable
+            foreach ($quote->byChef as $chefGroup) {
                 foreach ($chefGroup['items'] as $item) {
-                    OrderItem::create([
-                        'order_id' => $order->id,
-                        'meal_id' => $item['meal']->id,
-                        'meal_name' => $item['meal']->name,
-                        'quantity' => $item['quantity'],
-                        'price' => $item['price'],
+                    if (! $item['meal']->is_available) {
+                        throw ValidationException::withMessages([
+                            'cart' => __('The meal ":name" is currently unavailable.', ['name' => $item['meal']->name]),
+                        ]);
+                    }
+                }
+            }
+
+            // Resolve delivery address
+            $addressText = $validated['address'] ?? null;
+            if (! empty($validated['address_id'])) {
+                $savedAddress = Address::where('id', $validated['address_id'])
+                    ->where('user_id', $customer->id)
+                    ->first();
+
+                if (! $savedAddress) {
+                    throw ValidationException::withMessages([
+                        'address_id' => __('The selected delivery address does not belong to your account.'),
                     ]);
                 }
 
-                // Send queued notification to chef
-                $chef = User::find($chefId);
-                if ($chef) {
-                    try {
-                        $chef->notify(new NewOrderNotification($order));
-                    } catch (\Throwable $e) {
-                        report($e);
-                    }
-                }
-
-                $createdOrders->push($order);
+                $addressText = $savedAddress->address.($savedAddress->city ? ', '.$savedAddress->city : '');
             }
 
-            DB::commit();
-            $this->cartService->clear();
+            if (empty($addressText)) {
+                throw ValidationException::withMessages([
+                    'address' => __('Delivery address is required.'),
+                ]);
+            }
 
-            return $createdOrders;
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            report($e);
-            throw $e;
+            $createdOrders = collect();
+
+            DB::beginTransaction();
+            try {
+                foreach ($quote->byChef as $chefId => $chefGroup) {
+                    $order = Order::create([
+                        'user_id' => $customer->id,
+                        'chef_id' => $chefId,
+                        'subtotal' => $chefGroup['subtotal'],
+                        'delivery_fee' => $chefGroup['delivery_fee'],
+                        'total' => $chefGroup['total'],
+                        'address' => $addressText,
+                        'phone' => $validated['phone'],
+                        'payment_method' => $validated['payment_method'],
+                        'payment_status' => 'pending',
+                        'status' => 'pending',
+                    ]);
+
+                    foreach ($chefGroup['items'] as $item) {
+                        OrderItem::create([
+                            'order_id' => $order->id,
+                            'meal_id' => $item['meal']->id,
+                            'meal_name' => $item['meal']->name,
+                            'quantity' => $item['quantity'],
+                            'price' => $item['price'],
+                        ]);
+                    }
+
+                    // Send queued notification to chef
+                    $chef = User::find($chefId);
+                    if ($chef) {
+                        try {
+                            $chef->notify(new NewOrderNotification($order));
+                        } catch (\Throwable $e) {
+                            report($e);
+                        }
+                    }
+
+                    $createdOrders->push($order);
+                }
+
+                DB::commit();
+                $this->cartService->clear();
+
+                return $createdOrders;
+            } catch (\Throwable $e) {
+                DB::rollBack();
+                report($e);
+                throw $e;
+            }
+        } finally {
+            optional($lock)->release();
         }
     }
 }

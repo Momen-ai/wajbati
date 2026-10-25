@@ -26,22 +26,22 @@
 ---
 
 ### Step 2: Remaining Phase 0/1 Leftovers
-- [ ] **Step 2.1: F-08 Seeder Hardening**
+- [x] **Step 2.1: F-08 Seeder Hardening**
   - Remove chef creation (`chef@gmail.com / 123456789`) from `database/seeders/MealSeeder.php`.
   - Move demo chef creation to `DemoSeeder.php` only, using `DEMO_PASSWORD` or secure random.
   - Add test: `DatabaseSeeder` does not create demo users in production.
-- [ ] **Step 2.2: F-11 Remove Dead Admin Cart & Favourites Resources**
+- [x] **Step 2.2: F-11 Remove Dead Admin Cart & Favourites Resources**
   - Verify routes in `routes/admin.php` for `cart` and `favourites` are fully removed.
   - Remove dead controllers/views if lingering.
-- [ ] **Step 2.3: F-20 Missing Meal Fields UI & Checkout Validation**
+- [x] **Step 2.3: F-20 Missing Meal Fields UI & Checkout Validation**
   - Add `number_persons`, `is_available`, `prep_time_minutes` inputs to Chef meal create/edit forms (`front/chef/meals/*.blade.php`) and Admin meal forms (`admin/meals/*.blade.php`).
   - Update storefront to hide unavailable meals from index.
   - Reject checkout if any item in cart is `is_available = false`.
   - Add tests in `tests/Feature/CommerceTest.php` and `tests/Feature/MealAvailabilityTest.php`.
-- [ ] **Step 2.4: F-17 Follow-Up Migration Verification**
+- [x] **Step 2.4: F-17 Follow-Up Migration Verification**
   - Verify existing users are marked as verified so nobody is locked out.
   - Add test ensuring existing users have `email_verified_at` set.
-- [ ] **Step 2.5: Red-team & Reviewer Audit**
+- [x] **Step 2.5: Red-team & Reviewer Audit**
   - Document Phase 0/1 red-team audit findings in `docs/redteam-phase01.md`.
 
 ---

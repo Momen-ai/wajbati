@@ -104,9 +104,17 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <h5 class="fw-bold mb-0 text-truncate">{{ $meal->name }}</h5>
-                                <span class="fw-bold text-primary">${{ $meal->price }}</span>
+                                <span class="fw-bold text-primary">{{ money($meal->price) }}</span>
                             </div>
                             <p class="text-light small mb-1 text-truncate">{{ Str::limit($meal->description, 60) }}</p>
+                            <div class="d-flex align-items-center gap-3 text-light small mb-2 opacity-75">
+                                @if($meal->number_persons)
+                                    <span><i class="fas fa-users me-1 text-primary"></i>{{ $meal->number_persons }} {{ __('persons') }}</span>
+                                @endif
+                                @if($meal->prep_time_minutes)
+                                    <span><i class="fas fa-clock me-1 text-primary"></i>{{ $meal->prep_time_minutes }} {{ __('min') }}</span>
+                                @endif
+                            </div>
                             <div class="mb-3 text-warning small">
                                 @php $avg = round($meal->ratings_avg_star ?? 0); @endphp
                                 @for ($i = 1; $i <= 5; $i++)

@@ -94,15 +94,24 @@
                                 @if ($meal->image)
                                     <img src="{{ asset('storage/' . $meal->image->image_path) }}" class="card-img-top">
                                 @else
-                                    <img src="https://placehold.co/600x400?text=No+Image" alt="{{ $meal->name }}">
+                                    <img src="{{ asset('assets/images/placeholder.svg') }}" alt="{{ $meal->name }}">
                                 @endif
-                                <span class="card-badge">{{ $meal->category->name ?? 'Meal' }}</span>
+                                <span class="card-badge">{{ $meal->category->name ?? __('Meal') }}</span>
                             </div>
 
                             <div class="card-body d-flex flex-column p-4">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <h5 class="fw-bold text-light m-0">{{ $meal->name }}</h5>
-                                    <span class="text-primary-custom fw-800">${{ $meal->price }}</span>
+                                    <span class="text-primary-custom fw-800">{{ money($meal->price) }}</span>
+                                </div>
+
+                                <div class="d-flex align-items-center gap-3 text-light small mb-2 opacity-75">
+                                    @if($meal->number_persons)
+                                        <span><i class="fas fa-users me-1 text-primary"></i>{{ $meal->number_persons }} {{ __('persons') }}</span>
+                                    @endif
+                                    @if($meal->prep_time_minutes)
+                                        <span><i class="fas fa-clock me-1 text-primary"></i>{{ $meal->prep_time_minutes }} {{ __('min') }}</span>
+                                    @endif
                                 </div>
 
                                 <div class="d-flex align-items-center mb-3">

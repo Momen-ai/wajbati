@@ -42,7 +42,7 @@ class MealController extends Controller
         ]);
 
         $validated['chef_id'] = Auth::id();
-        $validated['is_available'] = $request->boolean('is_available', true);
+        $validated['is_available'] = $request->has('is_available') ? $request->boolean('is_available') : true;
 
         $meal = Meal::create($validated);
 
@@ -78,7 +78,7 @@ class MealController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        $validated['is_available'] = $request->boolean('is_available', true);
+        $validated['is_available'] = $request->boolean('is_available');
 
         if ($request->hasFile('image')) {
             $this->replaceImage($meal, $request->file('image'), 'meals');

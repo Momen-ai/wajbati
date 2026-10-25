@@ -45,9 +45,14 @@ class MealController extends Controller
             'category_id' => 'nullable|exists:categories,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'required|numeric',
+            'price' => 'required|numeric|min:0',
+            'number_persons' => 'nullable|integer|min:1|max:50',
+            'is_available' => 'nullable|boolean',
+            'prep_time_minutes' => 'nullable|integer|min:1|max:1440',
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
+
+        $validated['is_available'] = $request->boolean('is_available', true);
 
         $meal = Meal::create(Arr::except($validated, ['image']));
 
@@ -92,9 +97,14 @@ class MealController extends Controller
             'category_id' => 'nullable|exists:categories,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'required|numeric',
+            'price' => 'required|numeric|min:0',
+            'number_persons' => 'nullable|integer|min:1|max:50',
+            'is_available' => 'nullable|boolean',
+            'prep_time_minutes' => 'nullable|integer|min:1|max:1440',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
+
+        $validated['is_available'] = $request->boolean('is_available', true);
 
         // Bug Fix: previously used public_path('image/...') which resolves to the wrong path.
         // Now uses Storage::disk('public') via HandlesImageUploads::replaceImage() consistently.

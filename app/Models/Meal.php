@@ -21,6 +21,15 @@ class Meal extends Model
         'prep_time_minutes',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'is_available' => 'boolean',
+            'number_persons' => 'integer',
+            'prep_time_minutes' => 'integer',
+        ];
+    }
+
     public function chef()
     {
         return $this->belongsTo(User::class, 'chef_id');
