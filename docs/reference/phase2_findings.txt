@@ -1,0 +1,48 @@
+F-21. Add a customer "order received" notification. Document `php artisan queue:work` in README.
+
+**F-19 — Chef order UI vs state machine; admin bypass** [CODE]
+- `front/chef/orders/show.blade.php` lists all 8 statuses in the dropdown even though the server rejects invalid transitions → bad UX. `Dashboard\OrderController::update` bypasses the state machine silently and does not notify the customer; `store` has `status` validated only as `required`, doesn't check that items belong to `chef_id`, and creates orders without payment fields.
+- Fix: dropdown shows only `OrderStatusService::getAllowedStatuses($order->status)` (hide the form for terminal states). Admin update enforces the state machine unless an explicit `force` checkbox is ticked — forced changes are written to `order_status_histories` (new table: order_id, from, to, user_id, note, forced, created_at) and still notify the customer. Record history for every transition. Admin order create validates `status in (...)`, items belong to the chosen chef, and sets all payment/fee fields through the same `OrderService`. Move all order creation logic into `App\Services\OrderService` used by both storefront and admin.
+
+**F-20 — Chef cannot set number of persons; missing meal fields** [CODE]
+- `meals.number_persons` exists and is shown nowhere editable: chef create/edit forms and validation omit it (always 1).
+- Fix: add `number_persons` (integer 1..50) to chef + admin meal forms/validation; add `is_available` (boolean, default true) and `prep_time_minutes` (nullable) to meals via migration; storefront hides unavailable meals and checkout rejects them.
+
+### PHASE 2 — Platform quality: i18n, UI, assets, performance
+
+**F-21 — Currency / locale / timezone** [CODE]
+- `$` is hardcoded in 20+ places across ~13 views; `config/app.php` timezone is `UTC`; default locale `en` for an Arabic-first product.
+- Fix: global helper `money($amount)` (uses `config('shop.currency')`, Arabic-Indic digits optional via config) and use it in ALL views + notifications; `APP_TIMEZONE=Asia/Gaza` (read from env in `config/app.php`), `APP_LOCALE=ar`, `APP_FALLBACK_LOCALE=en`; `Carbon::setLocale` follows the session locale.
+
+**F-22 — i18n coverage is largely missing** [VERIFIED]
+- `__()` count: admin views 0 of 28 files; key storefront views (`cart`, `orders/index|show`, `meals/show`, `chef/dashboard`) 0; **81 of the 106 keys used in views are missing from `lang/ar.json`**; 36 hardcoded English flash messages in controllers. README claims "full Arabic/English support".
+- Fix: wrap every string in `__()` (views, controllers, notifications, validation attribute names); fill `lang/ar.json` and `lang/en.json` completely; add `lang/ar/validation.php` (publish Laravel validation lang and translate; or install `laravel-lang/lang`). Add a test that scans `resources/views` + `app` for `__('...')` keys and fails if any key is missing from `ar.json` or `en.json`. Fix RTL: use `bootstrap.rtl.min.css` consistently (frontend layout already switches; verify `layouts/app` and auth pages), logical properties (`ms-*`/`me-*` instead of `ml-*`/`mr-*`), admin dashboard RTL.
+
+**F-23 — Frontend assets: CDN sprawl, dead demo code, external placeholders** [CODE]
+- Bootstrap 5.3.0 (frontend) and 5.3.8 (app layout) from CDN, jQuery 3.6.0 from CDN (no SRI), Font Awesome via cdnjs (no SRI), Chart.js loaded unpinned (`cdn.jsdelivr.net/npm/chart.js` = floating latest), Google Fonts + bunny.net fonts, `placehold.co` used as the fallback image in 5 views (privacy leak + breaks offline/blocked networks).
+- Dead legacy static-prototype files: `public/assets/js/app.js` (a localStorage demo cart!), `public/assets/js/lang.js`, `public/assets/js/image-check.js` — not included by layouts (only `assets/css/style.css` is). Also tracked junk: `routes.txt`.
+- `layouts/app.blade.php` uses `@vite`, but `public/build` is gitignored and the README never says `npm run build` → fresh checkout gives "Vite manifest not found" (this makes `ProfileTest › profile page is displayed` fail) [VERIFIED].
+- Fix: bundle Bootstrap 5 (+RTL build), jQuery (or drop it and use fetch), Font Awesome (or inline SVG), Chart.js (pinned) via npm + Vite so the storefront and admin run with ZERO third-party CDNs; self-host the Cairo font. Replace `placehold.co` with a local `public/assets/images/placeholder.svg`. Delete the 3 dead JS files and `routes.txt`. Decide ONE CSS system: audit whether Tailwind is still needed (Breeze auth/profile views); if auth/profile can use Bootstrap, migrate them and remove Tailwind; otherwise keep Tailwind strictly scoped to those layouts and document it. Ensure `npm run build` is part of setup + CI.
+
+**F-24 — Performance / N+1 / indexes** [CODE]
+- `Front\HomeController` eager-loads ALL ratings of 6 meals then calls `Meal::averageRating()` (one extra query per meal, `front/home.blade.php:111`); "popularMeals" is just `latest()`. `ChefController@index` eager-loads every meal of every chef. Dashboards run a query per month in a loop (6+ queries each) plus many separate counts. No indexes on `orders(status)`, `orders(chef_id, status)`, `orders(payment_status, created_at)`, `ratings(meal_id)`. `Cart`-add does `$meal->chef->name` lazily.
+- Fix: use `withAvg('ratings','star')`/`withCount` everywhere; define "popular" = most completed orders last 30 days (fallback to rating); `->withCount('meals')` for chef lists; compute monthly series with ONE grouped query (`DB::raw` year/month, portable for sqlite+MySQL via `strftime`/`DATE_FORMAT` abstraction in a helper) and cache dashboard aggregates for 5 minutes (`Cache::remember`, invalidated on order status change); add the indexes via migration; enable `Model::preventLazyLoading(! app()->isProduction())` and fix every violation the test suite reveals.
+
+**F-25 — Smaller code-quality items** [CODE]
+- `Front\MealController::home()` is dead code → remove. Escape LIKE wildcards in the meal search; validate `min_price`/`max_price` as numeric and `sort` as an enum (`in:`) via a `MealIndexRequest`.
+- `Dashboard\UsersController::update`: `name` rule is just `sometimes` (add `required|string|max:255`), password min 6 → use `Rules\Password::defaults()`; admin can demote themselves (see F-07).
+- Remove the `//` stray comments, unused imports (`ShouldQueue`, `Request`, etc.) and trailing blank blocks; run Pint with a committed `pint.json` (PSR-12 + Laravel preset).
+- Admin CRUD for `cart`, `favourites` is meaningless for a session cart and creates inconsistent data → remove those two admin resources + views + routes + sidebar links (keep the tables/models only if F-30 favourites need them). Keep `ratings` as moderation (list/delete only).
+- `AppServiceProvider`: policies are auto-discovered — remove manual `Gate::policy` calls only if discovery works in tests; keep otherwise.
+
+### PHASE 3 — Tests & CI
+
+**F-26 — Broken / thin test suite** [VERIFIED]
+- Current: 44 tests, 41 pass, **3 fail**: (a) `OrderStatusTest` uses the `@dataProvider` docblock annotation, unsupported on PHPUnit 12 → 21 data-set cases never run (ArgumentCountError); (b) `ProfileTest › profile page is displayed` needs the Vite manifest.
+- Fix: convert to `#[\PHPUnit\Framework\Attributes\DataProvider('...')]` (providers must be `public static`); in `tests/TestCase.php::setUp()` call `$this->withoutVite()`; unify on Pest (convert PHPUnit-style classes) or keep both consistently — pick Pest and migrate.
+- Required new tests (Pest, `RefreshDatabase`): every scenario in Section 4; an authorization matrix test (guest/user/chef/admin × every protected route → expected 302/403/200); route-integrity test (F-10); i18n key test (F-22); checkout totals for single/multi-chef incl. fee; stale price; address ownership; payment status lifecycle (cash paid on delivery, rejected → failed, card disabled); upload rejection for php/svg/html on every upload endpoint; ratings rules; contact persistence; newsletter double opt-in; soft-delete/anonymization rules and last-admin guard; throttling (429); notifications queued + localized (`Notification::fake()` / `Queue::fake()`); `OrderStatusService` full transition matrix; seeders refuse to run in production. Target **≥ 80 % line coverage on `app/`** (`php artisan test --coverage --min=80` where pcov/xdebug available).
+- CI: `.github/workflows/ci.yml` — PHP 8.3 (+ matrix 8.2), MySQL 8 service AND sqlite job, `composer install`, `npm ci && npm run build`, `vendor/bin/pint --test`, `php artisan test --parallel`, `composer audit`, `npm audit --audit-level=high`. Add `larastan/larastan` at level 6 and fix reported errors (baseline allowed only for pre-existing vendor-style issues; document it).
+
+### PHASE 4 — Operations, security hardening, docs
+
+**
