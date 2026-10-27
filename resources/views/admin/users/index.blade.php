@@ -3,29 +3,29 @@
 
         {{-- Header --}}
         <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
-            <h4 class="mb-0 fw-bold">Users Management</h4>
+            <h4 class="mb-0 fw-bold">{{ __('Users Management') }}</h4>
 
             <div class="btn-group">
                 <a href="{{ route('dashboard.users.index') }}"
                     class="btn btn-outline-secondary {{ request('role') == null ? 'active' : '' }}">
-                    All
+                    {{ __('All') }}
                 </a>
                 <a href="{{ route('dashboard.users.index', ['role' => 'admin']) }}"
                     class="btn btn-outline-secondary {{ request('role') == 'admin' ? 'active' : '' }}">
-                    Admins
+                    {{ __('Admins') }}
                 </a>
                 <a href="{{ route('dashboard.users.index', ['role' => 'chef']) }}"
                     class="btn btn-outline-secondary {{ request('role') == 'chef' ? 'active' : '' }}">
-                    Chefs
+                    {{ __('Chefs') }}
                 </a>
                 <a href="{{ route('dashboard.users.index', ['role' => 'user']) }}"
                     class="btn btn-outline-secondary {{ request('role') == 'user' ? 'active' : '' }}">
-                    Users
+                    {{ __('Users') }}
                 </a>
             </div>
 
             <a href="{{ route('dashboard.users.create') }}" class="btn btn-success">
-                Add User
+                {{ __('Add User') }}
             </a>
         </div>
 
@@ -35,12 +35,12 @@
 
                 <thead class="table-dark">
                     <tr>
-                        <th style="width: 60px">ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th style="width: 120px">Role</th>
-                        <th style="width: 220px">Actions</th>
+                        <th style="width: 60px">{{ __('ID') }}</th>
+                        <th>{{ __('Name') }}</th>
+                        <th>{{ __('Email') }}</th>
+                        <th>{{ __('Phone') }}</th>
+                        <th style="width: 120px">{{ __('Role') }}</th>
+                        <th style="width: 220px">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
 
@@ -55,7 +55,7 @@
                                 <span
                                     class="badge
                             {{ $user->role === 'admin' ? 'bg-danger' : ($user->role === 'chef' ? 'bg-warning text-dark' : 'bg-secondary') }}">
-                                    {{ ucfirst($user->role) }}
+                                    {{ __($user->role) }}
                                 </span>
                             </td>
                             <td>
@@ -63,12 +63,12 @@
 
                                     <a class="btn btn-sm btn-primary"
                                         href="{{ route('dashboard.users.edit', $user->id) }}">
-                                        Edit
+                                        {{ __('Edit') }}
                                     </a>
 
-                                    <a class="btn btn-sm btn-outline-light"
+                                    <a class="btn btn-sm btn-outline-secondary"
                                         href="{{ route('dashboard.users.show', $user->id) }}">
-                                        Show
+                                        {{ __('Show') }}
                                     </a>
 
                                     @if ($user->role !== 'admin')
@@ -76,8 +76,8 @@
                                             action="{{ route('dashboard.users.destroy', $user->id) }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button class="btn btn-sm btn-danger">
-                                                Delete
+                                            <button class="btn btn-sm btn-danger" onclick="return confirm('{{ __('Are you sure you want to delete this user?') }}')">
+                                                {{ __('Delete') }}
                                             </button>
                                         </form>
                                     @endif
@@ -89,6 +89,10 @@
                 </tbody>
 
             </table>
+        </div>
+
+        <div class="mt-4">
+            {{ $users->withQueryString()->links() }}
         </div>
 
     </div>

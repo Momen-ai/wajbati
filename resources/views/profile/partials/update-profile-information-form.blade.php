@@ -29,7 +29,7 @@
                     @endif
                 </div>
                 <label class="block">
-                    <span class="sr-only">Choose profile photo</span>
+                    <span class="sr-only">{{ __('Choose profile photo') }}</span>
                     <input type="file" name="image" class="block w-full text-sm text-slate-500
                         file:mr-4 file:py-2 file:px-4
                         file:rounded-full file:border-0
@@ -83,19 +83,19 @@
 
             <div>
                 <x-input-label for="kitchen_name" :value="__('Kitchen Name')" />
-                <x-text-input id="kitchen_name" name="kitchen_name" type="text" class="mt-1 block w-full" :value="old('kitchen_name', $user->kitchen_name)" placeholder="e.g. Grandma's Kitchen" />
+                <x-text-input id="kitchen_name" name="kitchen_name" type="text" class="mt-1 block w-full" :value="old('kitchen_name', $user->kitchen_name)" :placeholder="__('e.g. Grandma\'s Kitchen')" />
                 <x-input-error class="mt-2" :messages="$errors->get('kitchen_name')" />
             </div>
 
             <div>
                 <x-input-label for="address" :value="__('Address')" />
-                <x-text-input id="address" name="address" type="text" class="mt-1 block w-full" :value="old('address', $user->address)" placeholder="Kitchen Location" />
+                <x-text-input id="address" name="address" type="text" class="mt-1 block w-full" :value="old('address', $user->address)" :placeholder="__('Kitchen Location')" />
                 <x-input-error class="mt-2" :messages="$errors->get('address')" />
             </div>
 
             <div>
                 <x-input-label for="bio" :value="__('About You / Bio')" />
-                <textarea id="bio" name="bio" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" rows="4" placeholder="Tell customers about your kitchen and specialty...">{{ old('bio', $user->bio) }}</textarea>
+                <textarea id="bio" name="bio" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" rows="4" placeholder="{{ __('Tell customers about your kitchen and specialty...') }}">{{ old('bio', $user->bio) }}</textarea>
                 <x-input-error class="mt-2" :messages="$errors->get('bio')" />
             </div>
         @endif

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\Controller;
 use App\Models\Contact;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class ContactController extends Controller
@@ -35,21 +35,21 @@ class ContactController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title'   => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'message' => 'required|string',
-            'type'    => 'required|in:contact,complaint,support',
+            'type' => 'required|in:contact,complaint,support',
         ]);
 
         Contact::create([
             'user_id' => Auth::id(),
-            'title'   => $validated['title'],
+            'title' => $validated['title'],
             'message' => $validated['message'],
-            'type'    => $validated['type'],
+            'type' => $validated['type'],
         ]);
 
         return redirect()
             ->route('dashboard.contacts.index')
-            ->with('success', 'Message sent successfully');
+            ->with('success', __('Message sent successfully.'));
     }
 
     /**
@@ -65,6 +65,13 @@ class ContactController extends Controller
         return view('admin.contacts.show', compact('contact'));
     }
 
+    public function toggleRead(Contact $contact)
+    {
+        $contact->update(['is_read' => ! $contact->is_read]);
+
+        return back()->with('success', __('Message status updated successfully.'));
+    }
+
     /**
      * Remove the specified resource from storage.
      */
@@ -74,6 +81,6 @@ class ContactController extends Controller
 
         return redirect()
             ->route('dashboard.contacts.index')
-            ->with('success', 'Message deleted successfully');
+            ->with('success', __('Message deleted successfully.'));
     }
 }

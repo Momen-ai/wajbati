@@ -1,7 +1,7 @@
 <x-app-layout>
 
     <div class="flex items-center justify-between mb-4">
-        <h2>Edit Category</h2>
+        <h2>{{ __('Edit Category') }}</h2>
     </div>
 
 
@@ -14,13 +14,13 @@
                 @method('put')
                 <!-- Name -->
                 <div class="mb-3">
-                    <label for="name" class="form-label">Hospital Name</label>
+                    <label for="name" class="form-label">{{ __('Category Name') }}</label>
                     <input type="text" id="name" name="name" class="form-control"
                         value="{{ $category->name }}">
                 </div>
 
 
-                <button type="submit" class="btn btn-primary px-3">Update</button>
+                <button type="submit" class="btn btn-primary px-3">{{ __('Update') }}</button>
 
 
             </form>

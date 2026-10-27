@@ -28,4 +28,12 @@ class OrderPolicy
     {
         return $user->id === $order->chef_id;
     }
+
+    /**
+     * Determine whether the user can create orders.
+     */
+    public function create(User $user): bool
+    {
+        return $user->role === 'user' || empty($user->role);
+    }
 }

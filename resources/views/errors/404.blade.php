@@ -9,14 +9,14 @@
                 <i class="fas fa-search fa-4x text-primary-custom opacity-75"></i>
             </div>
         </div>
-        <h2 class="fw-bold text-light mb-3">Oops! Page not found</h2>
-        <p class="text-muted mb-5 mx-auto" style="max-width: 500px;">The meal you're looking for might have been eaten or the recipe was changed. Let's get you back to the main kitchen.</p>
+        <h2 class="fw-bold text-light mb-3">{{ __('Page Not Found') }}</h2>
+        <p class="text-muted mb-5 mx-auto" style="max-width: 500px;">{{ __('The page you are looking for does not exist or has been moved.') }}</p>
         <div class="d-flex gap-3 justify-content-center">
             <a href="{{ route('home') }}" class="btn btn-primary rounded-pill px-5 py-2 grow-on-hover">
-                <i class="fas fa-home me-2"></i>Back to Home
+                <i class="fas fa-home me-2"></i>{{ __('Back to Home') }}
             </a>
             <a href="{{ route('meals.index') }}" class="btn btn-outline-primary rounded-pill px-5 py-2">
-                Browse Meals
+                {{ __('Browse Meals') }}
             </a>
         </div>
     </div>

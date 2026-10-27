@@ -22,13 +22,10 @@
 
     <!-- Styles -->
     @if(app()->getLocale() == 'ar')
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-        <style>body { font-family: 'Cairo', sans-serif; }</style>
+        @vite(['resources/css/app-rtl.css', 'resources/js/app.js'])
     @else
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
 
     @stack('styles')
@@ -44,7 +41,7 @@
                     style="width:42px;height:42px">
                     <i class="fas fa-utensils"></i>
                 </div>
-                <span class="brand-text">Wajbati</span>
+                <span class="brand-text">{{ __('Wajbati') }}</span>
             </a>
             
             <button class="navbar-toggler border-0 p-2 shadow-none" type="button"
@@ -74,10 +71,10 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-end dropdown-notif border-0 shadow-lg mt-3 p-0 overflow-hidden" style="width: 320px; border-radius: 15px;">
                             <div class="p-3 bg-dark border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
-                                <h6 class="m-0 fw-700 small uppercase tracking-wider text-light">Notifications</h6>
+                                <h6 class="m-0 fw-700 small uppercase tracking-wider text-light">{{ __('Notifications') }}</h6>
                                 <form action="{{ route('notifications.mark-as-read') }}" method="POST" class="m-0">
                                     @csrf
-                                    <button type="submit" class="btn btn-link p-0 small text-decoration-none text-primary-custom" style="font-size: 0.75rem">Mark all read</button>
+                                    <button type="submit" class="btn btn-link p-0 small text-decoration-none text-primary-custom" style="font-size: 0.75rem">{{ __('Mark all read') }}</button>
                                 </form>
                             </div>
                             <div class="notif-list" style="max-height: 350px; overflow-y: auto;">
@@ -96,7 +93,7 @@
                                 @empty
                                     <div class="p-4 text-center">
                                         <i class="fas fa-bell-slash text-muted mb-2 opacity-25 fa-2x"></i>
-                                        <p class="text-muted small m-0">No new notifications</p>
+                                        <p class="text-muted small m-0">{{ __('No new notifications') }}</p>
                                     </div>
                                 @endforelse
                             </div>
@@ -115,11 +112,11 @@
 
                     <li class="nav-item dropdown me-3">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-globe me-1"></i> {{ app()->getLocale() == 'ar' ? 'العربية' : 'English' }}
+                            <i class="fas fa-globe me-1"></i> {{ app()->getLocale() == 'ar' ? __('Arabic') : __('English') }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark border border-secondary border-opacity-10 shadow">
-                            <li><a class="dropdown-item" href="{{ route('lang.switch', 'en') }}">English</a></li>
-                            <li><a class="dropdown-item" href="{{ route('lang.switch', 'ar') }}">العربية</a></li>
+                            <li><a class="dropdown-item" href="{{ route('lang.switch', 'en') }}">{{ __('English') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ route('lang.switch', 'ar') }}">{{ __('Arabic') }}</a></li>
                         </ul>
                     </li>
 
@@ -138,9 +135,10 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end border border-secondary border-opacity-10 shadow mt-2">
                                 <li><a class="dropdown-item" href="{{ route('orders.index') }}"><i class="fas fa-box me-2 small opacity-75"></i>{{ __('My Orders') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ route('favourites.index') }}"><i class="fas fa-heart me-2 small opacity-75 text-danger"></i>{{ __('My Favourites') }}</a></li>
                                 <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="fas fa-user-gear me-2 small opacity-75"></i>{{ __('Profile') }}</a></li>
                                 @if (Auth::user()->role == 'admin')
-                                    <li><a class="dropdown-item fw-bold text-warning" href="{{ route('dashboard') }}"><i class="fas fa-terminal me-2 small"></i>Admin Panel</a></li>
+                                    <li><a class="dropdown-item fw-bold text-warning" href="{{ route('dashboard') }}"><i class="fas fa-terminal me-2 small"></i>{{ __('Admin Panel') }}</a></li>
                                 @endif
                                 @if (Auth::user()->role == 'chef')
                                     <li><a class="dropdown-item fw-bold text-primary-custom" href="{{ route('chef.dashboard') }}"><i class="fas fa-kitchen-set me-2 small"></i>{{ __('Chef Dashboard') }}</a></li>
@@ -166,13 +164,13 @@
         <div class="container">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 small">
-                    <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-muted"><i class="fas fa-home me-1"></i>Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-muted"><i class="fas fa-home me-1"></i>{{ __('Home') }}</a></li>
                     @if(request()->routeIs('meals.*'))
-                        <li class="breadcrumb-item active text-light" aria-current="page">Meals</li>
+                        <li class="breadcrumb-item active text-light" aria-current="page">{{ __('Meals') }}</li>
                     @elseif(request()->routeIs('chefs.*'))
-                        <li class="breadcrumb-item active text-light" aria-current="page">Chefs</li>
+                        <li class="breadcrumb-item active text-light" aria-current="page">{{ __('Chefs') }}</li>
                     @elseif(request()->routeIs('contact'))
-                        <li class="breadcrumb-item active text-light" aria-current="page">Contact</li>
+                        <li class="breadcrumb-item active text-light" aria-current="page">{{ __('Contact') }}</li>
                     @endif
                 </ol>
             </nav>
@@ -213,9 +211,9 @@
                 <div class="col-lg-4">
                     <a class="navbar-brand d-flex align-items-center mb-4 text-light" href="#">
                         <i class="fas fa-utensils text-primary-custom me-2 fa-lg"></i>
-                        <span class="fw-bold h4 m-0">Wajbati</span>
+                        <span class="fw-bold h4 m-0">{{ __('Wajbati') }}</span>
                     </a>
-                    <p class="text-muted small mb-4">Connecting food lovers with home chefs. Experience the taste of home, anytime, anywhere. Support local families and enjoy fresh meals.</p>
+                    <p class="text-muted small mb-4">{{ __('Connecting food lovers with home chefs. Experience the taste of home, anytime, anywhere. Support local families and enjoy fresh meals.') }}</p>
                     <div class="social-links d-flex gap-3">
                         <a href="#" class="rounded-circle bg-secondary bg-opacity-10 text-muted p-2 hover-lift border border-secondary border-opacity-10" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;"><i class="fab fa-facebook-f"></i></a>
                         <a href="#" class="rounded-circle bg-secondary bg-opacity-10 text-muted p-2 hover-lift border border-secondary border-opacity-10" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;"><i class="fab fa-instagram"></i></a>
@@ -224,36 +222,37 @@
                     </div>
                 </div>
                 <div class="col-6 col-md-3 col-lg-2">
-                    <h6 class="fw-700 mb-4 text-primary-custom small text-uppercase tracking-wider">Explore</h6>
+                    <h6 class="fw-700 mb-4 text-primary-custom small text-uppercase tracking-wider">{{ __('Explore') }}</h6>
                     <ul class="list-unstyled small">
-                        <li class="mb-3"><a href="{{ route('home') }}" class="text-decoration-none text-muted hover-text-primary">Home</a></li>
-                        <li class="mb-3"><a href="{{ route('meals.index') }}" class="text-decoration-none text-muted hover-text-primary">Browse Meals</a></li>
-                        <li class="mb-3"><a href="{{ route('chefs.index') }}" class="text-decoration-none text-muted hover-text-primary">Meet Chefs</a></li>
-                        <li class="mb-3"><a href="{{ route('contact') }}" class="text-decoration-none text-muted hover-text-primary">Contact Us</a></li>
+                        <li class="mb-3"><a href="{{ route('home') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Home') }}</a></li>
+                        <li class="mb-3"><a href="{{ route('meals.index') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Browse Meals') }}</a></li>
+                        <li class="mb-3"><a href="{{ route('chefs.index') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Meet Chefs') }}</a></li>
+                        <li class="mb-3"><a href="{{ route('contact') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Contact Us') }}</a></li>
                     </ul>
                 </div>
                 <div class="col-6 col-md-3 col-lg-2">
-                    <h6 class="fw-700 mb-4 text-primary-custom small text-uppercase tracking-wider">Account</h6>
+                    <h6 class="fw-700 mb-4 text-primary-custom small text-uppercase tracking-wider">{{ __('Account') }}</h6>
                     <ul class="list-unstyled small">
-                        <li class="mb-3"><a href="{{ route('orders.index') }}" class="text-decoration-none text-muted hover-text-primary">Track Orders</a></li>
-                        <li class="mb-3"><a href="{{ route('profile.edit') }}" class="text-decoration-none text-muted hover-text-primary">Settings</a></li>
-                        <li class="mb-3"><a href="#" class="text-decoration-none text-muted hover-text-primary">Privacy Policy</a></li>
+                        <li class="mb-3"><a href="{{ route('orders.index') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Track Orders') }}</a></li>
+                        <li class="mb-3"><a href="{{ route('profile.edit') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Settings') }}</a></li>
+                        <li class="mb-3"><a href="{{ route('privacy') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Privacy Policy') }}</a></li>
+                        <li class="mb-3"><a href="{{ route('terms') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Terms of Service') }}</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-4">
-                    <h6 class="fw-700 mb-4 text-primary-custom small text-uppercase tracking-wider">Stay Gourmet</h6>
-                    <p class="text-muted small mb-4">Join our newsletter to get weekly recipes and special offers.</p>
+                    <h6 class="fw-700 mb-4 text-primary-custom small text-uppercase tracking-wider">{{ __('Stay Gourmet') }}</h6>
+                    <p class="text-muted small mb-4">{{ __('Join our newsletter to get weekly recipes and special offers.') }}</p>
                     <form action="{{ route('newsletter.subscribe') }}" method="POST" class="input-group mb-3">
                         @csrf
-                        <input type="email" name="email" class="form-control bg-secondary bg-opacity-10 border-secondary border-opacity-10 text-light py-2 px-3" placeholder="Email address" required>
+                        <input type="email" name="email" class="form-control bg-secondary bg-opacity-10 border-secondary border-opacity-10 text-light py-2 px-3" placeholder="{{ __('Email Address') }}" required>
                         <button class="btn btn-primary px-3" type="submit"><i class="fas fa-paper-plane"></i></button>
                     </form>
-                    <p class="text-muted" style="font-size: 0.65rem;">By subscribing, you agree to our Terms and Privacy Policy.</p>
+                    <p class="text-muted" style="font-size: 0.65rem;">{{ __('By subscribing, you agree to our Terms and Privacy Policy.') }}</p>
                 </div>
             </div>
             <div class="border-top border-secondary border-opacity-10 pt-4 text-center small text-muted">
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-                    <p class="m-0">&copy; {{ date('Y') }} Wajbati Inc. Built with love for home food.</p>
+                    <p class="m-0">&copy; {{ date('Y') }} {{ __('Wajbati Inc. Built with love for home food.') }}</p>
                     <div class="payment-icons opacity-50 d-flex gap-3 h5 m-0">
                         <i class="fab fa-cc-visa"></i>
                         <i class="fab fa-cc-mastercard"></i>
@@ -264,8 +263,6 @@
         </div>
     </footer>
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     @stack('scripts')
 </body>
 

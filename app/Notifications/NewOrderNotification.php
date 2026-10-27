@@ -2,61 +2,53 @@
 
 namespace App\Notifications;
 
+use App\Models\Order;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NewOrderNotification extends Notification
+class NewOrderNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected $order;
-
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct($order)
-    {
-        $this->order = $order;
+    public function __construct(
+        public Order $order
+    ) {
+        $this->afterCommit();
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
     public function via(object $notifiable): array
     {
         return ['mail', 'database'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
     public function toMail(object $notifiable): MailMessage
     {
+        $locale = $notifiable->locale ?? app()->getLocale();
+        $symbol = config('shop.currency.symbol', '₪');
+
         return (new MailMessage)
-            ->subject('New Order Received! #' . $this->order->id)
-            ->greeting('Hello ' . $notifiable->name)
-            ->line('You have received a new order for your kitchen items.')
-            ->line('Order Total: $' . $this->order->total)
-            ->action('View Order Details', route('chef.orders.show', $this->order->id))
-            ->line('Thank you for being part of Wajbati!');
+            ->subject(__('New Order Received! #:id', ['id' => $this->order->id], $locale))
+            ->greeting(__('Hello :name', ['name' => $notifiable->name], $locale))
+            ->line(__('You have received a new order for your kitchen items.', [], $locale))
+            ->line(__('Order Total: :symbol:total', ['symbol' => $symbol, 'total' => number_format($this->order->total, 2)], $locale))
+            ->action(__('View Order Details', [], $locale), route('chef.orders.show', $this->order->id))
+            ->line(__('Thank you for being part of Wajbati!', [], $locale));
     }
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(object $notifiable): array
     {
+        $locale = $notifiable->locale ?? app()->getLocale();
+
         return [
             'order_id' => $this->order->id,
-            'customer_name' => $this->order->user->name,
+            'customer_name' => $this->order->user?->name ?? 'Customer',
             'total' => $this->order->total,
-            'message' => 'New order received from ' . $this->order->user->name,
+            'message' => __('New order #:id received from :customer', [
+                'id' => $this->order->id,
+                'customer' => $this->order->user?->name ?? 'Customer',
+            ], $locale),
         ];
     }
 }

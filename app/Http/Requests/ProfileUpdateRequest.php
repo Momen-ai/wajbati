@@ -15,7 +15,9 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $user = $this->user();
+
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
@@ -23,8 +25,23 @@ class ProfileUpdateRequest extends FormRequest
                 'lowercase',
                 'email',
                 'max:255',
-                Rule::unique(User::class)->ignore($this->user()->id),
+                Rule::unique(User::class)->ignore($user?->id),
             ],
+            'phone' => [
+                'nullable',
+                'string',
+                'regex:/^\+?[0-9]{9,15}$/',
+                Rule::unique(User::class)->ignore($user?->id),
+            ],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ];
+
+        if ($user && $user->role === 'chef') {
+            $rules['kitchen_name'] = ['nullable', 'string', 'max:255'];
+            $rules['bio'] = ['nullable', 'string', 'max:1000'];
+            $rules['address'] = ['nullable', 'string', 'max:255'];
+        }
+
+        return $rules;
     }
 }

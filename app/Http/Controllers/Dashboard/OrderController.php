@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Meal;
 use App\Models\Order;
 use App\Models\User;
-use App\Models\Meal;
+use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-
     public function index()
     {
         $orders = Order::with(['user', 'chef'])
@@ -35,8 +34,8 @@ class OrderController extends Controller
             'user_id' => 'required|exists:users,id',
             'chef_id' => 'required|exists:users,id',
             'address' => 'nullable|string',
-            'status'  => 'required',
-            'items'   => 'required|array',
+            'status' => 'required',
+            'items' => 'required|array',
             'items.*.meal_id' => 'required|exists:meals,id',
             'items.*.quantity' => 'required|integer|min:1',
         ]);
@@ -51,9 +50,9 @@ class OrderController extends Controller
         $order = Order::create([
             'user_id' => $request->user_id,
             'chef_id' => $request->chef_id,
-            'total'   => $total,
+            'total' => $total,
             'address' => $request->address,
-            'status'  => $request->status,
+            'status' => $request->status,
         ]);
 
         foreach ($request->items as $item) {
@@ -68,12 +67,13 @@ class OrderController extends Controller
 
         return redirect()
             ->route('dashboard.orders.index')
-            ->with('success', 'Order created successfully');
+            ->with('success', __('Order created successfully.'));
     }
 
     public function show(Order $order)
     {
         $order->load(['user', 'chef', 'items.meal']);
+
         return view('admin.orders.show', compact('order'));
     }
 
@@ -88,19 +88,82 @@ class OrderController extends Controller
     public function update(Request $request, Order $order)
     {
         $validated = $request->validate([
-            // Admin intentionally bypasses the OrderStatusService state machine.
-            // This allows manual correction of orders without transition restrictions.
-            // If you want to enforce the state machine for admins too, use:
-            //   OrderStatusService::canTransitionTo($order->status, $request->status)
-            'status'  => 'required|in:pending,accepted,rejected,preparing,prepared,delivered,completed,cancelled',
+            'status' => 'required|in:pending,accepted,rejected,preparing,prepared,delivered,completed,cancelled',
             'address' => 'nullable|string',
+            'force' => 'nullable|boolean',
+            'note' => 'nullable|string|max:500',
         ]);
 
-        $order->update($validated);
+        $fromStatus = $order->status;
+        $toStatus = $validated['status'];
+        $forced = $request->boolean('force');
+
+        if ($fromStatus !== $toStatus) {
+            if (! $forced && ! \App\Services\OrderStatusService::canTransitionTo($fromStatus, $toStatus)) {
+                $allowed = implode(', ', \App\Services\OrderStatusService::getAllowedStatuses($fromStatus));
+
+                return back()->with('error', __(
+                    'Invalid status transition from :from to :to. Allowed: :allowed (check "Force" to override).',
+                    ['from' => $fromStatus, 'to' => $toStatus, 'allowed' => $allowed ?: 'None']
+                ));
+            }
+
+            \App\Models\OrderStatusHistory::create([
+                'order_id' => $order->id,
+                'from_status' => $fromStatus,
+                'to_status' => $toStatus,
+                'user_id' => auth()->id(),
+                'note' => $request->input('note'),
+                'forced' => $forced,
+            ]);
+
+            app(\App\Services\OrderPaymentService::class)->handleStatusTransition($order, $toStatus);
+
+            if ($order->user) {
+                try {
+                    $order->user->notify(new \App\Notifications\OrderStatusUpdatedNotification($order));
+                } catch (\Throwable $e) {
+                    report($e);
+                }
+            }
+        }
+
+        $order->update([
+            'status' => $toStatus,
+            'address' => $validated['address'] ?? $order->address,
+        ]);
 
         return redirect()
             ->route('dashboard.orders.index')
-            ->with('success', 'Order updated successfully');
+            ->with('success', __('Order updated successfully.'));
+    }
+
+    public function exportCsv(): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="orders-admin-'.now()->format('Y-m-d').'.csv"',
+        ];
+
+        return response()->stream(function () {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['Order ID', 'Customer', 'Chef', 'Total', 'Status', 'Date']);
+
+            Order::with(['user', 'chef'])->latest()->chunk(100, function ($orders) use ($handle) {
+                foreach ($orders as $order) {
+                    fputcsv($handle, [
+                        $order->id,
+                        $order->user?->name ?? 'Guest',
+                        $order->chef?->name ?? 'Chef',
+                        number_format($order->total, 2, '.', ''),
+                        $order->status,
+                        $order->created_at->toDateTimeString(),
+                    ]);
+                }
+            });
+
+            fclose($handle);
+        }, 200, $headers);
     }
 
     public function destroy(Order $order)
@@ -109,9 +172,8 @@ class OrderController extends Controller
 
         return redirect()
             ->route('dashboard.orders.index')
-            ->with('success', 'Order deleted successfully');
+            ->with('success', __('Order deleted successfully.'));
     }
 }
 
-    //
-
+//

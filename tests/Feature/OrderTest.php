@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Meal;
 use App\Models\Category;
+use App\Models\Meal;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -23,7 +23,7 @@ class OrderTest extends TestCase
             'category_id' => $category->id,
             'name' => 'Burger',
             'price' => 10,
-            'number_persons' => 1
+            'number_persons' => 1,
         ]);
 
         $this->actingAs($user);
@@ -33,14 +33,14 @@ class OrderTest extends TestCase
                 'name' => $meal->name,
                 'quantity' => 2,
                 'price' => 10,
-                'image' => 'test.jpg'
-            ]
+                'image' => 'test.jpg',
+            ],
         ]]);
 
         $response = $this->post(route('orders.store'), [
             'address' => 'Test Address',
             'phone' => '0599111222',
-            'payment_method' => 'cash'
+            'payment_method' => 'cash',
         ]);
 
         $response->assertStatus(302);
@@ -60,13 +60,13 @@ class OrderTest extends TestCase
             'total' => 50,
             'address' => 'Gaza',
             'status' => 'pending',
-            'payment_method' => 'cash'
+            'payment_method' => 'cash',
         ]);
 
         $this->actingAs($chef);
 
         $response = $this->patch(route('chef.orders.update-status', $order), [
-            'status' => 'accepted'
+            'status' => 'accepted',
         ]);
 
         $response->assertStatus(302);

@@ -6,7 +6,7 @@
 
                 <div class="card shadow-sm">
                     <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0">Create New Meal</h5>
+                        <h5 class="mb-0">{{ __('Create New Meal') }}</h5>
                     </div>
 
                     <div class="card-body">
@@ -15,11 +15,11 @@
 
                             {{-- Chef --}}
                             <div class="mb-3">
-                                <label class="form-label">Chef</label>
+                                <label class="form-label">{{ __('Chef') }}</label>
                                 <select name="chef_id" class="form-select" required>
-                                    <option value="">Select Chef</option>
+                                    <option value="">{{ __('Select Chef') }}</option>
                                     @foreach ($chefs as $chef)
-                                        <option value="{{ $chef->id }}">
+                                        <option value="{{ $chef->id }}" @selected(old('chef_id') == $chef->id)>
                                             {{ $chef->name }}
                                         </option>
                                     @endforeach
@@ -28,11 +28,11 @@
 
                             {{-- Category --}}
                             <div class="mb-3">
-                                <label class="form-label">Category</label>
+                                <label class="form-label">{{ __('Category') }}</label>
                                 <select name="category_id" class="form-select">
-                                    <option value="">-- None --</option>
+                                    <option value="">-- {{ __('None') }} --</option>
                                     @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}">
+                                        <option value="{{ $category->id }}" @selected(old('category_id') == $category->id)>
                                             {{ $category->name }}
                                         </option>
                                     @endforeach
@@ -41,36 +41,50 @@
 
                             {{-- Name --}}
                             <div class="mb-3">
-                                <label class="form-label">Meal Name</label>
-                                <input type="text" name="name" class="form-control" placeholder="Enter meal name"
-                                    required>
+                                <label class="form-label">{{ __('Meal Name') }}</label>
+                                <input type="text" name="name" class="form-control" placeholder="{{ __('Enter meal name') }}" value="{{ old('name') }}" required>
                             </div>
 
                             {{-- Description --}}
                             <div class="mb-3">
-                                <label class="form-label">Description</label>
-                                <textarea name="description" rows="4" class="form-control" placeholder="Meal description"></textarea>
+                                <label class="form-label">{{ __('Description') }}</label>
+                                <textarea name="description" rows="4" class="form-control" placeholder="{{ __('Meal description') }}">{{ old('description') }}</textarea>
                             </div>
 
-                            {{-- Price --}}
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">{{ __('Price') }}</label>
+                                    <input type="number" step="0.01" min="0" name="price" class="form-control" value="{{ old('price') }}" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">{{ __('Number of Persons') }}</label>
+                                    <input type="number" name="number_persons" min="1" max="50" class="form-control" value="{{ old('number_persons', 1) }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">{{ __('Prep Time (Minutes)') }}</label>
+                                    <input type="number" name="prep_time_minutes" min="1" max="1440" class="form-control" value="{{ old('prep_time_minutes') }}">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="is_available" id="admin_is_available" value="1" {{ old('is_available', '1') ? 'checked' : '' }}>
+                                <label class="form-check-label ms-2" for="admin_is_available">
+                                    {{ __('Available for Ordering') }}
+                                </label>
+                            </div>
+
                             <div class="mb-3">
-                                <label class="form-label">Price</label>
-                                <input type="number" step="0.01" name="price" class="form-control" required>
+                                <label class="form-label">{{ __('Meal Image') }}</label>
+                                <input type="file" name="image" class="form-control" required accept="image/*">
                             </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Meal Image</label>
-                                <input type="file" name="image" class="form-control">
-                            </div>
-
 
                             {{-- Actions --}}
                             <div class="d-flex justify-content-end gap-2">
                                 <a href="{{ route('dashboard.meals.index') }}" class="btn btn-secondary">
-                                    Cancel
+                                    {{ __('Cancel') }}
                                 </a>
                                 <button type="submit" class="btn btn-primary">
-                                    Create Meal
+                                    {{ __('Create Meal') }}
                                 </button>
                             </div>
 
@@ -81,5 +95,4 @@
             </div>
         </div>
     </div>
-
 </x-app-layout>

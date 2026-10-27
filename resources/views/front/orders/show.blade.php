@@ -4,9 +4,9 @@
 <div class="container py-5">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-light">Home</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('orders.index') }}" class="text-decoration-none text-light">My Orders</a></li>
-            <li class="breadcrumb-item active text-light" aria-current="page">Order #{{ $order->id }}</li>
+            <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-light">{{ __('Home') }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('orders.index') }}" class="text-decoration-none text-light">{{ __('My Orders') }}</a></li>
+            <li class="breadcrumb-item active text-light" aria-current="page">{{ __('Order') }} #{{ $order->id }}</li>
         </ol>
     </nav>
 
@@ -15,18 +15,18 @@
             <div class="card shadow-card border border-secondary border-opacity-10 mb-4">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="fw-bold mb-0 text-light">Order Items</h4>
-                        <span class="text-light">Placed on {{ $order->created_at->format('M d, Y H:i') }}</span>
+                        <h4 class="fw-bold mb-0 text-light">{{ __('Order Items') }}</h4>
+                        <span class="text-light">{{ __('Placed on') }} {{ $order->created_at->format('M d, Y H:i') }}</span>
                     </div>
 
                     <div class="table-responsive">
                         <table class="table table-dark align-middle">
                             <thead>
                                 <tr class="text-light small text-uppercase">
-                                    <th class="border-0 ps-0">Meal</th>
-                                    <th class="border-0 text-center">Price</th>
-                                    <th class="border-0 text-center">Qty</th>
-                                    <th class="border-0 text-end pe-0">Total</th>
+                                    <th class="border-0 ps-0">{{ __('Meal') }}</th>
+                                    <th class="border-0 text-center">{{ __('Price') }}</th>
+                                    <th class="border-0 text-center">{{ __('Qty') }}</th>
+                                    <th class="border-0 text-end pe-0">{{ __('Total') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -34,22 +34,20 @@
                                 <tr>
                                     <td class="ps-0 py-3">
                                         <div class="d-flex align-items-center">
-                                            @if($item->meal->image)
+                                            @if($item->meal && $item->meal->image)
                                                 <img src="{{ asset('storage/' . $item->meal->image->image_path) }}" class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
                                             @else
-                                                <div class="rounded bg-secondary me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                                                    <i class="fas fa-utensils text-light"></i>
-                                                </div>
+                                                <img src="{{ asset('assets/images/placeholder.svg') }}" class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
                                             @endif
                                             <div>
-                                                <h6 class="mb-0 fw-bold text-light">{{ $item->meal->name }}</h6>
-                                                <small class="text-light">{{ $order->chef->name ?? 'Chef' }}</small>
+                                                <h6 class="mb-0 fw-bold text-light">{{ $item->meal_name ?? ($item->meal->name ?? __('Meal')) }}</h6>
+                                                <small class="text-light opacity-75">{{ $order->chef->name ?? __('Chef') }}</small>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-center">${{ $item->price }}</td>
+                                    <td class="text-center">{{ money($item->price) }}</td>
                                     <td class="text-center">{{ $item->quantity }}</td>
-                                    <td class="text-end pe-0 fw-bold">${{ $item->price * $item->quantity }}</td>
+                                    <td class="text-end pe-0 fw-bold">{{ money($item->price * $item->quantity) }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -60,14 +58,14 @@
 
             <div class="card shadow-card border border-secondary border-opacity-10">
                 <div class="card-body p-4">
-                    <h5 class="fw-bold mb-3 text-light">Delivery Information</h5>
+                    <h5 class="fw-bold mb-3 text-light">{{ __('Delivery Information') }}</h5>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="text-light small d-block">Address</label>
+                            <label class="text-light small d-block">{{ __('Address') }}</label>
                             <span class="fw-bold text-light">{{ $order->address }}</span>
                         </div>
                         <div class="col-md-6">
-                            <label class="text-light small d-block">Phone Number</label>
+                            <label class="text-light small d-block">{{ __('Phone Number') }}</label>
                             <span class="fw-bold text-light">{{ $order->phone ?? $order->user->phone }}</span>
                         </div>
                     </div>
@@ -78,52 +76,74 @@
         <div class="col-lg-4">
             <div class="card shadow-card border border-secondary border-opacity-10 mb-4">
                 <div class="card-body p-4">
-                    <h5 class="fw-bold mb-4 text-light">Order Summary</h5>
+                    <h5 class="fw-bold mb-4 text-light">{{ __('Order Summary') }}</h5>
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="text-light">Subtotal</span>
-                        <span class="fw-bold text-light">${{ $order->total - 3 }}</span>
+                        <span class="text-light">{{ __('Subtotal') }}</span>
+                        <span class="fw-bold text-light">{{ money($order->subtotal) }}</span>
                     </div>
                     <div class="d-flex justify-content-between mb-3">
-                        <span class="text-light">Delivery Fee</span>
-                        <span class="fw-bold text-light">$3.00</span>
+                        <span class="text-light">{{ __('Delivery Fee') }}</span>
+                        <span class="fw-bold text-light">{{ money($order->delivery_fee) }}</span>
                     </div>
                     <hr class="opacity-25 text-light">
                     <div class="d-flex justify-content-between mb-4">
-                        <span class="fw-bold h5 mb-0 text-light">Total</span>
-                        <span class="fw-bold h5 text-primary mb-0">${{ $order->total }}</span>
+                        <span class="fw-bold h5 mb-0 text-light">{{ __('Total') }}</span>
+                        <span class="fw-bold h5 text-primary mb-0">{{ money($order->total) }}</span>
                     </div>
 
                     <div class="bg-secondary text-light rounded p-3 mb-3">
                         <div class="d-flex justify-content-between mb-2 small">
-                            <span class="text-light">Order Status</span>
+                            <span class="text-light">{{ __('Order Status') }}</span>
                             @php
                                 $statusColor = match($order->status) {
                                     'pending' => 'warning',
                                     'accepted' => 'info',
-                                    'delivered' => 'success',
-                                    'cancelled' => 'danger',
+                                    'preparing' => 'primary',
+                                    'ready_for_delivery', 'prepared' => 'info',
+                                    'out_for_delivery' => 'primary',
+                                    'delivered', 'completed' => 'success',
+                                    'cancelled', 'rejected' => 'danger',
                                     default => 'secondary'
                                 };
                             @endphp
-                            <span class="badge bg-{{ $statusColor }} text-uppercase">{{ $order->status }}</span>
+                            <span class="badge bg-{{ $statusColor }} text-uppercase">{{ __($order->status) }}</span>
                         </div>
                         <div class="d-flex justify-content-between small">
-                            <span class="text-light">Payment Method</span>
-                            <span class="badge bg-dark text-uppercase">{{ $order->payment_method }}</span>
+                            <span class="text-light">{{ __('Payment Method') }}</span>
+                            <span class="badge bg-dark text-uppercase">{{ __($order->payment_method) }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between small mt-2">
+                            <span class="text-light">{{ __('Payment Status') }}</span>
+                            <span class="badge bg-info text-uppercase">{{ __($order->payment_status) }}</span>
                         </div>
                     </div>
 
                     @if($order->status == 'pending')
-                        <div class="alert alert-warning mb-0 small">
-                            <i class="fas fa-clock me-2"></i> Your order is waiting for chef's approval.
+                        <div class="alert alert-warning mb-3 small">
+                            <i class="fas fa-clock me-2"></i> {{ __('Your order is waiting for chef\'s approval.') }}
                         </div>
+                        <form action="{{ route('orders.cancel', $order->id) }}" method="POST" onsubmit="return confirm('{{ __('Are you sure you want to cancel this order?') }}');">
+                            @csrf
+                            <button type="submit" class="btn btn-danger w-100 mb-2">
+                                <i class="fas fa-times-circle me-1"></i> {{ __('Cancel Order') }}
+                            </button>
+                        </form>
+                    @endif
+
+                    @if(in_array($order->status, ['delivered', 'completed']))
+                        <form action="{{ route('orders.reorder', $order->id) }}" method="POST" class="mb-2">
+                            @csrf
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="fas fa-redo me-1"></i> {{ __('Reorder Items') }}
+                            </button>
+                        </form>
                     @endif
                 </div>
             </div>
 
             <div class="d-grid mt-3">
                 <a href="{{ route('orders.index') }}" class="btn btn-outline-primary">
-                    <i class="fas fa-arrow-left me-2"></i> Back to My Orders
+                    <i class="fas fa-arrow-left me-2"></i> {{ __('Back to My Orders') }}
                 </a>
             </div>
         </div>

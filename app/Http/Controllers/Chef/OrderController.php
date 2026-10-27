@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Chef;
 
-use App\Models\Order;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Gate;
+use App\Models\Order;
 use App\Notifications\OrderStatusUpdatedNotification;
 use App\Services\OrderStatusService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class OrderController extends Controller
 {
@@ -17,6 +17,7 @@ class OrderController extends Controller
             ->with(['user', 'items.meal'])
             ->orderBy('id', 'desc')
             ->paginate(15);
+
         return view('front.chef.orders.index', compact('orders'));
     }
 
@@ -25,27 +26,39 @@ class OrderController extends Controller
         Gate::authorize('update', $order);
 
         $validated = $request->validate([
-            'status' => 'required|in:' . implode(',', array_keys(OrderStatusService::TRANSITIONS)),
+            'status' => 'required|in:'.implode(',', array_keys(OrderStatusService::TRANSITIONS)),
         ]);
 
         $currentStatus = $order->status;
-        $newStatus     = $validated['status'];
+        $newStatus = $validated['status'];
 
         if (! OrderStatusService::canTransitionTo($currentStatus, $newStatus)) {
             $allowed = implode(', ', OrderStatusService::getAllowedStatuses($currentStatus));
             $message = $allowed
-                ? "Cannot change status from '{$currentStatus}' to '{$newStatus}'. Allowed next statuses: {$allowed}."
-                : "Order status '{$currentStatus}' is terminal and cannot be changed.";
+                ? __("Cannot change status from ':from' to ':to'. Allowed next statuses: :allowed.", ['from' => $currentStatus, 'to' => $newStatus, 'allowed' => $allowed])
+                : __("Order status ':status' is terminal and cannot be changed.", ['status' => $currentStatus]);
 
             return back()->with('error', $message);
         }
 
+        $fromStatus = $order->status;
         $order->update(['status' => $newStatus]);
+
+        \App\Models\OrderStatusHistory::create([
+            'order_id' => $order->id,
+            'from_status' => $fromStatus,
+            'to_status' => $newStatus,
+            'user_id' => auth()->id(),
+            'forced' => false,
+        ]);
+
+        // Update payment status lifecycle (COD paid on delivery, etc.)
+        app(\App\Services\OrderPaymentService::class)->handleStatusTransition($order, $newStatus);
 
         // Notify the customer about the status change
         $order->user->notify(new OrderStatusUpdatedNotification($order));
 
-        return back()->with('success', 'Order status updated successfully.');
+        return back()->with('success', __('Order status updated successfully.'));
     }
 
     public function show(Order $order)
@@ -53,6 +66,7 @@ class OrderController extends Controller
         Gate::authorize('view', $order);
 
         $order->load(['user', 'items.meal']);
+
         return view('front.chef.orders.show', compact('order'));
     }
 }

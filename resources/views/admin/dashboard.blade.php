@@ -1,6 +1,5 @@
 <x-app-layout>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
         :root {
             --primary: #6366f1;
@@ -68,7 +67,12 @@
             font-weight: 600;
             padding: 2px 8px;
             border-radius: 99px;
-            margin-left: 8px;
+            margin-inline-start: 8px;
+        }
+
+        [dir="rtl"] .fa-arrow-right {
+            transform: scaleX(-1);
+            display: inline-block;
         }
 
         .growth-up { background: var(--success-soft); color: var(--success); }
@@ -130,12 +134,12 @@
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-end mb-5 animate-fade-in">
             <div>
-                <h1 class="fw-bold tracking-tight mb-2">Welcome Back, <span class="gradient-text">{{ Auth::user()->name }}</span></h1>
-                <p class="text-secondary mb-0">Here's a premium overview of your Wajbati platform performance.</p>
+                <h1 class="fw-bold tracking-tight mb-2">{{ __('Welcome Back') }}, <span class="gradient-text">{{ Auth::user()->name }}</span></h1>
+                <p class="text-secondary mb-0">{{ __("Here's a premium overview of your Wajbati platform performance.") }}</p>
             </div>
             <div class="d-none d-md-block">
                 <button class="btn btn-white premium-card py-2 px-4 fw-600 border-0 shadow-sm">
-                    <i class="fas fa-download me-2 text-primary"></i> Export Report
+                    <i class="fas fa-download me-2 text-primary"></i> {{ __('Export Report') }}
                 </button>
             </div>
         </div>
@@ -151,8 +155,8 @@
                         </div>
                         <span class="growth-tag growth-up">{{ $growth['revenue'] }}</span>
                     </div>
-                    <div class="stat-label">Total Revenue</div>
-                    <div class="stat-value">${{ number_format($totalRevenue, 2) }}</div>
+                    <div class="stat-label">{{ __('Total Revenue') }}</div>
+                    <div class="stat-value">{{ money($totalRevenue) }}</div>
                 </div>
             </div>
 
@@ -165,7 +169,7 @@
                         </div>
                         <span class="growth-tag growth-up">{{ $growth['orders'] }}</span>
                     </div>
-                    <div class="stat-label">Completed Orders</div>
+                    <div class="stat-label">{{ __('Completed Orders') }}</div>
                     <div class="stat-value">{{ $ordersCount }}</div>
                 </div>
             </div>
@@ -179,7 +183,7 @@
                         </div>
                         <span class="growth-tag growth-up">{{ $growth['users'] }}</span>
                     </div>
-                    <div class="stat-label">Active Users</div>
+                    <div class="stat-label">{{ __('Active Users') }}</div>
                     <div class="stat-value">{{ $usersCount }}</div>
                 </div>
             </div>
@@ -192,7 +196,7 @@
                             <i class="fas fa-clock fa-lg"></i>
                         </div>
                     </div>
-                    <div class="stat-label">Pending Orders</div>
+                    <div class="stat-label">{{ __('Pending Orders') }}</div>
                     <div class="stat-value">{{ $pendingOrdersCount }}</div>
                 </div>
             </div>
@@ -203,8 +207,8 @@
             <div class="col-xl-12 animate-fade-in" style="animation-delay: 0.5s">
                 <div class="premium-card p-4">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="fw-700 m-0">Revenue Analytics (Last 6 Months)</h5>
-                        <div class="text-secondary small fw-600">Earnings in USD</div>
+                        <h5 class="fw-700 m-0">{{ __('Revenue Analytics (Last 6 Months)') }}</h5>
+                        <div class="text-secondary small fw-600">{{ __('Earnings Overview') }}</div>
                     </div>
                     <div style="height: 300px;">
                         <canvas id="revenueChart"></canvas>
@@ -219,18 +223,18 @@
             <div class="col-xl-8 animate-fade-in" style="animation-delay: 0.6s">
                 <div class="premium-card h-100">
                     <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
-                        <h5 class="fw-700 m-0">Recent Transactions</h5>
-                        <a href="{{ route('dashboard.orders.index') }}" class="btn btn-sm text-primary fw-600">View All</a>
+                        <h5 class="fw-700 m-0">{{ __('Recent Transactions') }}</h5>
+                        <a href="{{ route('dashboard.orders.index') }}" class="btn btn-sm text-primary fw-600">{{ __('View All') }}</a>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-premium mb-0">
                             <thead>
                                 <tr>
-                                    <th>Ref ID</th>
-                                    <th>Customer</th>
-                                    <th>Chef</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
+                                    <th>{{ __('Ref ID') }}</th>
+                                    <th>{{ __('Customer') }}</th>
+                                    <th>{{ __('Chef') }}</th>
+                                    <th>{{ __('Amount') }}</th>
+                                    <th>{{ __('Status') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -242,14 +246,14 @@
                                             <div class="avatar-initial me-3" style="width: 32px; height: 32px; font-size: 0.75rem;">
                                                 {{ substr($order->user->name ?? 'U', 0, 1) }}
                                             </div>
-                                            <span class="fw-600">{{ $order->user->name ?? 'Guest User' }}</span>
+                                            <span class="fw-600">{{ $order->user->name ?? __('Guest User') }}</span>
                                         </div>
                                     </td>
-                                    <td class="text-secondary">{{ $order->chef->kitchen_name ?? 'N/A' }}</td>
-                                    <td class="fw-700">${{ number_format($order->total, 2) }}</td>
+                                    <td class="text-secondary">{{ $order->chef->kitchen_name ?? __('N/A') }}</td>
+                                    <td class="fw-700">{{ money($order->total) }}</td>
                                     <td>
                                         <span class="badge-premium {{ $order->status == 'completed' ? 'bg-success-soft text-success' : 'bg-warning-soft text-warning' }}">
-                                            {{ ucfirst($order->status) }}
+                                            {{ __(ucfirst($order->status)) }}
                                         </span>
                                     </td>
                                 </tr>
@@ -264,7 +268,7 @@
             <div class="col-xl-4 animate-fade-in" style="animation-delay: 0.7s">
                 <div class="premium-card h-100">
                     <div class="p-4 border-bottom">
-                        <h5 class="fw-700 m-0">New Registrations</h5>
+                        <h5 class="fw-700 m-0">{{ __('New Registrations') }}</h5>
                     </div>
                     <div class="p-4">
                         @foreach($latestUsers as $user)
@@ -278,19 +282,18 @@
                                     <div class="text-muted text-xs">{{ $user->email }}</div>
                                 </div>
                             </div>
-                            <span class="badge-premium bg-light text-secondary">{{ ucfirst($user->role) }}</span>
+                            <span class="badge-premium bg-light text-secondary">{{ __(ucfirst($user->role)) }}</span>
                         </div>
                         @endforeach
                     </div>
                     <div class="p-4 bg-light border-top text-center rounded-bottom-20">
-                        <a href="{{ route('dashboard.users.index') }}" class="text-primary text-sm fw-700 text-decoration-none">Manage User Database <i class="fas fa-arrow-right ms-1"></i></a>
+                        <a href="{{ route('dashboard.users.index') }}" class="text-primary text-sm fw-700 text-decoration-none">{{ __('Manage User Database') }} <i class="fas fa-arrow-right ms-1"></i></a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const ctx = document.getElementById('revenueChart').getContext('2d');
@@ -305,7 +308,7 @@
                 data: {
                     labels: {!! json_encode($chartData['labels']) !!},
                     datasets: [{
-                        label: 'Monthly Revenue',
+                        label: '{{ __('Monthly Revenue') }}',
                         data: {!! json_encode($chartData['values']) !!},
                         borderColor: '#6366f1',
                         borderWidth: 3,

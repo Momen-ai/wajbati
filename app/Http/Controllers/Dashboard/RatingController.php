@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\Controller;
 use App\Models\Rating;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class RatingController extends Controller
 {
@@ -31,17 +31,16 @@ class RatingController extends Controller
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'chef_id' => 'required|exists:users,id,role,chef',
-            'star'    => 'required|integer|min:1|max:5',
-            'body'    => 'nullable|string',
+            'star' => 'required|integer|min:1|max:5',
+            'body' => 'nullable|string',
         ]);
 
         Rating::create($validated);
 
         return redirect()
             ->route('dashboard.ratings.index')
-            ->with('success', 'Rating added successfully');
+            ->with('success', __('Rating added successfully.'));
     }
-
 
     public function edit(Rating $rating)
     {
@@ -56,15 +55,15 @@ class RatingController extends Controller
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'chef_id' => 'required|exists:users,id,role,chef',
-            'star'    => 'required|integer|min:1|max:5',
-            'body'    => 'nullable|string',
+            'star' => 'required|integer|min:1|max:5',
+            'body' => 'nullable|string',
         ]);
 
         $rating->update($validated);
 
         return redirect()
             ->route('dashboard.ratings.index')
-            ->with('success', 'Rating updated successfully');
+            ->with('success', __('Rating updated successfully.'));
     }
 
     public function destroy(Rating $rating)
@@ -73,7 +72,6 @@ class RatingController extends Controller
 
         return redirect()
             ->route('dashboard.ratings.index')
-            ->with('success', 'Rating deleted successfully');
+            ->with('success', __('Rating deleted successfully.'));
     }
 }
-

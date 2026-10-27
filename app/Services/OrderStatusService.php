@@ -18,6 +18,7 @@ namespace App\Services;
  *
  * Admins (Dashboard\OrderController) are intentionally exempt from these
  * restrictions — they may need to correct orders manually. See:
+ *
  * @see \App\Http\Controllers\Dashboard\OrderController::update()
  */
 class OrderStatusService
@@ -26,14 +27,14 @@ class OrderStatusService
      * Whitelist: maps each status to the set of statuses it may transition into.
      */
     public const TRANSITIONS = [
-        'pending'   => ['accepted', 'rejected', 'cancelled'],
-        'accepted'  => ['preparing', 'rejected', 'cancelled'],
+        'pending' => ['accepted', 'rejected', 'cancelled'],
+        'accepted' => ['preparing', 'rejected', 'cancelled'],
         'preparing' => ['prepared'],
-        'prepared'  => ['delivered'],
+        'prepared' => ['delivered'],
         'delivered' => ['completed'],
         // Terminal states — no further transitions allowed
         'completed' => [],
-        'rejected'  => [],
+        'rejected' => [],
         'cancelled' => [],
     ];
 

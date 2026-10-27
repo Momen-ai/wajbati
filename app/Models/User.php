@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -22,10 +23,10 @@ class User extends Authenticatable
         'email',
         'password',
         'phone',
-        'role',
         'kitchen_name',
         'bio',
         'address',
+        'daily_capacity',
     ];
 
     /**
@@ -50,39 +51,41 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    
 
     public function meals()
     {
         return $this->hasMany(Meal::class, 'chef_id');
     }
+
     public function carts()
     {
         return $this->hasMany(Cart::class);
     }
+
     public function orders()
     {
         return $this->hasMany(Order::class);
     }
+
     public function favourites()
     {
         return $this->hasMany(Favourite::class);
     }
+
     public function ratings()
     {
         return $this->hasMany(Rating::class);
     }
+
     public function addresses()
     {
         return $this->hasMany(Address::class);
     }
-    function image()
+
+    public function image()
     {
         return $this->morphOne(Image::class, 'imageable');
     }
-
-
-
 
     public function isAdmin()
     {

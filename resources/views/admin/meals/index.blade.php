@@ -3,10 +3,10 @@
 
         {{-- Header --}}
         <div class="card-body d-flex justify-content-between align-items-center">
-            <h4 class="mb-0 fw-bold">Meals Management</h4>
+            <h4 class="mb-0 fw-bold">{{ __('Meals Management') }}</h4>
 
             <a href="{{ route('dashboard.meals.create') }}" class="btn btn-success">
-                <i class="bi bi-plus-lg"></i> Add Meal
+                <i class="bi bi-plus-lg"></i> {{ __('Add Meal') }}
             </a>
         </div>
 
@@ -16,12 +16,12 @@
 
                 <thead class="table-dark">
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Chef</th>
-                        <th>Category</th>
-                        <th>Price</th>
-                        <th style="width: 240px">Actions</th>
+                        <th>{{ __('ID') }}</th>
+                        <th>{{ __('Name') }}</th>
+                        <th>{{ __('Chef') }}</th>
+                        <th>{{ __('Category') }}</th>
+                        <th>{{ __('Price') }}</th>
+                        <th style="width: 240px">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
 
@@ -34,7 +34,7 @@
                             <td>{{ $meal->category?->name ?? '-' }}</td>
                             <td>
                                 <span class="badge bg-success">
-                                    {{ number_format($meal->price, 2) }} $
+                                    {{ money($meal->price) }}
                                 </span>
                             </td>
 
@@ -43,20 +43,20 @@
 
                                     <a href="{{ route('dashboard.meals.show', $meal->id) }}"
                                         class="btn btn-outline-secondary btn-sm">
-                                        Show
+                                        {{ __('Show') }}
                                     </a>
 
                                     <a href="{{ route('dashboard.meals.edit', $meal->id) }}"
                                         class="btn btn-primary btn-sm">
-                                        Edit
+                                        {{ __('Edit') }}
                                     </a>
 
                                     <form action="{{ route('dashboard.meals.destroy', $meal->id) }}" method="POST"
-                                        onsubmit="return confirm('Are you sure?')">
+                                        onsubmit="return confirm('{{ __('Are you sure?') }}')">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn btn-danger btn-sm">
-                                            Delete
+                                            {{ __('Delete') }}
                                         </button>
                                     </form>
 
@@ -66,13 +66,17 @@
                     @empty
                         <tr>
                             <td colspan="6" class="text-muted py-4">
-                                No meals found
+                                {{ __('No meals found') }}
                             </td>
                         </tr>
                     @endforelse
                 </tbody>
 
             </table>
+        </div>
+
+        <div class="mt-4">
+            {{ $meals->withQueryString()->links() }}
         </div>
 
     </div>

@@ -3,29 +3,45 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use RuntimeException;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // ===== Admin User =====
-        User::updateOrCreate(
-            ['email' => 'admin@gmail.com'], // شرط البحث
-            [
-                'name'     => 'Admin',
-                'phone'    => '0590000000',
-                'password' => Hash::make('123456789'),
-                'role'     => 'admin',
-            ]
-        );
+        $adminEmail = env('ADMIN_EMAIL');
+        $adminPassword = env('ADMIN_PASSWORD');
+
+        if (app()->isProduction()) {
+            if (empty($adminEmail) || empty($adminPassword)) {
+                throw new RuntimeException('ADMIN_EMAIL and ADMIN_PASSWORD environment variables are required in production.');
+            }
+        } else {
+            $adminEmail = $adminEmail ?: 'admin@wajbati.local';
+            if (empty($adminPassword)) {
+                $adminPassword = Str::random(16);
+                $this->command?->warn("Generated random admin password for local development: {$adminPassword}");
+            }
+        }
+
+        $admin = User::firstOrNew(['email' => $adminEmail]);
+        $admin->name = 'Wajbati Admin';
+        $admin->phone = $admin->phone ?: '0590000000';
+        $admin->password = Hash::make($adminPassword);
+        $admin->role = 'admin';
+        $admin->save();
 
         $this->call([
             CategorySeeder::class,
-            MealSeeder::class,
         ]);
+
+        if (! app()->isProduction()) {
+            $this->call([
+                DemoSeeder::class,
+            ]);
+        }
     }
 }
-

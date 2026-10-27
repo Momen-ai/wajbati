@@ -1,0 +1,73 @@
+## 3. Phase order and gates
+
+| Phase | Scope | Gate to proceed |
+|---|---|---|
+| 0 | F-01 … F-09 | All Phase-0 regression tests green; `images:audit` exists; no secrets in repo |
+| 1 | F-10 … F-20 | Route-integrity + authorization-matrix tests green |
+| 2 | F-21 … F-25 | i18n key test green; storefront loads with zero external requests (verify with a headless check or `grep` for `http` in layouts) |
+| 3 | F-26 | Full suite green on sqlite AND MySQL; coverage ≥ 80 % on `app/`; CI file committed |
+| 4 | F-27 … F-28 | README commands verified from a clean clone |
+| 5 | Improvements | Each item ships with tests + translations |
+
+### 3.1 Parallel streams per phase (designed with disjoint file ownership)
+
+`dep` = must be merged first. Merge in the order listed. Orchestrator adds a reviewer sub-agent per stream (rule 8) and, at the end of Phase 0 and 1, the red-team agent (rule 9).
+
+| Phase | Stream | Findings | Owns (main files) | dep |
+|---|---|---|---|---|
+| 0 | **S0-A Uploads** | F-01 (all endpoints except `UsersController`) | `Traits/HandlesImageUploads.php`, `Console/Commands/ImagesAudit.php`, `ProfileController::update` (image part), `Chef/MealController`, `Dashboard/MealController`, upload tests | — |
+| 0 | **S0-C Accounts & data integrity** | F-07, F-08, F-09 (+ F-01 image rules inside `UsersController`) | `Models/User.php`, `Dashboard/UsersController`, `ProfileController::destroy`, seeders, factories (states `admin()`/`chef()`), soft-delete/FK migrations, README credential removal | S0-A |
+| 0 | **S0-B Commerce core** | F-02, F-03, F-04, F-05, F-06 | `Front/CartController`, `Front/OrderController`, `Services/{CartService,OrderService,OrderPaymentService,OrderStats}`, `Contracts/PaymentGateway`, `config/shop.php`, `Order`/`OrderItem`/`Payment` models, front cart+order views, order migrations, commerce tests (may nest one sub-agent for payment lifecycle + `OrderStats` after `OrderService` lands) | S0-C |
+| 1 | **S1-A Admin & routing** | F-10, F-11, F-13, F-25 (admin parts) | `routes/admin.php` block, `Dashboard/{Cart,Category,Contact,Favourite,Rating}Controller`, admin views (except orders), `Front/ContactController`, newsletter tables, `Paginator::useBootstrapFive` | Phase 0 |
+| 1 | **S1-B Storefront rules** | F-12, F-15, F-20 | `Front/MealController`, `Chef/MealController` (new fields), `Rating` model + `RatingPolicy`, meal views, `meals` migrations | Phase 0 |
+| 1 | **S1-C Auth & profile** | F-14, F-16, F-17 | `Auth/*`, `Requests/Auth/LoginRequest`, `ProfileUpdateRequest`, `ProfileController::update/addAddress`, rate limiters, `MustVerifyEmail` | Phase 0 |
+| 1 | **S1-D Order workflow & notifications** | F-18, F-19 | `Notifications/*`, `Chef/OrderController`, `Dashboard/OrderController`, `OrderService` additions, `order_status_histories`, chef/admin order views, customer timeline view | Phase 0 (S0-B) |
+| 2 | **S2-A Assets & layout** | F-23 | `layouts/*`, `vite.config.js`, `package.json`, `public/assets/*`, placeholder image, deletion of dead JS and `routes.txt` | Phase 1 |
+| 2 | **S2-B Performance** | F-24 | controllers/models/services for queries, `OrderStats` caching, index migration, `preventLazyLoading` fixes | Phase 1 |
+| 2 | **S2-D Cleanup** | F-25 (rest) | dead code, stray comments/imports, `pint.json`, `MealIndexRequest` | Phase 1 |
+| 2 | **S2-C i18n / currency / RTL** (runs AFTER S2-A, S2-B, S2-D are merged) | F-21, F-22 | split into 3 sub-agents by directory: (1) `resources/views/front/**`, (2) `resources/views/admin/**`, (3) `auth/**`, `profile/**`, `layouts/**`, controller flash messages, notifications, `lang/ar/validation.php`; Impeccable `harden`/`clarify`/`adapt`/`polish` pass after the merge | S2-A, S2-B, S2-D |
+| 3 | **S3-A Test infra** (first, ~small) | F-26 (a)(b) | `tests/TestCase.php`, `OrderStatusTest` data providers, Pest migration | Phase 2 |
+| 3 | **S3-B CI & static analysis** | F-26 CI | `.github/workflows/ci.yml`, `pint.json`, Larastan config | S3-A |
+| 3 | **S3-C Cross-cutting tests** | F-26 | authorization matrix, route-integrity, i18n-key test | S3-A |
+| 3 | **S3-D Coverage gaps** (up to 3 sub-agents by domain: commerce / accounts / content) | F-26 | `tests/Feature/**` by domain until ≥ 80 % on `app/` | S3-A |
+| 4 | **S4-A Docs** | F-27 | `README.md`, `.env.example`, `docs/*` (ER + status diagrams in Mermaid) | Phase 3 |
+| 4 | **S4-B Production hardening** | F-28 | `SecurityHeaders` middleware, trust proxies, error pages, Sentry, optional Docker | Phase 3 |
+| 5 | **S5-n One stream per feature** (items 1-7, max 4 at once) | Phase 5 list | each feature's own controllers/views/migrations/tests/translations; Impeccable before/after review for UI | Phase 4 |
+
+---
+
+## 4. Regression scenarios to turn into permanent tests (all reproduced by running them against the current code, except R6/R7 which are confirmed by reading the code)
+
+| ID | Scenario | Current (buggy) result | Required result |
+|---|---|---|---|
+| P1 | `POST /cart/add quantity=-5`, then checkout | order total −47, item qty −5 | 422, nothing stored |
+| P1b | `quantity=abc` / `99999999` | 500 / accepted | 422 |
+| P2 | `PATCH /cart/update id=99999` then `GET /cart` | 500 | 422, cart intact |
+| P3 | 2 meals from 2 chefs, card | 2 orders [13, 23], both `paid`, no phone stored | card disabled; fee shown per chef; `phone` stored; payment `pending` |
+| P4 | `address_id` of another user | order saved with `address = NULL` | 422 |
+| P5 | Guest contact form | name/email not stored | stored + visible to admin |
+| P6 | `GET /chef/meals/{id}`, `/dashboard/category/{id}`, `/dashboard/contacts/{id}/edit` | 500 | 404/405 (route removed) |
+| P7 | Same user rates same meal 3×; chef rates own meal; no purchase | 4 ratings stored | 1 per user/meal; chef & non-buyer rejected |
+| P8 | `PATCH /profile` with another user's phone | 500 | 422 validation error |
+| P9 | Admin `PUT /dashboard/users/{id}` with `shell.php` as `image` | stored `users/<hash>.php` | 422 |
+| P9b | Customer `PATCH /profile` with `shell.php` as `image` | 302, stored `chefs/<hash>.php` | 422, nothing stored |
+| P10 | Chef deletes a meal that is in a completed order | 0 order items remain | order items kept (snapshot name/price) |
+| P11 | Chef deletes account with customer orders; admin deletes self | orders gone; 0 admins | blocked / anonymized; last admin protected |
+| P12 | `User instanceof MustVerifyEmail` | false | true; unverified user can't checkout |
+| P13 | Admin lists with >15 rows | no page links | page links present, `?page=2` works |
+| Q8 | 8 registrations in a row from one IP | all succeed | 429 after limit |
+| Q9 | Meal price 5→500 after add-to-cart, then checkout | charged 5 + fee | charged 500 + fee (or rejected with "price changed") |
+| R4 | Chef orders own meal | order created | forbidden |
+| R5 | Card order, chef rejects | `payment_status` stays `paid` | `failed`/`refund_pending`; excluded from revenue |
+| R6 | Cash order delivered | `payment_status` stays `pending` forever | becomes `paid`; included in revenue |
+| R7 | Mail transport throws during checkout | order rolled back, raw exception shown | order stored, mail queued/reported, generic message |
+
+## 5. Definition of done
+
+- `php artisan test` green on SQLite and MySQL; `vendor/bin/pint --test` clean; larastan level 6 clean; CI green.
+- Every F-xx finding is marked **Fixed / Won't fix (with reason) / Deferred (with reason)** in `docs/REFACTOR_REPORT.md` with: files changed, migration names, tests added.
+- Every stream passed an independent reviewer sub-agent, and Phases 0 and 1 also passed the red-team agent; the report lists, per stream: branch, owner agent, files, tests (RED→GREEN evidence), reviewer verdict.
+- The report states which skills were really used (Superpowers: plans in `docs/plans/`, review notes; Impeccable: `docs/ui-review/*-before|after.md`) — or why a fallback was used.
+- Fresh clone → follow README only → app boots with Arabic RTL UI, images visible, queue processing, zero third-party CDN requests, no PHP-executable uploads possible, no default credentials.
+- Manual smoke script in the report: register → verify email → add 2 meals from 2 chefs → checkout (cash) → chef accepts → prepares → delivers → payment marked paid → customer rates → admin sees correct revenue.
+

@@ -23,7 +23,7 @@
                     @auth
                         @if (auth()->user()->role === 'admin')
                             <x-nav-link :href="route('dashboard.users.index')" :active="request()->routeIs('dashboard.users.*')">
-                                Users
+                                {{ __('Users') }}
                             </x-nav-link>
                         @endif
                     @endauth
@@ -35,14 +35,6 @@
 
                     <x-nav-link :href="route('dashboard.orders.index')" :active="request()->routeIs('dashboard.orders.*')">
                         {{ __('Orders') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('dashboard.cart.index')" :active="request()->routeIs('dashboard.cart.*')">
-                        {{ __('Cart') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('dashboard.favourites.index')" :active="request()->routeIs('dashboard.favourites.*')">
-                        {{ __('Favourites') }}
                     </x-nav-link>
 
                     <x-nav-link :href="route('dashboard.ratings.index')" :active="request()->routeIs('dashboard.ratings.*')">

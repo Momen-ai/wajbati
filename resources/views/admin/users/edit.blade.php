@@ -5,7 +5,7 @@
 
             <div class="card shadow-sm">
                 <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">Edit User</h5>
+                    <h5 class="mb-0">{{ __('Edit User') }}</h5>
                 </div>
 
                 <div class="card-body">
@@ -15,7 +15,7 @@
 
                         {{-- Name --}}
                         <div class="mb-3">
-                            <label class="form-label">Name</label>
+                            <label class="form-label">{{ __('Name') }}</label>
                             <input
                                 type="text"
                                 name="name"
@@ -29,7 +29,7 @@
 
                         {{-- Email --}}
                         <div class="mb-3">
-                            <label class="form-label">Email</label>
+                            <label class="form-label">{{ __('Email') }}</label>
                             <input
                                 type="email"
                                 name="email"
@@ -43,7 +43,7 @@
 
                         {{-- Phone --}}
                         <div class="mb-3">
-                            <label class="form-label">Phone</label>
+                            <label class="form-label">{{ __('Phone') }}</label>
                             <input
                                 type="text"
                                 name="phone"
@@ -58,7 +58,7 @@
                         {{-- Password (Optional) --}}
                         <div class="mb-3">
                             <label class="form-label">
-                                Password <small class="text-muted">(leave blank to keep current)</small>
+                                {{ __('Password') }} <small class="text-muted">({{ __('leave blank to keep current') }})</small>
                             </label>
                             <input
                                 type="password"
@@ -71,21 +71,20 @@
                         </div>
 
                         <div class="mb-3">
-                                <label for="image" class="form-label">Image</label>
-                                <input type="file" id="image" name="image" class="form-control"
-                                    value="{{ $user->image }}">
-                            </div>
+                            <label for="image" class="form-label">{{ __('Image') }}</label>
+                            <input type="file" id="image" name="image" class="form-control">
+                        </div>
 
                         {{-- Role --}}
                         <div class="mb-4">
-                            <label class="form-label">Role</label>
+                            <label class="form-label">{{ __('Role') }}</label>
                             <select
                                 name="role"
                                 class="form-select @error('role') is-invalid @enderror"
                             >
-                                <option value="user"  @selected(old('role', $user->role) === 'user')>User</option>
-                                <option value="chef"  @selected(old('role', $user->role) === 'chef')>Chef</option>
-                                <option value="admin" @selected(old('role', $user->role) === 'admin')>Admin</option>
+                                <option value="user"  @selected(old('role', $user->role) === 'user')>{{ __('User') }}</option>
+                                <option value="chef"  @selected(old('role', $user->role) === 'chef')>{{ __('Chef') }}</option>
+                                <option value="admin" @selected(old('role', $user->role) === 'admin')>{{ __('Admin') }}</option>
                             </select>
                             @error('role')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -95,10 +94,10 @@
                         {{-- Actions --}}
                         <div class="d-flex justify-content-end gap-2">
                             <a href="{{ route('dashboard.users.index') }}" class="btn btn-secondary">
-                                Cancel
+                                {{ __('Cancel') }}
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                Update User
+                                {{ __('Update User') }}
                             </button>
                         </div>
 
@@ -110,4 +109,3 @@
     </div>
 </div>
 </x-app-layout>
-

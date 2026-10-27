@@ -2,10 +2,7 @@
     <div class="container mt-4">
 
         <div class="d-flex justify-content-between mb-3">
-            <h4>Contacts</h4>
-            <a href="{{ route('dashboard.contacts.create') }}" class="btn btn-success">
-                New Message
-            </a>
+            <h4>{{ __('Contacts') }}</h4>
         </div>
 
         <div class="card shadow-sm">
@@ -14,11 +11,11 @@
                     <thead class="table-dark text-center">
                         <tr>
                             <th>#</th>
-                            <th>Sender</th>
-                            <th>Type</th>
-                            <th>Title</th>
-                            <th>Status</th>
-                            <th width="180">Actions</th>
+                            <th>{{ __('Sender') }}</th>
+                            <th>{{ __('Type') }}</th>
+                            <th>{{ __('Title') }}</th>
+                            <th>{{ __('Status') }}</th>
+                            <th width="180">{{ __('Actions') }}</th>
                         </tr>
                     </thead>
 
@@ -30,32 +27,32 @@
                                 <td>
                                     @if ($contact->user)
                                         <span class="badge bg-primary">
-                                            {{ $contact->user->name }} (User)
+                                            {{ $contact->user->name }} ({{ __('User') }})
                                         </span>
                                     @elseif ($contact->chef)
                                         <span class="badge bg-warning text-dark">
-                                            {{ $contact->chef->name }} (Chef)
+                                            {{ $contact->chef->name }} ({{ __('Chef') }})
                                         </span>
                                     @else
-                                        <span class="text-muted">Guest</span>
+                                        <span class="text-muted">{{ __('Guest') }}</span>
                                     @endif
                                 </td>
 
-                                <td>{{ ucfirst($contact->type) }}</td>
+                                <td>{{ __(ucfirst($contact->type)) }}</td>
                                 <td>{{ $contact->title }}</td>
 
                                 <td>
                                     @if ($contact->is_read)
-                                        <span class="badge bg-success">Read</span>
+                                        <span class="badge bg-success">{{ __('Read') }}</span>
                                     @else
-                                        <span class="badge bg-secondary">Unread</span>
+                                        <span class="badge bg-secondary">{{ __('Unread') }}</span>
                                     @endif
                                 </td>
 
                                 <td>
                                     <a href="{{ route('dashboard.contacts.show', $contact->id) }}"
                                         class="btn btn-sm btn-primary">
-                                        View
+                                        {{ __('View') }}
                                     </a>
 
                                     <form method="POST"
@@ -64,7 +61,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn btn-sm btn-danger">
-                                            Delete
+                                            {{ __('Delete') }}
                                         </button>
                                     </form>
                                 </td>
@@ -75,7 +72,9 @@
             </div>
         </div>
 
-        {{ $contacts->links() }}
+        <div class="mt-4">
+            {{ $contacts->withQueryString()->links() }}
+        </div>
 
     </div>
 </x-app-layout>

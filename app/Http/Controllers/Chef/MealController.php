@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Chef;
 
 use App\Http\Controllers\Controller;
-use App\Models\Meal;
 use App\Models\Category;
+use App\Models\Meal;
 use App\Traits\HandlesImageUploads;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,26 +17,32 @@ class MealController extends Controller
     public function index()
     {
         $meals = Meal::where('chef_id', Auth::id())->with('category')->orderBy('id', 'desc')->paginate(10);
+
         return view('front.chef.meals.index', compact('meals'));
     }
 
     public function create()
     {
         $categories = Category::all();
+
         return view('front.chef.meals.create', compact('categories'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'        => 'required|string|max:255',
-            'price'       => 'required|numeric|min:0',
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'number_persons' => 'nullable|integer|min:1|max:50',
+            'is_available' => 'nullable|boolean',
+            'prep_time_minutes' => 'nullable|integer|min:1|max:1440',
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
-            'image'       => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         $validated['chef_id'] = Auth::id();
+        $validated['is_available'] = $request->has('is_available') ? $request->boolean('is_available') : true;
 
         $meal = Meal::create($validated);
 
@@ -45,7 +51,7 @@ class MealController extends Controller
             $meal->image()->create(['image_path' => $path]);
         }
 
-        return redirect()->route('chef.meals.index')->with('success', 'Meal created successfully.');
+        return redirect()->route('chef.meals.index')->with('success', __('Meal created successfully.'));
     }
 
     public function edit(Meal $meal)
@@ -53,6 +59,7 @@ class MealController extends Controller
         Gate::authorize('update', $meal);
 
         $categories = Category::all();
+
         return view('front.chef.meals.edit', compact('meal', 'categories'));
     }
 
@@ -61,12 +68,17 @@ class MealController extends Controller
         Gate::authorize('update', $meal);
 
         $validated = $request->validate([
-            'name'        => 'required|string|max:255',
-            'price'       => 'required|numeric|min:0',
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'number_persons' => 'nullable|integer|min:1|max:50',
+            'is_available' => 'nullable|boolean',
+            'prep_time_minutes' => 'nullable|integer|min:1|max:1440',
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
-            'image'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
+
+        $validated['is_available'] = $request->boolean('is_available');
 
         if ($request->hasFile('image')) {
             $this->replaceImage($meal, $request->file('image'), 'meals');
@@ -74,7 +86,7 @@ class MealController extends Controller
 
         $meal->update($validated);
 
-        return redirect()->route('chef.meals.index')->with('success', 'Meal updated successfully.');
+        return redirect()->route('chef.meals.index')->with('success', __('Meal updated successfully.'));
     }
 
     public function destroy(Meal $meal)
@@ -84,6 +96,6 @@ class MealController extends Controller
         $this->deleteImage($meal);
         $meal->delete();
 
-        return redirect()->route('chef.meals.index')->with('success', 'Meal deleted successfully.');
+        return redirect()->route('chef.meals.index')->with('success', __('Meal deleted successfully.'));
     }
 }

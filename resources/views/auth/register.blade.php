@@ -6,8 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Wajbati') }} - {{ __('Register') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/images/logo.png') }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    @if(app()->getLocale() == 'ar')
+        @vite(['resources/css/app-rtl.css', 'resources/js/app.js'])
+    @else
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @endif
     <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
 </head>
 
@@ -61,7 +64,7 @@
 
                     <div class="form-floating mb-3">
                         <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                            id="emailInput" placeholder="Email Address" value="{{ old('email') }}" required>
+                            id="emailInput" placeholder="{{ __('Email Address') }}" value="{{ old('email') }}" required>
                         <label for="emailInput">{{ __('Email Address') }}</label>
                         @error('email')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -115,8 +118,6 @@
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

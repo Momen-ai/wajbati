@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('chef_id')->constrained('users')->onDelete('cascade');
-            $table->decimal('total',10,2);
+            $table->decimal('total', 10, 2);
             $table->string('address')->nullable();
             $table->integer('processing_time')->nullable();
             $table->timestamp('delivery_time')->nullable();
-            $table->enum('status',['pending','accepted','preparing','prepared','delivered','completed','rejected','cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'accepted', 'preparing', 'prepared', 'delivered', 'completed', 'rejected', 'cancelled'])->default('pending');
             $table->timestamps();
         });
     }

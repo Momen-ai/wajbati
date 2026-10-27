@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Front;
 
-use App\Models\User;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\User;
 
 class ChefController extends Controller
 {
     public function index()
     {
         $chefs = User::where('role', 'chef')
-            ->with(['image', 'meals'])
+            ->with('image')
+            ->withCount('meals')
             ->latest()
             ->paginate(12);
 
