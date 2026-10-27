@@ -190,7 +190,7 @@
                                         <img src="{{ asset('storage/' . $related->image->image_path) }}"
                                             alt="{{ $related->name }}">
                                     @else
-                                        <img src="https://placehold.co/400x300?text=No+Image" alt="{{ $related->name }}">
+                                        <img src="{{ asset('assets/images/placeholder.svg') }}" alt="{{ $related->name }}">
                                     @endif
                                 </a>
                             </div>

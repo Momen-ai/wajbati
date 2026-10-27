@@ -34,7 +34,7 @@ This report tracks the status, implementation details, test additions, and verif
 | **F-20** | Meal Availability & Serving Quantities | **Fixed** | `app/Models/Meal.php`, `app/Http/Controllers/Chef/MealController.php`, `app/Http/Controllers/Dashboard/MealController.php`, `app/Services/OrderService.php`, Chef/Admin meal forms, storefront views | `2026_10_19_200100_add_availability_to_meals_and_unique_to_ratings.php` | `tests/Feature/MealAvailabilityTest.php` | `MealAvailabilityTest` (4 passed: chef create/update with fields, availability storefront filtering, checkout unavailability rejection) |
 | **F-21** | Currency Helper & Timezone Defaults | **Fixed** | `app/helpers.php`, `config/app.php`, `.env.example`, all views | None | `tests/Feature/I18nCoverageTest.php` | `Tests: 4 passed (I18nCoverageTest > money helper formats currency correctly, no literal dollar patterns)` |
 | **F-22** | Complete i18n & RTL Coverage | **Fixed** | `lang/ar.json`, `lang/en.json`, `lang/ar/validation.php`, `.env.example`, resources/views | None | `tests/Feature/I18nCoverageTest.php` | `Tests: 4 passed (I18nCoverageTest > all translation keys defined, lang pending empty)` |
-| **F-23** | Asset Bundling & CDN Cleanup | **Partial** | `public/assets/images/placeholder.svg`, deleted dead JS, `tests/TestCase.php` | None | None | Bundling via Vite pending in Step 4 |
+| **F-23** | Asset Bundling & CDN Cleanup | **Fixed** | `package.json`, `vite.config.js`, `resources/css/*`, `resources/js/*`, views layouts, `docs/DECISIONS.md` | None | `tests/Feature/AssetSecurityTest.php` | `Tests: 2 passed (AssetSecurityTest > no third party asset urls, placeholder svg exists), npm run build passes cleanly` |
 | **F-24** | Performance & Database Indexes | **Partial** | `database/migrations/2026_10_20_200100_add_performance_indexes.php`, `app/Services/OrderStats.php`, `AppServiceProvider.php` | `2026_10_20_200100_add_performance_indexes.php` | None | Verification & cache tests in Step 5 |
 | **F-25** | Code Quality & Search Validation | **Fixed** | `app/Http/Requests/MealIndexRequest.php`, `pint.json`, `app/Http/Controllers/Front/MealController.php` | None | None | Linted and validated |
 | **F-26** | Comprehensive Test Suite & CI | **Not started** | None | None | None | Scheduled for Phase 3 (Step 7) |
@@ -44,5 +44,4 @@ This report tracks the status, implementation details, test additions, and verif
 ---
 
 ## NEXT
-- **STEP 4 — F-23 Asset Bundling & CDN Cleanup**: Install Vite bundle (Bootstrap 5 RTL, self-host Cairo font, Chart.js, placeholder SVG), remove all CDN references and add a third-party host detection test.
 - **STEP 5 — F-24 Performance & Verification**: Monthly revenue grouped query verification, popular meals 30-day window check, dashboard cache invalidation on order status changes, and MySQL compatibility check.

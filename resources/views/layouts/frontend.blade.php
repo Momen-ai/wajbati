@@ -22,13 +22,10 @@
 
     <!-- Styles -->
     @if(app()->getLocale() == 'ar')
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-        <style>body { font-family: 'Cairo', sans-serif; }</style>
+        @vite(['resources/css/app-rtl.css', 'resources/js/app.js'])
     @else
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
 
     @stack('styles')
@@ -264,8 +261,6 @@
         </div>
     </footer>
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     @stack('scripts')
 </body>
 

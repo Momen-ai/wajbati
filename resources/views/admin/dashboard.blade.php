@@ -1,6 +1,5 @@
 <x-app-layout>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
         :root {
             --primary: #6366f1;
@@ -295,7 +294,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const ctx = document.getElementById('revenueChart').getContext('2d');

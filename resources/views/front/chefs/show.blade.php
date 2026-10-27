@@ -54,7 +54,7 @@
                                 @if ($meal->image)
                                     <img src="{{ asset('storage/' . $meal->image->image_path) }}" alt="{{ $meal->name }}">
                                 @else
-                                    <img src="https://placehold.co/600x400?text=No+Image" alt="{{ $meal->name }}">
+                                    <img src="{{ asset('assets/images/placeholder.svg') }}" alt="{{ $meal->name }}">
                                 @endif
                             </a>
                             <span class="card-badge text-primary-custom">{{ $meal->category->name ?? 'Special' }}</span>
