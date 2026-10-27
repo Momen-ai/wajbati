@@ -72,14 +72,14 @@
                                             @csrf
                                             @method('PATCH')
                                             <select name="status" class="form-select form-select-sm border-secondary bg-secondary text-light me-2" onchange="this.form.submit()" style="width: 130px;">
-                                                <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                                <option value="accepted" {{ $order->status == 'accepted' ? 'selected' : '' }}>Accepted</option>
-                                                <option value="preparing" {{ $order->status == 'preparing' ? 'selected' : '' }}>Preparing</option>
-                                                <option value="prepared" {{ $order->status == 'prepared' ? 'selected' : '' }}>Prepared</option>
-                                                <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Delivered</option>
-                                                <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Completed</option>
-                                                <option value="rejected" {{ $order->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                                <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                                <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>{{ __('Pending') }}</option>
+                                                <option value="accepted" {{ $order->status == 'accepted' ? 'selected' : '' }}>{{ __('Accepted') }}</option>
+                                                <option value="preparing" {{ $order->status == 'preparing' ? 'selected' : '' }}>{{ __('Preparing') }}</option>
+                                                <option value="prepared" {{ $order->status == 'prepared' ? 'selected' : '' }}>{{ __('Prepared') }}</option>
+                                                <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>{{ __('Delivered') }}</option>
+                                                <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>{{ __('Completed') }}</option>
+                                                <option value="rejected" {{ $order->status == 'rejected' ? 'selected' : '' }}>{{ __('Rejected') }}</option>
+                                                <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>{{ __('Cancelled') }}</option>
                                             </select>
                                         </form>
                                         <a href="{{ route('chef.orders.show', $order->id) }}" class="btn btn-sm btn-outline-primary ms-1"><i class="fas fa-eye"></i></a>
@@ -97,8 +97,8 @@
             @else
             <div class="text-center py-5">
                 <div class="mb-3"><i class="fas fa-clipboard-list fa-4x text-light opacity-25"></i></div>
-                <h3 class="text-light">No orders yet</h3>
-                <p class="text-light">Wait for customers to discover your delicious meals!</p>
+                <h3 class="text-light">{{ __('No orders yet') }}</h3>
+                <p class="text-light">{{ __('Wait for customers to discover your delicious meals!') }}</p>
             </div>
             @endif
         </div>

@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container py-5">
-  <h2 class="fw-bold mb-4 text-light">My Orders</h2>
+  <h2 class="fw-bold mb-4 text-light">{{ __('My Orders') }}</h2>
 
   <div class="row g-4">
       @forelse($orders as $order)
@@ -18,31 +18,31 @@
                         default => 'secondary'
                     };
                 @endphp
-                <span class="badge bg-{{ $statusColor }} bg-opacity-10 text-{{ $statusColor }} px-3 py-2 rounded-pill fw-bold text-uppercase">{{ $order->status }}</span>
+                <span class="badge bg-{{ $statusColor }} bg-opacity-10 text-{{ $statusColor }} px-3 py-2 rounded-pill fw-bold text-uppercase">{{ __($order->status) }}</span>
                 <small class="text-light">#{{ $order->id }}</small>
             </div>
             <div class="card-body px-4">
                 <h5 class="fw-bold mb-1 text-light">
-                    {{ $order->items->first()->meal->name }} 
+                    {{ $order->items->first()?->meal?->name ?? __('Meal') }} 
                     @if($order->items->count() > 1) 
-                        <span class="text-light small opacity-75">+ {{ $order->items->count() - 1 }} more</span>
+                        <span class="text-light small opacity-75">+ {{ $order->items->count() - 1 }} {{ __('more') }}</span>
                     @endif
                 </h5>
-                <p class="text-light small mb-3">Ordered on {{ $order->created_at->format('M d, Y') }}</p>
+                <p class="text-light small mb-3">{{ __('Ordered on') }} {{ $order->created_at->format('Y-m-d') }}</p>
                 <div class="d-flex align-items-center mb-3">
                     <div class="bg-secondary text-light rounded-circle p-2 me-2"><i class="fas fa-store"></i></div>
-                    <small class="fw-bold text-light">{{ $order->chef->name ?? 'Chef' }}</small>
+                    <small class="fw-bold text-light">{{ $order->chef->name ?? __('Chef') }}</small>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mt-4 border-top border-secondary border-opacity-10 pt-3">
                     <span class="fw-bold h5 mb-0 text-primary">{{ money($order->total) }}</span>
-                    <a href="{{ route('orders.show', $order->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">Details</a>
+                    <a href="{{ route('orders.show', $order->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">{{ __('Details') }}</a>
                 </div>
             </div>
         </div>
       </div>
       @empty
       <div class="col-12 text-center py-5">
-          <div class="alert alert-info">No orders found.</div>
+          <div class="alert alert-info">{{ __('No orders found.') }}</div>
       </div>
       @endforelse
   </div>

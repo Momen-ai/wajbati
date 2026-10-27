@@ -41,7 +41,7 @@
                     style="width:42px;height:42px">
                     <i class="fas fa-utensils"></i>
                 </div>
-                <span class="brand-text">Wajbati</span>
+                <span class="brand-text">{{ __('Wajbati') }}</span>
             </a>
             
             <button class="navbar-toggler border-0 p-2 shadow-none" type="button"
@@ -112,11 +112,11 @@
 
                     <li class="nav-item dropdown me-3">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-globe me-1"></i> {{ app()->getLocale() == 'ar' ? 'العربية' : 'English' }}
+                            <i class="fas fa-globe me-1"></i> {{ app()->getLocale() == 'ar' ? __('Arabic') : __('English') }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark border border-secondary border-opacity-10 shadow">
-                            <li><a class="dropdown-item" href="{{ route('lang.switch', 'en') }}">English</a></li>
-                            <li><a class="dropdown-item" href="{{ route('lang.switch', 'ar') }}">العربية</a></li>
+                            <li><a class="dropdown-item" href="{{ route('lang.switch', 'en') }}">{{ __('English') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ route('lang.switch', 'ar') }}">{{ __('Arabic') }}</a></li>
                         </ul>
                     </li>
 
@@ -211,7 +211,7 @@
                 <div class="col-lg-4">
                     <a class="navbar-brand d-flex align-items-center mb-4 text-light" href="#">
                         <i class="fas fa-utensils text-primary-custom me-2 fa-lg"></i>
-                        <span class="fw-bold h4 m-0">Wajbati</span>
+                        <span class="fw-bold h4 m-0">{{ __('Wajbati') }}</span>
                     </a>
                     <p class="text-muted small mb-4">{{ __('Connecting food lovers with home chefs. Experience the taste of home, anytime, anywhere. Support local families and enjoy fresh meals.') }}</p>
                     <div class="social-links d-flex gap-3">

@@ -2,7 +2,7 @@
     <div class="container mt-5 col-md-8">
 
         <div class="card">
-            <div class="card-header bg-dark text-white">Edit Rating</div>
+            <div class="card-header bg-dark text-white">{{ __('Edit Rating') }}</div>
 
             <div class="card-body">
                 <form method="POST" action="{{ route('dashboard.ratings.update', $rating->id) }}">
@@ -10,7 +10,7 @@
                     @method('PUT')
 
                     <div class="mb-3">
-                        <label>User</label>
+                        <label class="form-label">{{ __('User') }}</label>
                         <select name="user_id" class="form-select">
                             @foreach ($users as $user)
                                 <option value="{{ $user->id }}" @selected($rating->user_id == $user->id)>
@@ -21,7 +21,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Chef</label>
+                        <label class="form-label">{{ __('Chef') }}</label>
                         <select name="chef_id" class="form-select">
                             @foreach ($chefs as $chef)
                                 <option value="{{ $chef->id }}" @selected($rating->chef_id == $chef->id)>
@@ -32,7 +32,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Stars</label>
+                        <label class="form-label">{{ __('Stars') }}</label>
                         <select name="star" class="form-select">
                             @for ($i = 1; $i <= 5; $i++)
                                 <option value="{{ $i }}" @selected($rating->star == $i)>
@@ -43,11 +43,16 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Comment</label>
-                        <textarea name="body" class="form-control">{{ $rating->body }}</textarea>
+                        <label class="form-label">{{ __('Comment') }}</label>
+                        <textarea name="body" class="form-control" rows="3">{{ $rating->body }}</textarea>
                     </div>
 
-                    <button class="btn btn-primary">Update</button>
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ route('dashboard.ratings.index') }}" class="btn btn-secondary">
+                            {{ __('Cancel') }}
+                        </a>
+                        <button class="btn btn-primary">{{ __('Update') }}</button>
+                    </div>
                 </form>
             </div>
 

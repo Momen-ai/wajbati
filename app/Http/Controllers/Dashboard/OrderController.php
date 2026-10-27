@@ -67,7 +67,7 @@ class OrderController extends Controller
 
         return redirect()
             ->route('dashboard.orders.index')
-            ->with('success', 'Order created successfully');
+            ->with('success', __('Order created successfully.'));
     }
 
     public function show(Order $order)
@@ -144,7 +144,7 @@ class OrderController extends Controller
 
         return redirect()
             ->route('dashboard.orders.index')
-            ->with('success', 'Order deleted successfully');
+            ->with('success', __('Order deleted successfully.'));
     }
 }
 

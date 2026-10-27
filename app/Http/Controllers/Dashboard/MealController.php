@@ -63,7 +63,7 @@ class MealController extends Controller
 
         return redirect()
             ->route('dashboard.meals.index')
-            ->with('success', 'Meal created successfully');
+            ->with('success', __('Meal created successfully.'));
     }
 
     /**
@@ -120,7 +120,7 @@ class MealController extends Controller
 
         return redirect()
             ->route('dashboard.meals.index')
-            ->with('success', 'Meal updated successfully');
+            ->with('success', __('Meal updated successfully.'));
     }
 
     /**
@@ -133,6 +133,6 @@ class MealController extends Controller
 
         return redirect()
             ->route('dashboard.meals.index')
-            ->with('success', 'Meal deleted successfully');
+            ->with('success', __('Meal deleted successfully.'));
     }
 }

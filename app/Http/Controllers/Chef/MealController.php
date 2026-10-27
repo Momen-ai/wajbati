@@ -51,7 +51,7 @@ class MealController extends Controller
             $meal->image()->create(['image_path' => $path]);
         }
 
-        return redirect()->route('chef.meals.index')->with('success', 'Meal created successfully.');
+        return redirect()->route('chef.meals.index')->with('success', __('Meal created successfully.'));
     }
 
     public function edit(Meal $meal)
@@ -86,7 +86,7 @@ class MealController extends Controller
 
         $meal->update($validated);
 
-        return redirect()->route('chef.meals.index')->with('success', 'Meal updated successfully.');
+        return redirect()->route('chef.meals.index')->with('success', __('Meal updated successfully.'));
     }
 
     public function destroy(Meal $meal)
@@ -96,6 +96,6 @@ class MealController extends Controller
         $this->deleteImage($meal);
         $meal->delete();
 
-        return redirect()->route('chef.meals.index')->with('success', 'Meal deleted successfully.');
+        return redirect()->route('chef.meals.index')->with('success', __('Meal deleted successfully.'));
     }
 }

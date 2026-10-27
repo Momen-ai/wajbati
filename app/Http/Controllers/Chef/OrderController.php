@@ -35,8 +35,8 @@ class OrderController extends Controller
         if (! OrderStatusService::canTransitionTo($currentStatus, $newStatus)) {
             $allowed = implode(', ', OrderStatusService::getAllowedStatuses($currentStatus));
             $message = $allowed
-                ? "Cannot change status from '{$currentStatus}' to '{$newStatus}'. Allowed next statuses: {$allowed}."
-                : "Order status '{$currentStatus}' is terminal and cannot be changed.";
+                ? __("Cannot change status from ':from' to ':to'. Allowed next statuses: :allowed.", ['from' => $currentStatus, 'to' => $newStatus, 'allowed' => $allowed])
+                : __("Order status ':status' is terminal and cannot be changed.", ['status' => $currentStatus]);
 
             return back()->with('error', $message);
         }
@@ -58,7 +58,7 @@ class OrderController extends Controller
         // Notify the customer about the status change
         $order->user->notify(new OrderStatusUpdatedNotification($order));
 
-        return back()->with('success', 'Order status updated successfully.');
+        return back()->with('success', __('Order status updated successfully.'));
     }
 
     public function show(Order $order)

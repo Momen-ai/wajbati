@@ -5,9 +5,9 @@
     <div class="container py-5">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-light">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-light">{{ __('Home') }}</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('meals.index') }}"
-                        class="text-decoration-none text-light">Meals</a></li>
+                        class="text-decoration-none text-light">{{ __('Meals') }}</a></li>
                 <li class="breadcrumb-item active text-light" aria-current="page">{{ $meal->name }}</li>
             </ol>
         </nav>
@@ -54,30 +54,30 @@
                     <div class="card bg-secondary text-light border border-secondary border-opacity-10 p-3 mb-4 rounded-3 d-flex flex-row align-items-center">
                         <div class="bg-darker text-light rounded-circle p-1 me-3 shadow">
                             <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-light"
-                                style="width:48px;height:48px"><i class="fas fa-user-chef"></i></div>
+                                style="width:48px;height:48px"><i class="fas fa-utensils"></i></div>
                         </div>
                         <div>
                             <small class="text-light d-block text-uppercase fw-bold"
-                                style="font-size:0.7rem; letter-spacing:1px">Prepared by</small>
-                            <h6 class="mb-0 fw-bold">{{ $meal->chef->name ?? 'Unknown Chef' }}</h6>
+                                style="font-size:0.7rem; letter-spacing:1px">{{ __('Prepared by') }}</small>
+                            <h6 class="mb-0 fw-bold">{{ $meal->chef->name ?? __('Home Cook') }}</h6>
                         </div>
                     </div>
 
                     <div class="mb-4">
-                        <h5 class="fw-bold mb-2">Description</h5>
+                        <h5 class="fw-bold mb-2">{{ __('Description') }}</h5>
                         <p class="text-light">{{ $meal->description }}</p>
                     </div>
 
                     <!-- Add to Cart Box -->
                     <div class="card shadow-card p-4 border border-secondary border-opacity-10">
-                        <h5 class="fw-bold mb-3 text-light">Order Now</h5>
+                        <h5 class="fw-bold mb-3 text-light">{{ __('Order Now') }}</h5>
                         <form action="{{ route('cart.add') }}" method="POST">
                             @csrf
                             <input type="hidden" name="meal_id" value="{{ $meal->id }}">
 
                             <div class="d-flex align-items-end gap-3 mb-3">
                                 <div class="flex-grow-1">
-                                    <label class="form-label text-light small">Quantity</label>
+                                    <label class="form-label text-light small">{{ __('Quantity') }}</label>
                                     <div class="input-group">
                                         <button class="btn btn-outline-secondary" type="button"
                                             onclick="this.nextElementSibling.stepDown()"><i
@@ -110,17 +110,17 @@
 
                 <!-- Ratings & Reviews Section -->
                 <div class="mb-5">
-                    <h4 class="fw-bold mb-4 text-light">Reviews ({{ $meal->ratings_count ?? $meal->ratings->count() }})</h4>
+                    <h4 class="fw-bold mb-4 text-light">{{ __('Reviews') }} ({{ $meal->ratings_count ?? $meal->ratings->count() }})</h4>
 
                     <!-- Review Form -->
                     @auth
                         <div class="card shadow-card border border-secondary border-opacity-10 mb-5">
                             <div class="card-body p-4">
-                                <h5 class="fw-bold mb-3 text-light">Write a Review</h5>
+                                <h5 class="fw-bold mb-3 text-light">{{ __('Write a Review') }}</h5>
                                 <form action="{{ route('meals.rate', $meal->id) }}" method="POST">
                                     @csrf
                                     <div class="mb-3">
-                                        <label class="form-label small fw-bold text-light">Rating</label>
+                                        <label class="form-label small fw-bold text-light">{{ __('Rating') }}</label>
                                         <div class="d-flex gap-2">
                                             @for ($i = 5; $i >= 1; $i--)
                                                 <input type="radio" class="btn-check" name="star"
@@ -133,16 +133,16 @@
                                         </div>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label small fw-bold text-light">Your Review</label>
-                                        <textarea name="body" class="form-control bg-secondary text-light border-secondary border-opacity-10" rows="3" placeholder="Share your experience..."></textarea>
+                                        <label class="form-label small fw-bold text-light">{{ __('Your Review') }}</label>
+                                        <textarea name="body" class="form-control bg-secondary text-light border-secondary border-opacity-10" rows="3" placeholder="{{ __('Share your experience...') }}"></textarea>
                                     </div>
-                                    <button class="btn btn-primary px-4 rounded-pill">Submit Review</button>
+                                    <button class="btn btn-primary px-4 rounded-pill">{{ __('Submit Review') }}</button>
                                 </form>
                             </div>
                         </div>
                     @else
                         <div class="alert alert-secondary text-light border border-secondary border-opacity-10 mb-5">
-                            Please <a href="{{ route('login') }}" class="fw-bold text-primary text-decoration-none">login</a> to write a review.
+                            {{ __('Please login to write a review.') }}
                         </div>
                     @endauth
 
@@ -156,7 +156,7 @@
                                 </div>
                                 <div>
                                     <div class="d-flex align-items-center mb-1">
-                                        <h6 class="fw-bold mb-0 me-2">{{ $rating->user->name ?? 'User' }}</h6>
+                                        <h6 class="fw-bold mb-0 me-2">{{ $rating->user->name ?? __('User') }}</h6>
                                         <small class="text-light">{{ $rating->created_at->diffForHumans() }}</small>
                                     </div>
                                     <div class="mb-2 text-warning small">
@@ -168,7 +168,7 @@
                                 </div>
                             </div>
                         @empty
-                            <p class="text-light">No reviews yet. Be the first to review!</p>
+                            <p class="text-light">{{ __('No reviews yet. Be the first to review!') }}</p>
                         @endforelse
                     </div>
                 </div>
@@ -179,7 +179,7 @@
         @if ($relatedMeals->count() > 0)
             <div class="row mt-5 pt-5 border-top border-secondary border-opacity-10">
                 <div class="col-12 mb-4">
-                    <h3 class="fw-bold text-light">You might also like</h3>
+                    <h3 class="fw-bold text-light">{{ __('You might also like') }}</h3>
                 </div>
                 @foreach ($relatedMeals as $related)
                     <div class="col-md-3">

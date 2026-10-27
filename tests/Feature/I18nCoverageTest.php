@@ -134,6 +134,71 @@ class I18nCoverageTest extends TestCase
     }
 
     /**
+     * Fail if any Blade view (excluding components, errors, emails) has visible text outside __()/@lang.
+     */
+    public function test_views_have_no_hardcoded_visible_text(): void
+    {
+        $viewsPath = resource_path('views');
+        $files = File::allFiles($viewsPath);
+        $violations = [];
+
+        foreach ($files as $file) {
+            $relPath = str_replace(resource_path('views').DIRECTORY_SEPARATOR, '', $file->getPathname());
+            $relPathUnix = str_replace('\\', '/', $relPath);
+
+            // Exclude components, errors, emails
+            if (
+                str_starts_with($relPathUnix, 'components/') ||
+                str_starts_with($relPathUnix, 'errors/') ||
+                str_starts_with($relPathUnix, 'emails/') ||
+                str_contains($relPathUnix, '/components/') ||
+                str_contains($relPathUnix, '/errors/') ||
+                str_contains($relPathUnix, '/emails/')
+            ) {
+                continue;
+            }
+
+            if (! str_ends_with($file->getFilename(), '.blade.php')) {
+                continue;
+            }
+
+            $content = File::get($file->getPathname());
+
+            // Strip Blade and PHP blocks
+            $stripped = preg_replace('/\{\{--.*?--\}\}/s', '', $content);
+            $stripped = preg_replace('/@php.*?@endphp/s', '', $stripped);
+            $stripped = preg_replace('/\{\{.*?\}\}/s', '', $stripped);
+            $stripped = preg_replace('/\{!!.*?!!\}/s', '', $stripped);
+            $stripped = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $stripped);
+            $stripped = preg_replace('/<style\b[^>]*>(.*?)<\/style>/is', '', $stripped);
+            $stripped = preg_replace('/<svg\b[^>]*>(.*?)<\/svg>/is', '', $stripped);
+            // Strip blade directives with balanced parentheses
+            $stripped = preg_replace('/@[a-zA-Z0-9_]+(?:\s*(\((?>[^()]+|(?1))*\)))?/s', '', $stripped);
+            $stripped = str_replace(['->', '=>'], ['__ARROW__', '__FAT_ARROW__'], $stripped);
+
+            // Scan for >[A-Za-z] text nodes
+            if (preg_match_all('/>\s*([A-Za-z]{2,}[^<]*)</', $stripped, $matches)) {
+                $foundTexts = [];
+                foreach ($matches[1] as $m) {
+                    $m = trim($m);
+                    // Filter out HTML artifacts if any
+                    if (! empty($m) && ! in_array(strtolower($m), ['html', 'body', 'head']) && ! str_contains($m, '@')) {
+                        $foundTexts[] = $m;
+                    }
+                }
+                if (! empty($foundTexts)) {
+                    $violations[] = "{$relPathUnix}: ".implode(' | ', array_slice($foundTexts, 0, 5));
+                }
+            }
+        }
+
+        $this->assertEmpty(
+            $violations,
+            "Hardcoded visible English text nodes found in views:\n".implode("\n", $violations)
+        );
+    }
+
+    /**
      * Scan directories for translation keys.
      */
     protected function extractTranslationKeys(): array

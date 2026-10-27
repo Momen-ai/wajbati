@@ -136,6 +136,6 @@ class ProfileController extends Controller
 
         $address->delete();
 
-        return back()->with('success', 'Address deleted successfully!');
+        return back()->with('success', __('Address deleted successfully!'));
     }
 }

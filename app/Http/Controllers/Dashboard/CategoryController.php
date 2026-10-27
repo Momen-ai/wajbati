@@ -29,7 +29,7 @@ class CategoryController extends Controller
         Category::create($request->only('name'));
 
         return redirect()->route('dashboard.category.index')
-            ->with('success', 'Category created successfully');
+            ->with('success', __('Category created successfully.'));
     }
 
     public function edit(Category $category)
@@ -46,7 +46,7 @@ class CategoryController extends Controller
         $category->update($request->only('name'));
 
         return redirect()->route('dashboard.category.index')
-            ->with('success', 'Category updated successfully');
+            ->with('success', __('Category updated successfully.'));
     }
 
     public function destroy(Category $category)
@@ -54,6 +54,6 @@ class CategoryController extends Controller
         $category->delete();
 
         return redirect()->route('dashboard.category.index')
-            ->with('success', 'Category deleted successfully');
+            ->with('success', __('Category deleted successfully.'));
     }
 }

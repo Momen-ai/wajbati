@@ -39,7 +39,7 @@ class RatingController extends Controller
 
         return redirect()
             ->route('dashboard.ratings.index')
-            ->with('success', 'Rating added successfully');
+            ->with('success', __('Rating added successfully.'));
     }
 
     public function edit(Rating $rating)
@@ -63,7 +63,7 @@ class RatingController extends Controller
 
         return redirect()
             ->route('dashboard.ratings.index')
-            ->with('success', 'Rating updated successfully');
+            ->with('success', __('Rating updated successfully.'));
     }
 
     public function destroy(Rating $rating)
@@ -72,6 +72,6 @@ class RatingController extends Controller
 
         return redirect()
             ->route('dashboard.ratings.index')
-            ->with('success', 'Rating deleted successfully');
+            ->with('success', __('Rating deleted successfully.'));
     }
 }

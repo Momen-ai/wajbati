@@ -49,7 +49,7 @@ class ContactController extends Controller
 
         return redirect()
             ->route('dashboard.contacts.index')
-            ->with('success', 'Message sent successfully');
+            ->with('success', __('Message sent successfully.'));
     }
 
     /**
@@ -81,6 +81,6 @@ class ContactController extends Controller
 
         return redirect()
             ->route('dashboard.contacts.index')
-            ->with('success', 'Message deleted successfully');
+            ->with('success', __('Message deleted successfully.'));
     }
 }

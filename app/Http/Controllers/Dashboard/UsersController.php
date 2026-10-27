@@ -52,7 +52,7 @@ class UsersController extends Controller
         }
 
         return redirect()->route('dashboard.users.index')
-            ->with('success', 'User created successfully');
+            ->with('success', __('User created successfully.'));
     }
 
     public function show(User $user)
@@ -101,7 +101,7 @@ class UsersController extends Controller
         $user->save();
 
         return redirect()->route('dashboard.users.index')
-            ->with('success', 'User updated successfully');
+            ->with('success', __('User updated successfully.'));
     }
 
     public function destroy(User $user)
@@ -117,7 +117,7 @@ class UsersController extends Controller
         $user->delete();
 
         return redirect()->route('dashboard.users.index')
-            ->with('success', 'User deleted successfully');
+            ->with('success', __('User deleted successfully.'));
     }
 }
 
