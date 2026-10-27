@@ -41,7 +41,8 @@ class OrderStats
             ->when($chefId !== null, fn ($q) => $q->where('chef_id', $chefId))
             ->where('created_at', '>=', $startDate)
             ->selectRaw("{$dateExpr} as ym, SUM(total) as total")
-            ->groupBy('ym')
+            ->groupByRaw($dateExpr)
+            ->get()
             ->pluck('total', 'ym');
 
         $labels = [];

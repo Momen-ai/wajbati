@@ -13,7 +13,7 @@ class LegalPagesAndSeoTest extends TestCase
     {
         $response = $this->get(route('privacy'));
         $response->assertOk();
-        $response->assertSee('Privacy Policy');
+        $response->assertSee(__('Privacy Policy'));
     }
 
     /**
@@ -23,6 +23,22 @@ class LegalPagesAndSeoTest extends TestCase
     {
         $response = $this->get(route('terms'));
         $response->assertOk();
-        $response->assertSee('Terms of Service');
+        $response->assertSee(__('Terms of Service'));
+    }
+
+    /**
+     * Test legal pages render in Arabic when locale is ar.
+     */
+    public function test_legal_pages_render_in_arabic_when_locale_is_ar(): void
+    {
+        app()->setLocale('ar');
+
+        $privacy = $this->get(route('privacy'));
+        $privacy->assertOk();
+        $privacy->assertSee(__('Privacy Policy', [], 'ar'));
+
+        $terms = $this->get(route('terms'));
+        $terms->assertOk();
+        $terms->assertSee(__('Terms of Service', [], 'ar'));
     }
 }
