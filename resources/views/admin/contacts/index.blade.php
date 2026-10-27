@@ -3,9 +3,6 @@
 
         <div class="d-flex justify-content-between mb-3">
             <h4>{{ __('Contacts') }}</h4>
-            <a href="{{ route('dashboard.contacts.create') }}" class="btn btn-success">
-                {{ __('New Message') }}
-            </a>
         </div>
 
         <div class="card shadow-sm">
