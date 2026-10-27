@@ -3,9 +3,14 @@
 @section('content')
 <div class="container py-5">
     <div class="row mb-4">
-        <div class="col-12">
-            <h2 class="fw-bold text-light">{{ __('Welcome back') }}, {{ Auth::user()->name }}!</h2>
-            <p class="text-light">{{ __("Here's what's happening with your kitchen today.") }}</p>
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="fw-bold text-light mb-1">{{ __('Welcome back') }}, {{ Auth::user()->name }}!</h2>
+                <p class="text-light mb-0">{{ __("Here's what's happening with your kitchen today.") }}</p>
+            </div>
+            <a href="{{ route('chef.orders.export') }}" class="btn btn-outline-success rounded-pill btn-sm">
+                <i class="fas fa-file-csv me-1"></i>{{ __('Export Report') }}
+            </a>
         </div>
     </div>
 

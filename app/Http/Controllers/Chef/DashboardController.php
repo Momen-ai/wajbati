@@ -60,4 +60,62 @@ class DashboardController extends Controller
             'chartData'
         ));
     }
+
+    /**
+     * Export chef completed orders to CSV.
+     */
+    public function exportOrdersCsv()
+    {
+        $chefId = Auth::id();
+        $orders = Order::where('chef_id', $chefId)
+            ->with(['user', 'items'])
+            ->latest()
+            ->get();
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="kitchen-orders-'.date('Y-m-d').'.csv"',
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        $callback = function () use ($orders) {
+            $file = fopen('php://output', 'w');
+            // Add UTF-8 BOM for Excel Arabic compatibility
+            fwrite($file, "\xEF\xBB\xBF");
+
+            fputcsv($file, [
+                'Order ID',
+                'Customer Name',
+                'Customer Phone',
+                'Delivery Address',
+                'Status',
+                'Payment Status',
+                'Subtotal',
+                'Delivery Fee',
+                'Total',
+                'Date',
+            ]);
+
+            foreach ($orders as $order) {
+                fputcsv($file, [
+                    $order->id,
+                    $order->user->name ?? 'Guest',
+                    $order->phone ?? ($order->user->phone ?? ''),
+                    $order->address,
+                    $order->status,
+                    $order->payment_status,
+                    $order->subtotal,
+                    $order->delivery_fee,
+                    $order->total,
+                    $order->created_at->format('Y-m-d H:i:s'),
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }

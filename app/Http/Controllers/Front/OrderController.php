@@ -53,4 +53,52 @@ class OrderController extends Controller
 
         return view('front.orders.show', compact('order'));
     }
+
+    /**
+     * Customer can cancel their order if still pending.
+     */
+    public function cancel(int $id): RedirectResponse
+    {
+        $order = Order::where('user_id', Auth::id())
+            ->findOrFail($id);
+
+        if ($order->status !== 'pending') {
+            return back()->with('error', __('Only pending orders can be cancelled.'));
+        }
+
+        $order->update(['status' => 'cancelled']);
+
+        \App\Models\OrderStatusHistory::create([
+            'order_id' => $order->id,
+            'from_status' => 'pending',
+            'to_status' => 'cancelled',
+            'comment' => 'Cancelled by customer',
+        ]);
+
+        return back()->with('success', __('Order cancelled successfully.'));
+    }
+
+    /**
+     * Customer can reorder items from a previous order into cart.
+     */
+    public function reorder(int $id, \App\Services\CartService $cartService): RedirectResponse
+    {
+        $order = Order::where('user_id', Auth::id())
+            ->with('items.meal')
+            ->findOrFail($id);
+
+        $addedCount = 0;
+        foreach ($order->items as $item) {
+            if ($item->meal && $item->meal->is_available) {
+                $cartService->add($item->meal->id, $item->quantity);
+                $addedCount++;
+            }
+        }
+
+        if ($addedCount === 0) {
+            return back()->with('error', __('None of the items from this order are currently available.'));
+        }
+
+        return redirect()->route('cart.index')->with('success', __('Items added to your cart.'));
+    }
 }

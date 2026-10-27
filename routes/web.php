@@ -39,6 +39,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store')->middleware('throttle:checkout');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+    Route::post('/orders/{id}/reorder', [OrderController::class, 'reorder'])->name('orders.reorder');
 
     // Favourites (Phase 5)
     Route::get('/favourites', [\App\Http\Controllers\Front\FavouriteController::class, 'index'])->name('favourites.index');
@@ -60,11 +62,20 @@ Route::middleware('auth')->group(function () {
 });
 Route::middleware(['auth', 'role:chef'])->prefix('chef')->name('chef.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Chef\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/orders/export', [App\Http\Controllers\Chef\DashboardController::class, 'exportOrdersCsv'])->name('orders.export');
     Route::resource('meals', App\Http\Controllers\Chef\MealController::class)->except(['show']);
     Route::get('/orders', [App\Http\Controllers\Chef\OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [App\Http\Controllers\Chef\OrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/status', [App\Http\Controllers\Chef\OrderController::class, 'updateStatus'])->name('orders.update-status');
 });
+
+Route::get('/privacy-policy', function () {
+    return view('front.pages.privacy');
+})->name('privacy');
+
+Route::get('/terms-of-service', function () {
+    return view('front.pages.terms');
+})->name('terms');
 
 Route::post('/newsletter', [ContactController::class, 'subscribe'])->name('newsletter.subscribe')->middleware('throttle:newsletter');
 

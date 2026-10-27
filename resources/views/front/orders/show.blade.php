@@ -119,9 +119,24 @@
                     </div>
 
                     @if($order->status == 'pending')
-                        <div class="alert alert-warning mb-0 small">
+                        <div class="alert alert-warning mb-3 small">
                             <i class="fas fa-clock me-2"></i> {{ __('Your order is waiting for chef\'s approval.') }}
                         </div>
+                        <form action="{{ route('orders.cancel', $order->id) }}" method="POST" onsubmit="return confirm('{{ __('Are you sure you want to cancel this order?') }}');">
+                            @csrf
+                            <button type="submit" class="btn btn-danger w-100 mb-2">
+                                <i class="fas fa-times-circle me-1"></i> {{ __('Cancel Order') }}
+                            </button>
+                        </form>
+                    @endif
+
+                    @if(in_array($order->status, ['delivered', 'completed']))
+                        <form action="{{ route('orders.reorder', $order->id) }}" method="POST" class="mb-2">
+                            @csrf
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="fas fa-redo me-1"></i> {{ __('Reorder Items') }}
+                            </button>
+                        </form>
                     @endif
                 </div>
             </div>

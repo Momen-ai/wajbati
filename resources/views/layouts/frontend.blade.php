@@ -235,7 +235,8 @@
                     <ul class="list-unstyled small">
                         <li class="mb-3"><a href="{{ route('orders.index') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Track Orders') }}</a></li>
                         <li class="mb-3"><a href="{{ route('profile.edit') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Settings') }}</a></li>
-                        <li class="mb-3"><a href="#" class="text-decoration-none text-muted hover-text-primary">{{ __('Privacy Policy') }}</a></li>
+                        <li class="mb-3"><a href="{{ route('privacy') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Privacy Policy') }}</a></li>
+                        <li class="mb-3"><a href="{{ route('terms') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Terms of Service') }}</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-4">
