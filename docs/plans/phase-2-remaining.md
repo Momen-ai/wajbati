@@ -47,40 +47,40 @@
 ---
 
 ### Step 3: F-21 / F-22 i18n, Currency, and RTL
-- [ ] **Step 3.1: Views & Messages Localization Pass**
+- [x] **Step 3.1: Views & Messages Localization Pass**
   - `resources/views/front/**`
   - `resources/views/admin/**`
   - `auth/**`, `profile/**`, `layouts/**`, flash messages, notifications, validation attributes.
-- [ ] **Step 3.2: Currency Helper `money()` Adoption**
+- [x] **Step 3.2: Currency Helper `money()` Adoption**
   - Replace all `${{ ... }}`, `$3.00`, and literal `$` with `{{ money(...) }}`.
-- [ ] **Step 3.3: RTL & Logical Utilities**
+- [x] **Step 3.3: RTL & Logical Utilities**
   - Use `bootstrap.rtl` and logical utility classes (`ms-`, `me-`, `ps-`, `pe-`).
-- [ ] **Step 3.4: Complete `lang/ar.json`, `lang/en.json`, `lang/ar/validation.php`**
-- [ ] **Step 3.5: Write `tests/Feature/I18nCoverageTest.php`**
+- [x] **Step 3.4: Complete `lang/ar.json`, `lang/en.json`, `lang/ar/validation.php`**
+- [x] **Step 3.5: Write `tests/Feature/I18nCoverageTest.php`**
   - Fail if any `__('...')` key is missing in `ar.json` or `en.json`.
   - Fail if `${{` or `$[0-9]` literal remains in views.
-- [ ] **Step 3.6: Impeccable UI Review Documentation (`docs/ui-review/`)**
+- [x] **Step 3.6: Impeccable UI Review Documentation (`docs/ui-review/`)**
 
 ---
 
 ### Step 4: F-23 Frontend Asset Bundling (Vite)
-- [ ] **Step 4.1: Install & bundle assets locally via Vite**
+- [x] **Step 4.1: Install & bundle assets locally via Vite**
   - Bootstrap 5 (+ RTL), Font Awesome, Chart.js.
   - Self-host Cairo font.
   - Replace any remaining CDN links with local bundled assets.
-- [ ] **Step 4.2: Automated zero third-party asset test / check**
+- [x] **Step 4.2: Automated zero third-party asset test / check**
 
 ---
 
 ### Step 5: F-24 Performance Verification
-- [ ] **Step 5.1: Portable monthly revenue series query verification**
-- [ ] **Step 5.2: Popular meals logic verification**
-- [ ] **Step 5.3: Cache invalidation test for dashboard stats**
+- [x] **Step 5.1: Portable monthly revenue series query verification**
+- [x] **Step 5.2: Popular meals logic verification**
+- [x] **Step 5.3: Cache invalidation test for dashboard stats**
 
 ---
 
 ### Step 6: Phase 2 Gate
-- [ ] Full suite green on SQLite.
-- [ ] `I18nCoverageTest` green.
-- [ ] Zero third-party requests verified.
-- [ ] All reports and plans updated.
+- [x] Full suite green on SQLite.
+- [x] `I18nCoverageTest` green.
+- [x] Zero third-party requests verified.
+- [x] All reports and plans updated.

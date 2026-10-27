@@ -58,8 +58,8 @@
 - [x] **Step 2: Configure default locale and timezone in `config/app.php`**
   - `APP_TIMEZONE` = `Asia/Gaza`, `APP_LOCALE` = `ar`, `APP_FALLBACK_LOCALE` = `en`.
   - `SetLocale` middleware sets `Carbon::setLocale`.
-- [ ] **Step 3: Replace hardcoded `$` in all views with `{{ money(...) }}`**
-- [ ] **Step 4: Audit and populate `lang/ar.json` and `lang/en.json`**
+- [x] **Step 3: Replace hardcoded `$` in all views with `{{ money(...) }}`**
+- [x] **Step 4: Audit and populate `lang/ar.json` and `lang/en.json`**
   - Add missing translation keys and `lang/ar/validation.php`.
-- [ ] **Step 5: Write `I18nCoverageTest.php`**
+- [x] **Step 5: Write `I18nCoverageTest.php`**
   - Verify key translations exist and money helper operates correctly.
