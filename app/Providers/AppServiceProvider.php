@@ -28,6 +28,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if ($this->app->isProduction()) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         Paginator::useBootstrapFive();
         \Illuminate\Database\Eloquent\Model::preventLazyLoading(! app()->isProduction());
 

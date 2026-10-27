@@ -3,8 +3,8 @@
 This report tracks the status, implementation details, test additions, and verification evidence for all findings F-01 through F-28 across all project phases.
 
 **Last Test Suite Run:**
-`Tests:    114 passed (392 assertions)`
-`Duration: 30.99s`
+`Tests:    116 passed (410 assertions)`
+`Duration: 33.55s`
 
 ---
 
@@ -38,11 +38,10 @@ This report tracks the status, implementation details, test additions, and verif
 | **F-24** | Performance & Database Indexes | **Fixed** | `database/migrations/2026_10_20_200100_add_performance_indexes.php`, `app/Services/OrderStats.php`, `AppServiceProvider.php`, `app/Models/Order.php`, `app/Models/Meal.php`, `app/Http/Controllers/Front/HomeController.php` | `2026_10_20_200100_add_performance_indexes.php` | `tests/Feature/OrderStatsAndPerformanceTest.php` | `Tests: 3 passed (OrderStatsAndPerformanceTest > monthly revenue series groups revenue properly, dashboard cache cleared on order status change, popular meals prioritizes recent completed orders)` |
 | **F-25** | Code Quality & Search Validation | **Fixed** | `app/Http/Requests/MealIndexRequest.php`, `pint.json`, `app/Http/Controllers/Front/MealController.php` | None | None | Linted and validated |
 | **F-26** | Comprehensive Test Suite & CI | **Fixed** | `tests/Feature/AuthorizationMatrixTest.php`, `.github/workflows/ci.yml`, `resources/views/admin/contacts/index.blade.php` | None | `tests/Feature/AuthorizationMatrixTest.php` | `Tests: 4 passed (AuthorizationMatrixTest > admin dashboard, chef portal, customer routes, public routes), CI workflow configured for PHP 8.2/8.3, SQLite & MySQL 8.0` |
-| **F-27** | Documentation & Runbooks | **Not started** | None | None | None | Scheduled for Phase 4 (Step 8) |
-| **F-28** | Production Security Hardening | **Not started** | None | None | None | Scheduled for Phase 4 (Step 8) |
+| **F-27** | Documentation & Runbooks | **Fixed** | `README.md`, `docs/DECISIONS.md`, `docs/plans/*` | None | None | Comprehensive accurate rewrite of README with environment variables, roles matrix, Mermaid lifecycles, and deployment guides |
+| **F-28** | Production Security Hardening | **Fixed** | `app/Http/Middleware/SecurityHeaders.php`, `bootstrap/app.php`, `app/Providers/AppServiceProvider.php`, `.env.example`, `resources/views/errors/*` | None | `tests/Feature/SecurityHeadersTest.php` | `Tests: 2 passed (SecurityHeadersTest > security headers are present, error pages render localized content)` |
 
 ---
 
 ## NEXT
-- **STEP 8 — Phase 4 (F-27 Documentation & F-28 Production Security Hardening)**: Complete README rewrite, SecurityHeaders middleware, HTTPS enforcement, trust proxies, and localized error pages (403, 419, 429, 503).
 - **STEP 9 — Phase 5**: Feature streams (Customer favourites, Chef tools, Admin moderation, Payment gateway contract).
