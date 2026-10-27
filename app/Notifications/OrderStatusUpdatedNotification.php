@@ -28,7 +28,6 @@ class OrderStatusUpdatedNotification extends Notification implements ShouldQueue
         $locale = $notifiable->locale ?? app()->getLocale();
 
         return (new MailMessage)
-            ->locale($locale)
             ->subject(__('Order Update! #:id', ['id' => $this->order->id], $locale))
             ->greeting(__('Hello :name', ['name' => $notifiable->name], $locale))
             ->line(__('The status of your order #:id has been updated to: :status', [

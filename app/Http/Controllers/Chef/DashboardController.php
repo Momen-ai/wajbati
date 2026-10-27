@@ -118,4 +118,37 @@ class DashboardController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+
+    public function earnings()
+    {
+        $chef = Auth::user();
+        $chefId = $chef->id;
+
+        $completedOrders = Order::where('chef_id', $chefId)
+            ->whereIn('status', ['delivered', 'completed'])
+            ->get();
+
+        $totalEarnings = $completedOrders->sum('total');
+        $ordersCount = $completedOrders->count();
+        $averageOrderValue = $ordersCount > 0 ? $totalEarnings / $ordersCount : 0;
+
+        return view('front.chef.earnings', compact(
+            'chef',
+            'totalEarnings',
+            'ordersCount',
+            'averageOrderValue',
+            'completedOrders'
+        ));
+    }
+
+    public function updateCapacity(\Illuminate\Http\Request $request)
+    {
+        $validated = $request->validate([
+            'daily_capacity' => 'required|integer|min:1|max:1000',
+        ]);
+
+        Auth::user()->update($validated);
+
+        return back()->with('success', __('Daily order capacity updated successfully.'));
+    }
 }

@@ -138,6 +138,34 @@ class OrderController extends Controller
             ->with('success', __('Order updated successfully.'));
     }
 
+    public function exportCsv(): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="orders-admin-'.now()->format('Y-m-d').'.csv"',
+        ];
+
+        return response()->stream(function () {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['Order ID', 'Customer', 'Chef', 'Total', 'Status', 'Date']);
+
+            Order::with(['user', 'chef'])->latest()->chunk(100, function ($orders) use ($handle) {
+                foreach ($orders as $order) {
+                    fputcsv($handle, [
+                        $order->id,
+                        $order->user?->name ?? 'Guest',
+                        $order->chef?->name ?? 'Chef',
+                        number_format($order->total, 2, '.', ''),
+                        $order->status,
+                        $order->created_at->toDateTimeString(),
+                    ]);
+                }
+            });
+
+            fclose($handle);
+        }, 200, $headers);
+    }
+
     public function destroy(Order $order)
     {
         $order->delete();

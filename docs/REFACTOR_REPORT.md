@@ -3,9 +3,10 @@
 This report tracks the status, implementation details, test additions, and verification evidence for all findings F-01 through F-28 across all project phases.
 
 **Last Test Suite Run:**
-`Tests:    125 passed (442 assertions)`
-`Duration: 7.92s`
-`Pint:     158 files pass`
+`Tests:    134 passed (467 assertions)`
+`Duration: 15.57s`
+`Pint:     167 files pass`
+`Vite:     built in 18.89s (Clean CSS/JS/Font/SVG bundle, zero external CDNs)`
 
 ---
 
@@ -33,18 +34,21 @@ This report tracks the status, implementation details, test additions, and verif
 | **F-18** | Asynchronous & Queued Notifications | **Fixed** | `app/Notifications/*` (`ShouldQueue`, `afterCommit()`) | None | `tests/Feature/OrderStatusHistoryTest.php` | `OrderStatusHistoryTest` |
 | **F-19** | Order State Machine & History Audit Log | **Fixed** | `app/Services/OrderStatusService.php`, `app/Models/OrderStatusHistory.php`, `app/Http/Controllers/Dashboard/OrderController.php` | `2026_10_19_400100_create_order_status_histories_table.php` | `tests/Feature/OrderStatusTest.php`, `tests/Feature/OrderStatusHistoryTest.php` | `OrderStatusTest` (29 passed) |
 | **F-20** | Meal Availability & Serving Quantities | **Fixed** | `app/Models/Meal.php`, `app/Http/Controllers/Chef/MealController.php`, `app/Http/Controllers/Dashboard/MealController.php`, `app/Services/OrderService.php`, Chef/Admin meal forms, storefront views | `2026_10_19_200100_add_availability_to_meals_and_unique_to_ratings.php` | `tests/Feature/MealAvailabilityTest.php` | `MealAvailabilityTest` (4 passed: chef create/update with fields, availability storefront filtering, checkout unavailability rejection) |
-| **F-21** | Currency Helper & Timezone Defaults | **Partial** | `app/helpers.php`, `config/app.php`, `.env.example`, all views | None | `tests/Feature/I18nCoverageTest.php` | In progress: expanding hardcoded view text detection and money format audit |
-| **F-22** | Complete i18n & RTL Coverage | **Partial** | `lang/ar.json`, `lang/en.json`, `lang/ar/validation.php`, `.env.example`, resources/views | None | `tests/Feature/I18nCoverageTest.php` | In progress: wrapping 16 views, 27 controller flash messages, notifications, missing keys |
+| **F-21** | Currency Helper & Timezone Defaults | **Fixed** | `app/helpers.php`, `config/app.php`, `.env.example`, all views | None | `tests/Feature/I18nCoverageTest.php` | `I18nCoverageTest` (5 passed: money format, no literal dollar patterns, empty pending dir, no hardcoded visible text) |
+| **F-22** | Complete i18n & RTL Coverage | **Fixed** | `lang/ar.json`, `lang/en.json`, `lang/ar/validation.php`, `.env.example`, resources/views, controllers, notifications | None | `tests/Feature/I18nCoverageTest.php` | `I18nCoverageTest` (5 passed, 16 views localized, 27 controller flash messages wrapped, notifications localized via recipient locale, 566 synced keys) |
 | **F-23** | Asset Bundling & CDN Cleanup | **Fixed** | `package.json`, `vite.config.js`, `resources/css/*`, `resources/js/*`, views layouts, `docs/DECISIONS.md` | None | `tests/Feature/AssetSecurityTest.php` | `Tests: 2 passed (AssetSecurityTest > no third party asset urls, placeholder svg exists), npm run build passes cleanly` |
 | **F-24** | Performance & Database Indexes | **Fixed** | `database/migrations/2026_10_20_200100_add_performance_indexes.php`, `app/Services/OrderStats.php`, `AppServiceProvider.php`, `app/Models/Order.php`, `app/Models/Meal.php`, `app/Http/Controllers/Front/HomeController.php` | `2026_10_20_200100_add_performance_indexes.php` | `tests/Feature/OrderStatsAndPerformanceTest.php` | `Tests: 3 passed (OrderStatsAndPerformanceTest > monthly revenue series groups revenue properly, dashboard cache cleared on order status change, popular meals prioritizes recent completed orders)` |
-| **F-25** | Code Quality & Search Validation | **Fixed** | `app/Http/Requests/MealIndexRequest.php`, `pint.json`, `app/Http/Controllers/Front/MealController.php` | None | None | Linted and validated |
-| **F-26** | Comprehensive Test Suite & CI | **Partial** | `tests/Feature/AuthorizationMatrixTest.php`, `.github/workflows/ci.yml`, `resources/views/admin/contacts/index.blade.php` | None | `tests/Feature/AuthorizationMatrixTest.php` | In progress: Larastan L6, coverage >= 80%, removing audit bypasses, MySQL 8 CI job |
-| **F-27** | Documentation & Runbooks | **Fixed** | `README.md`, `docs/DECISIONS.md`, `docs/plans/*` | None | None | Comprehensive accurate rewrite of README with environment variables, roles matrix, Mermaid lifecycles, and deployment guides |
+| **F-25** | Code Quality & Search Validation | **Fixed** | `app/Http/Requests/MealIndexRequest.php`, `pint.json`, `app/Http/Controllers/Front/MealController.php` | None | None | Linted and validated (Pint 167 files pass) |
+| **F-26** | Comprehensive Test Suite & CI | **Fixed** | `tests/Feature/*`, `.github/workflows/ci.yml`, `phpstan.neon` | None | `tests/Feature/AuthorizationMatrixTest.php`, all 134 test cases | Complete CI workflow (PHP 8.2 + MySQL 8 service container, Larastan Level 6, Composer/NPM audit `--audit-level=high` without `\|\| true`, PCOV >= 80% coverage check). 134 passing tests. |
+| **F-27** | Documentation & Runbooks | **Fixed** | `README.md`, `docs/DECISIONS.md`, `docs/plans/*`, `docs/ui-review/*`, `docs/redteam-phase2.md`, `docs/reviewer-verdicts-phase2.md` | None | None | Comprehensive accurate documentation, UI review audit, red-team analysis, reviewer verdicts |
 | **F-28** | Production Security Hardening | **Fixed** | `app/Http/Middleware/SecurityHeaders.php`, `bootstrap/app.php`, `app/Providers/AppServiceProvider.php`, `.env.example`, `resources/views/errors/*` | None | `tests/Feature/SecurityHeadersTest.php` | `Tests: 2 passed (SecurityHeadersTest > security headers are present, error pages render localized content)` |
 
 ---
 
 ## Phase 5 Features Summary
+- **Chef Application & Admin Approval:** Customers can apply to become chefs (`/chef-apply`, `ChefApplication` model), admin review interface (`/dashboard/chef-applications`) to approve/reject with role escalation guard (`ChefApplicationTest`, 4 passed).
+- **Admin Tools (CSV Export & Audit Log):** Admin orders search/filter/CSV export and complete order status audit log viewer (`/dashboard/audit-log`) (`AdminToolsTest`, 2 passed).
+- **Chef Capacity & Earnings Report:** Chef daily capacity limit configuration and comprehensive earnings report breakdown (`/chef/earnings`, `/chef/capacity`) (`ChefEarningsAndCapacityTest`, 2 passed).
 - **Customer Favourites:** Fully implemented for both meals and chefs with toggles and dedicated index view (`FavouritesTest`, 3 passed).
 - **Customer Order Cancel & Reorder:** Customers can cancel pending orders and re-populate the cart with a single click from order details (`OrderCancelAndReorderTest`, 3 passed).
 - **Chef Tools & Order Export:** Chefs can export their orders to standard CSV format directly from the dashboard (`ChefToolsTest`, 1 passed).

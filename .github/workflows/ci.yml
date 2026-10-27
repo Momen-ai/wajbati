@@ -38,6 +38,9 @@ jobs:
       - name: Run Laravel Pint (Code Style)
         run: vendor/bin/pint --test
 
+      - name: Run Larastan (PHPStan Level 6)
+        run: vendor/bin/phpstan analyse --ansi
+
       - name: Composer Audit
         run: composer audit
 
@@ -79,8 +82,8 @@ jobs:
           cp .env.example .env
           php artisan key:generate
 
-      - name: Run Test Suite
-        run: php artisan test
+      - name: Run Test Suite with Coverage (min 80%)
+        run: php artisan test --coverage --min=80
 
   test-mysql:
     name: Tests (PHP 8.3 - MySQL 8.0)

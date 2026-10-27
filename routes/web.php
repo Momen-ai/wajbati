@@ -59,9 +59,15 @@ Route::middleware('auth')->group(function () {
     // Address management
     Route::post('/profile/address', [ProfileController::class, 'addAddress'])->name('profile.address.store');
     Route::delete('/profile/address/{address}', [ProfileController::class, 'deleteAddress'])->name('profile.address.destroy');
+
+    // Chef Application
+    Route::get('/chef-apply', [App\Http\Controllers\Front\ChefApplicationController::class, 'create'])->name('chef.apply');
+    Route::post('/chef-apply', [App\Http\Controllers\Front\ChefApplicationController::class, 'store'])->name('chef.apply.store');
 });
 Route::middleware(['auth', 'role:chef'])->prefix('chef')->name('chef.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Chef\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/earnings', [App\Http\Controllers\Chef\DashboardController::class, 'earnings'])->name('earnings');
+    Route::post('/capacity', [App\Http\Controllers\Chef\DashboardController::class, 'updateCapacity'])->name('capacity.update');
     Route::get('/orders/export', [App\Http\Controllers\Chef\DashboardController::class, 'exportOrdersCsv'])->name('orders.export');
     Route::resource('meals', App\Http\Controllers\Chef\MealController::class)->except(['show']);
     Route::get('/orders', [App\Http\Controllers\Chef\OrderController::class, 'index'])->name('orders.index');

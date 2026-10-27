@@ -29,7 +29,6 @@ class NewOrderNotification extends Notification implements ShouldQueue
         $symbol = config('shop.currency.symbol', '₪');
 
         return (new MailMessage)
-            ->locale($locale)
             ->subject(__('New Order Received! #:id', ['id' => $this->order->id], $locale))
             ->greeting(__('Hello :name', ['name' => $notifiable->name], $locale))
             ->line(__('You have received a new order for your kitchen items.', [], $locale))
