@@ -24,6 +24,17 @@ class Order extends Model
         'payment_status',
     ];
 
+    protected static function booted(): void
+    {
+        static::saved(function ($order) {
+            \App\Services\OrderStats::clearCaches();
+        });
+
+        static::deleted(function ($order) {
+            \App\Services\OrderStats::clearCaches();
+        });
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

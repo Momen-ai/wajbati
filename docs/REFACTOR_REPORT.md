@@ -3,8 +3,8 @@
 This report tracks the status, implementation details, test additions, and verification evidence for all findings F-01 through F-28 across all project phases.
 
 **Last Test Suite Run:**
-`Tests:    105 passed (304 assertions)`
-`Duration: 165.34s`
+`Tests:    110 passed (314 assertions)`
+`Duration: 105.70s`
 
 ---
 
@@ -35,7 +35,7 @@ This report tracks the status, implementation details, test additions, and verif
 | **F-21** | Currency Helper & Timezone Defaults | **Fixed** | `app/helpers.php`, `config/app.php`, `.env.example`, all views | None | `tests/Feature/I18nCoverageTest.php` | `Tests: 4 passed (I18nCoverageTest > money helper formats currency correctly, no literal dollar patterns)` |
 | **F-22** | Complete i18n & RTL Coverage | **Fixed** | `lang/ar.json`, `lang/en.json`, `lang/ar/validation.php`, `.env.example`, resources/views | None | `tests/Feature/I18nCoverageTest.php` | `Tests: 4 passed (I18nCoverageTest > all translation keys defined, lang pending empty)` |
 | **F-23** | Asset Bundling & CDN Cleanup | **Fixed** | `package.json`, `vite.config.js`, `resources/css/*`, `resources/js/*`, views layouts, `docs/DECISIONS.md` | None | `tests/Feature/AssetSecurityTest.php` | `Tests: 2 passed (AssetSecurityTest > no third party asset urls, placeholder svg exists), npm run build passes cleanly` |
-| **F-24** | Performance & Database Indexes | **Partial** | `database/migrations/2026_10_20_200100_add_performance_indexes.php`, `app/Services/OrderStats.php`, `AppServiceProvider.php` | `2026_10_20_200100_add_performance_indexes.php` | None | Verification & cache tests in Step 5 |
+| **F-24** | Performance & Database Indexes | **Fixed** | `database/migrations/2026_10_20_200100_add_performance_indexes.php`, `app/Services/OrderStats.php`, `AppServiceProvider.php`, `app/Models/Order.php`, `app/Models/Meal.php`, `app/Http/Controllers/Front/HomeController.php` | `2026_10_20_200100_add_performance_indexes.php` | `tests/Feature/OrderStatsAndPerformanceTest.php` | `Tests: 3 passed (OrderStatsAndPerformanceTest > monthly revenue series groups revenue properly, dashboard cache cleared on order status change, popular meals prioritizes recent completed orders)` |
 | **F-25** | Code Quality & Search Validation | **Fixed** | `app/Http/Requests/MealIndexRequest.php`, `pint.json`, `app/Http/Controllers/Front/MealController.php` | None | None | Linted and validated |
 | **F-26** | Comprehensive Test Suite & CI | **Not started** | None | None | None | Scheduled for Phase 3 (Step 7) |
 | **F-27** | Documentation & Runbooks | **Not started** | None | None | None | Scheduled for Phase 4 (Step 8) |
@@ -44,4 +44,5 @@ This report tracks the status, implementation details, test additions, and verif
 ---
 
 ## NEXT
-- **STEP 5 — F-24 Performance & Verification**: Monthly revenue grouped query verification, popular meals 30-day window check, dashboard cache invalidation on order status changes, and MySQL compatibility check.
+- **STEP 6 — Phase 2 Gate Review**: Review PR readiness, open Phase 2 PR / verify against gate requirements.
+- **STEP 7 — Phase 3 (F-26 Comprehensive Test Suite & CI)**: Convert tests to Pest, achieve ≥ 80% line coverage, configure GitHub Actions workflow.

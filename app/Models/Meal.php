@@ -50,6 +50,11 @@ class Meal extends Model
         return $this->hasMany(Rating::class);
     }
 
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
     public function averageRating()
     {
         return $this->ratings()->avg('star') ?: 0;
