@@ -3,10 +3,10 @@
 
         {{-- Header --}}
         <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
-            <h4 class="mb-0 fw-bold">Categories Management</h4>
+            <h4 class="mb-0 fw-bold">{{ __('Categories Management') }}</h4>
 
             <a href="{{ route('dashboard.category.create') }}" class="btn btn-success">
-                Add Category
+                {{ __('Add Category') }}
             </a>
         </div>
 
@@ -17,9 +17,9 @@
 
                 <thead class="table-dark">
                     <tr>
-                        <th style="width: 60px">ID</th>
-                        <th>Name</th>
-                        <th style="width: 220px">Actions</th>
+                        <th style="width: 60px">{{ __('ID') }}</th>
+                        <th>{{ __('Name') }}</th>
+                        <th style="width: 220px">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
 
@@ -33,7 +33,7 @@
 
                                     <a class="btn btn-sm btn-primary"
                                         href="{{ route('dashboard.category.edit', $category->id) }}">
-                                        Edit
+                                        {{ __('Edit') }}
                                     </a>
 
                                     @if ($category->role !== 'admin')
@@ -42,7 +42,7 @@
                                             @csrf
                                             @method('DELETE')
                                             <button class="btn btn-sm btn-danger">
-                                                Delete
+                                                {{ __('Delete') }}
                                             </button>
                                         </form>
                                     @endif
@@ -53,7 +53,7 @@
                     @empty
                         <tr>
                             <td colspan="6" class="text-muted py-4">
-                                No categories found
+                                {{ __('No categories found') }}
                             </td>
                         </tr>
                     @endforelse

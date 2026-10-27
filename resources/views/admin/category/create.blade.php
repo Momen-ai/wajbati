@@ -1,7 +1,7 @@
 <x-app-layout>
 
     <div class="flex items-center justify-between mb-4">
-        <h2>New Category</h2>
+        <h2>{{ __('New Category') }}</h2>
     </div>
 
 
@@ -13,13 +13,13 @@
 
                 <!-- Name -->
                 <div class="mb-3">
-                    <label for="name" class="form-label">Category Name</label>
+                    <label for="name" class="form-label">{{ __('Category Name') }}</label>
                     <input type="text" id="name" name="name" class="form-control"
-                        placeholder="Enter category name" required>
+                        placeholder="{{ __('Enter category name') }}" required>
                 </div>
 
 
-                <button type="submit" class="btn btn-success px-3">Save</button>
+                <button type="submit" class="btn btn-success px-3">{{ __('Save') }}</button>
 
             </form>
 

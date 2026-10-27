@@ -7,7 +7,7 @@
             <div class="row align-items-center">
                 <div class="col-lg-6 mb-4 mb-lg-0">
                     <span class="badge bg-warning text-light mb-3 px-3 py-2 rounded-pill fw-bold"><i
-                            class="fas fa-star me-1"></i> #1 Homemade Food App</span>
+                            class="fas fa-star me-1"></i> {{ __('#1 Homemade Food App') }}</span>
                     <h1 class="hero-title pt-2">{{ __('Delicious Homemade Meals') }},<br><span class="text-primary-custom">{{ __('brought to your doorstep.') }}</span></h1>
                     <p class="lead text-light mb-4">{{ __("Order healthy, fresh, and authentic food from local home kitchens.") }}</p>
                     
@@ -70,7 +70,7 @@
                                 <i class="fas fa-utensils fa-2x"></i> <!-- Or category icon if exists -->
                             </div>
                             <h6 class="fw-bold text-light">{{ $category->name }}</h6>
-                            <small class="text-light opacity-75">{{ $category->meals_count }} Meals</small>
+                            <small class="text-light opacity-75">{{ $category->meals_count }} {{ __('Meals') }}</small>
                         </div>
                     </a>
                 </div>
@@ -99,7 +99,7 @@
                             @else
                                 <img src="{{ asset('assets/images/placeholder.svg') }}" alt="{{ $meal->name }}">
                             @endif
-                            <span class="card-badge text-primary-custom">{{ $meal->category->name ?? 'General' }}</span>
+                            <span class="card-badge text-primary-custom">{{ $meal->category->name ?? __('General') }}</span>
                         </div>
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
@@ -126,10 +126,10 @@
                             <div class="d-flex align-items-center justify-content-between border-top border-secondary border-secondary pt-3 mt-auto">
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-user-circle fa-lg text-light me-2"></i>
-                                    <small class="fw-bold text-light">{{ $meal->chef->name ?? 'Chef' }}</small>
+                                    <small class="fw-bold text-light">{{ $meal->chef->name ?? __('Chef') }}</small>
                                 </div>
                                 <a href="{{ route('meals.show', $meal->id) }}"
-                                    class="btn btn-sm btn-outline-primary rounded-pill px-3">View</a>
+                                    class="btn btn-sm btn-outline-primary rounded-pill px-3">{{ __('View') }}</a>
                             </div>
                         </div>
                     </div>
@@ -163,8 +163,8 @@
                             @endif
                         </div>
                         <h6 class="fw-bold mb-1 text-light">{{ $chef->kitchen_name ?? $chef->name }}</h6>
-                        <small class="text-light d-block mb-3">{{ $chef->address ?? 'Local Chef' }}</small>
-                        <a href="{{ route('chefs.show', $chef->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">View Kitchen</a>
+                        <small class="text-light d-block mb-3">{{ $chef->address ?? __('Local Chef') }}</small>
+                        <a href="{{ route('chefs.show', $chef->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">{{ __('View Kitchen') }}</a>
                     </div>
                 </div>
             @endforeach

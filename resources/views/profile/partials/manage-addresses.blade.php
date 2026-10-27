@@ -13,7 +13,7 @@
             <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div>
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 uppercase">
-                        {{ $address->type }}
+                        {{ __($address->type) }}
                     </span>
                     <p class="mt-1 text-sm text-gray-900">{{ $address->address }}, {{ $address->city }}</p>
                 </div>
@@ -32,18 +32,18 @@
             <div>
                 <x-input-label for="type" :value="__('Type')" />
                 <select id="type" name="type" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                    <option value="home">Home</option>
-                    <option value="work">Work</option>
-                    <option value="other">Other</option>
+                    <option value="home">{{ __('Home') }}</option>
+                    <option value="work">{{ __('Work') }}</option>
+                    <option value="other">{{ __('Other') }}</option>
                 </select>
             </div>
             <div>
                 <x-input-label for="city" :value="__('City')" />
-                <x-text-input id="city" name="city" type="text" class="mt-1 block w-full" placeholder="Riyadh, Jeddah..." />
+                <x-text-input id="city" name="city" type="text" class="mt-1 block w-full" placeholder="{{ __('Riyadh, Jeddah...') }}" />
             </div>
             <div>
                 <x-input-label for="address" :value="__('Address Detail')" />
-                <x-text-input id="address" name="address" type="text" class="mt-1 block w-full" placeholder="Street name, Building number..." required />
+                <x-text-input id="address" name="address" type="text" class="mt-1 block w-full" placeholder="{{ __('Street name, Building number...') }}" required />
             </div>
             <div class="flex items-center gap-4">
                 <x-primary-button>{{ __('Add Address') }}</x-primary-button>

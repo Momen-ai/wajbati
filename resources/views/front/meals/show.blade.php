@@ -196,7 +196,7 @@
                             </div>
                             <div class="card-body p-3">
                                 <h6 class="fw-bold mb-1 text-light text-truncate">{{ $related->name }}</h6>
-                                <small class="text-primary fw-bold">${{ $related->price }}</small>
+                                <small class="text-primary fw-bold">{{ money($related->price) }}</small>
                             </div>
                         </div>
                     </div>

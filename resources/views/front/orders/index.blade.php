@@ -34,7 +34,7 @@
                     <small class="fw-bold text-light">{{ $order->chef->name ?? 'Chef' }}</small>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mt-4 border-top border-secondary border-opacity-10 pt-3">
-                    <span class="fw-bold h5 mb-0 text-primary">${{ $order->total }}</span>
+                    <span class="fw-bold h5 mb-0 text-primary">{{ money($order->total) }}</span>
                     <a href="{{ route('orders.show', $order->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">Details</a>
                 </div>
             </div>

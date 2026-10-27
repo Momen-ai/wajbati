@@ -3,8 +3,8 @@
 @section('content')
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-light">Kitchen Orders</h2>
-        <div class="badge bg-primary fs-6">{{ $orders->total() }} Total Orders</div>
+        <h2 class="fw-bold text-light">{{ __('Kitchen Orders') }}</h2>
+        <div class="badge bg-primary fs-6">{{ $orders->total() }} {{ __('Total Orders') }}</div>
     </div>
 
     <div class="row">
@@ -16,13 +16,13 @@
                         <table class="table table-dark table-hover align-middle mb-0">
                             <thead class="bg-secondary text-light">
                                 <tr>
-                                    <th class="p-3 border-0">Order ID</th>
-                                    <th class="p-3 border-0">Customer</th>
-                                    <th class="p-3 border-0">Items</th>
-                                    <th class="p-3 border-0">Total</th>
-                                    <th class="p-3 border-0">Status</th>
-                                    <th class="p-3 border-0">Date</th>
-                                    <th class="p-3 border-0">Action</th>
+                                    <th class="p-3 border-0">{{ __('Order ID') }}</th>
+                                    <th class="p-3 border-0">{{ __('Customer') }}</th>
+                                    <th class="p-3 border-0">{{ __('Items') }}</th>
+                                    <th class="p-3 border-0">{{ __('Total') }}</th>
+                                    <th class="p-3 border-0">{{ __('Status') }}</th>
+                                    <th class="p-3 border-0">{{ __('Date') }}</th>
+                                    <th class="p-3 border-0">{{ __('Action') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -35,7 +35,7 @@
                                                 <i class="fas fa-user text-light"></i>
                                             </div>
                                             <div>
-                                                <div class="fw-bold text-light">{{ $order->user->name ?? 'Guest' }}</div>
+                                                <div class="fw-bold text-light">{{ $order->user->name ?? __('Guest') }}</div>
                                                 <small class="text-light">{{ $order->phone ?? $order->user->phone ?? '-' }}</small>
                                             </div>
                                         </div>
@@ -48,11 +48,11 @@
                                             </li>
                                             @endforeach
                                             @if($order->items->count() > 2)
-                                            <li class="small text-primary">+ {{ $order->items->count() - 2 }} more...</li>
+                                            <li class="small text-primary">+ {{ $order->items->count() - 2 }} {{ __('more...') }}</li>
                                             @endif
                                         </ul>
                                     </td>
-                                    <td class="p-3 fw-bold text-light">${{ $order->total }}</td>
+                                    <td class="p-3 fw-bold text-light">{{ money($order->total) }}</td>
                                     <td class="p-3">
                                         @php
                                             $statusColor = match($order->status) {
@@ -64,7 +64,7 @@
                                                 default => 'secondary'
                                             };
                                         @endphp
-                                        <span class="badge bg-{{ $statusColor }} text-{{ $statusColor }} bg-opacity-10 px-3 py-2 rounded-pill text-uppercase">{{ $order->status }}</span>
+                                        <span class="badge bg-{{ $statusColor }} text-{{ $statusColor }} bg-opacity-10 px-3 py-2 rounded-pill text-uppercase">{{ __($order->status) }}</span>
                                     </td>
                                     <td class="p-3 text-light small">{{ $order->created_at->format('M d, H:i') }}</td>
                                     <td class="p-3">

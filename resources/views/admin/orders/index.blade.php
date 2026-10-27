@@ -26,7 +26,7 @@
                         <td>{{ $order->id }}</td>
                         <td>{{ $order->user->name }}</td>
                         <td>{{ $order->chef->name }}</td>
-                        <td>${{ $order->total }}</td>
+                        <td>{{ money($order->total) }}</td>
                         <td>
                             <span class="badge bg-info text-dark">
                                 {{ ucfirst($order->status) }}

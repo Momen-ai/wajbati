@@ -5,36 +5,36 @@
 
                 <div class="card shadow-sm">
                     <div class="card-header bg-dark text-white d-flex justify-content-between">
-                        <h5 class="mb-0">Message Details</h5>
+                        <h5 class="mb-0">{{ __('Message Details') }}</h5>
                         <span class="badge bg-info text-dark">
-                            {{ ucfirst($contact->type) }}
+                            {{ __(ucfirst($contact->type)) }}
                         </span>
                     </div>
 
                     <div class="card-body">
 
                         <p>
-                            <strong>Sender:</strong>
+                            <strong>{{ __('Sender') }}:</strong>
                             @if ($contact->user)
-                                {{ $contact->user->name }} (User) - {{ $contact->user->email }}
+                                {{ $contact->user->name }} ({{ __('User') }}) - {{ $contact->user->email }}
                             @elseif ($contact->chef)
-                                {{ $contact->chef->name }} (Chef) - {{ $contact->chef->email }}
+                                {{ $contact->chef->name }} ({{ __('Chef') }}) - {{ $contact->chef->email }}
                             @else
-                                {{ $contact->name ?? 'Guest' }} (Guest)
+                                {{ $contact->name ?? __('Guest') }} ({{ __('Guest') }})
                             @endif
                         </p>
 
                         @if ($contact->email)
-                            <p><strong>Email:</strong> {{ $contact->email }}</p>
+                            <p><strong>{{ __('Email') }}:</strong> {{ $contact->email }}</p>
                         @endif
 
                         @if ($contact->phone)
-                            <p><strong>Phone:</strong> {{ $contact->phone }}</p>
+                            <p><strong>{{ __('Phone') }}:</strong> {{ $contact->phone }}</p>
                         @endif
 
-                        <p><strong>Status:</strong> <span class="badge {{ $contact->is_read ? 'bg-success' : 'bg-warning' }}">{{ $contact->is_read ? 'Read' : 'Unread' }}</span></p>
+                        <p><strong>{{ __('Status') }}:</strong> <span class="badge {{ $contact->is_read ? 'bg-success' : 'bg-warning' }}">{{ $contact->is_read ? __('Read') : __('Unread') }}</span></p>
 
-                        <p><strong>Title:</strong> {{ $contact->title }}</p>
+                        <p><strong>{{ __('Title') }}:</strong> {{ $contact->title }}</p>
 
                         <hr>
 
@@ -47,7 +47,7 @@
                                 @php $replyEmail = $contact->email ?? ($contact->user?->email ?? $contact->chef?->email); @endphp
                                 @if ($replyEmail)
                                     <a href="mailto:{{ $replyEmail }}?subject=Re: {{ rawurlencode($contact->title) }}" class="btn btn-primary btn-sm">
-                                        Reply via Email
+                                        {{ __('Reply via Email') }}
                                     </a>
                                 @endif
 
@@ -55,13 +55,13 @@
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" class="btn btn-outline-secondary btn-sm">
-                                        Mark as {{ $contact->is_read ? 'Unread' : 'Read' }}
+                                        {{ $contact->is_read ? __('Mark as Unread') : __('Mark as Read') }}
                                     </button>
                                 </form>
                             </div>
 
                             <a href="{{ route('dashboard.contacts.index') }}" class="btn btn-secondary">
-                                Back
+                                {{ __('Back') }}
                             </a>
                         </div>
 

@@ -63,7 +63,7 @@
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <h5 class="fw-bold mb-0 text-truncate"><a href="{{ route('meals.show', $meal->id) }}"
                                         class="text-light text-decoration-none hover-text-primary">{{ $meal->name }}</a></h5>
-                                <span class="fw-bold text-primary">${{ $meal->price }}</span>
+                                <span class="fw-bold text-primary">{{ money($meal->price) }}</span>
                             </div>
                             <p class="text-light small mb-3 text-truncate">{{ Str::limit($meal->description, 60) }}</p>
 

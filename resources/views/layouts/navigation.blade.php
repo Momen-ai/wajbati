@@ -23,7 +23,7 @@
                     @auth
                         @if (auth()->user()->role === 'admin')
                             <x-nav-link :href="route('dashboard.users.index')" :active="request()->routeIs('dashboard.users.*')">
-                                Users
+                                {{ __('Users') }}
                             </x-nav-link>
                         @endif
                     @endauth

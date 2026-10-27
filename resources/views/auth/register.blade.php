@@ -61,7 +61,7 @@
 
                     <div class="form-floating mb-3">
                         <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                            id="emailInput" placeholder="Email Address" value="{{ old('email') }}" required>
+                            id="emailInput" placeholder="{{ __('Email Address') }}" value="{{ old('email') }}" required>
                         <label for="emailInput">{{ __('Email Address') }}</label>
                         @error('email')
                             <div class="invalid-feedback">{{ $message }}</div>

@@ -3,7 +3,7 @@
 
 <div class="card shadow-sm">
     <div class="card-header bg-dark text-white">
-        Edit Order #{{ $order->id }}
+        {{ __('Edit Order') }} #{{ $order->id }}
     </div>
 
     <div class="card-body">
@@ -13,7 +13,7 @@
 
             {{-- User --}}
             <div class="mb-3">
-                <label class="form-label">User</label>
+                <label class="form-label">{{ __('User') }}</label>
                 <select name="user_id" class="form-select" disabled>
                     @foreach ($users as $user)
                         <option value="{{ $user->id }}"
@@ -23,13 +23,13 @@
                     @endforeach
                 </select>
                 <small class="text-muted">
-                    User cannot be changed after order creation
+                    {{ __('User cannot be changed after order creation') }}
                 </small>
             </div>
 
             {{-- Chef --}}
             <div class="mb-3">
-                <label class="form-label">Chef</label>
+                <label class="form-label">{{ __('Chef') }}</label>
                 <select name="chef_id" class="form-select" disabled>
                     @foreach ($chefs as $chef)
                         <option value="{{ $chef->id }}"
@@ -42,7 +42,7 @@
 
             {{-- Address --}}
             <div class="mb-3">
-                <label class="form-label">Address</label>
+                <label class="form-label">{{ __('Address') }}</label>
                 <input
                     type="text"
                     name="address"
@@ -53,12 +53,12 @@
 
             {{-- Status --}}
             <div class="mb-3">
-                <label class="form-label">Status</label>
+                <label class="form-label">{{ __('Status') }}</label>
                 <select name="status" class="form-select">
                     @foreach (['pending','accepted','preparing','prepared','delivered','completed','rejected','cancelled'] as $status)
                         <option value="{{ $status }}"
                             @selected($order->status === $status)>
-                            {{ ucfirst($status) }}
+                            {{ __(ucfirst($status)) }}
                         </option>
                     @endforeach
                 </select>
@@ -66,14 +66,14 @@
 
             {{-- Order Items (Read Only) --}}
             <hr>
-            <h6 class="fw-bold">Order Items</h6>
+            <h6 class="fw-bold">{{ __('Order Items') }}</h6>
 
             <table class="table table-bordered text-center">
                 <thead class="table-light">
                     <tr>
-                        <th>Meal</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
+                        <th>{{ __('Meal') }}</th>
+                        <th>{{ __('Quantity') }}</th>
+                        <th>{{ __('Price') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -81,7 +81,7 @@
                         <tr>
                             <td>{{ $item->meal->name }}</td>
                             <td>{{ $item->quantity }}</td>
-                            <td>${{ $item->price }}</td>
+                            <td>{{ money($item->price) }}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -90,10 +90,10 @@
             {{-- Actions --}}
             <div class="d-flex justify-content-end gap-2 mt-4">
                 <a href="{{ route('dashboard.orders.index') }}" class="btn btn-secondary">
-                    Cancel
+                    {{ __('Cancel') }}
                 </a>
                 <button class="btn btn-primary">
-                    Update Order
+                    {{ __('Update Order') }}
                 </button>
             </div>
 

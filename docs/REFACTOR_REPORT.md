@@ -3,8 +3,8 @@
 This report tracks the status, implementation details, test additions, and verification evidence for all findings F-01 through F-28 across all project phases.
 
 **Last Test Suite Run:**
-`Tests:    101 passed (295 assertions)`
-`Duration: 29.99s`
+`Tests:    105 passed (304 assertions)`
+`Duration: 165.34s`
 
 ---
 
@@ -32,8 +32,8 @@ This report tracks the status, implementation details, test additions, and verif
 | **F-18** | Asynchronous & Queued Notifications | **Fixed** | `app/Notifications/*` (`ShouldQueue`, `afterCommit()`) | None | `tests/Feature/OrderStatusHistoryTest.php` | `OrderStatusHistoryTest` |
 | **F-19** | Order State Machine & History Audit Log | **Fixed** | `app/Services/OrderStatusService.php`, `app/Models/OrderStatusHistory.php`, `app/Http/Controllers/Dashboard/OrderController.php` | `2026_10_19_400100_create_order_status_histories_table.php` | `tests/Feature/OrderStatusTest.php`, `tests/Feature/OrderStatusHistoryTest.php` | `OrderStatusTest` (29 passed) |
 | **F-20** | Meal Availability & Serving Quantities | **Fixed** | `app/Models/Meal.php`, `app/Http/Controllers/Chef/MealController.php`, `app/Http/Controllers/Dashboard/MealController.php`, `app/Services/OrderService.php`, Chef/Admin meal forms, storefront views | `2026_10_19_200100_add_availability_to_meals_and_unique_to_ratings.php` | `tests/Feature/MealAvailabilityTest.php` | `MealAvailabilityTest` (4 passed: chef create/update with fields, availability storefront filtering, checkout unavailability rejection) |
-| **F-21** | Currency Helper & Timezone Defaults | **Partial** | `app/helpers.php`, `config/app.php`, `composer.json` | None | None | View replacement pending in Step 3 |
-| **F-22** | Complete i18n & RTL Coverage | **Partial** | `app/Http/Middleware/SetLocale.php` | None | None | Views and translations pending in Step 3 |
+| **F-21** | Currency Helper & Timezone Defaults | **Fixed** | `app/helpers.php`, `config/app.php`, `.env.example`, all views | None | `tests/Feature/I18nCoverageTest.php` | `Tests: 4 passed (I18nCoverageTest > money helper formats currency correctly, no literal dollar patterns)` |
+| **F-22** | Complete i18n & RTL Coverage | **Fixed** | `lang/ar.json`, `lang/en.json`, `lang/ar/validation.php`, `.env.example`, resources/views | None | `tests/Feature/I18nCoverageTest.php` | `Tests: 4 passed (I18nCoverageTest > all translation keys defined, lang pending empty)` |
 | **F-23** | Asset Bundling & CDN Cleanup | **Partial** | `public/assets/images/placeholder.svg`, deleted dead JS, `tests/TestCase.php` | None | None | Bundling via Vite pending in Step 4 |
 | **F-24** | Performance & Database Indexes | **Partial** | `database/migrations/2026_10_20_200100_add_performance_indexes.php`, `app/Services/OrderStats.php`, `AppServiceProvider.php` | `2026_10_20_200100_add_performance_indexes.php` | None | Verification & cache tests in Step 5 |
 | **F-25** | Code Quality & Search Validation | **Fixed** | `app/Http/Requests/MealIndexRequest.php`, `pint.json`, `app/Http/Controllers/Front/MealController.php` | None | None | Linted and validated |
@@ -44,4 +44,5 @@ This report tracks the status, implementation details, test additions, and verif
 ---
 
 ## NEXT
-- **STEP 3 — F-21 / F-22 i18n, currency, RTL**: Audit and populate `lang/ar.json`, `lang/en.json`, `lang/ar/validation.php`, replace hardcoded `$`, write `I18nCoverageTest.php`, and conduct Impeccable review pass.
+- **STEP 4 — F-23 Asset Bundling & CDN Cleanup**: Install Vite bundle (Bootstrap 5 RTL, self-host Cairo font, Chart.js, placeholder SVG), remove all CDN references and add a third-party host detection test.
+- **STEP 5 — F-24 Performance & Verification**: Monthly revenue grouped query verification, popular meals 30-day window check, dashboard cache invalidation on order status changes, and MySQL compatibility check.

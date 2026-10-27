@@ -10,7 +10,7 @@
         <p><strong>User:</strong> {{ $order->user->name }}</p>
         <p><strong>Chef:</strong> {{ $order->chef->name }}</p>
         <p><strong>Status:</strong> {{ ucfirst($order->status) }}</p>
-        <p><strong>Total:</strong> ${{ $order->total }}</p>
+        <p><strong>Total:</strong> {{ money($order->total) }}</p>
 
         <hr>
 
@@ -27,7 +27,7 @@
                 <tr>
                     <td>{{ $item->meal->name }}</td>
                     <td>{{ $item->quantity }}</td>
-                    <td>${{ $item->price }}</td>
+                    <td>{{ money($item->price) }}</td>
                 </tr>
                 @endforeach
             </tbody>
