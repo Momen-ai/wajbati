@@ -135,6 +135,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end border border-secondary border-opacity-10 shadow mt-2">
                                 <li><a class="dropdown-item" href="{{ route('orders.index') }}"><i class="fas fa-box me-2 small opacity-75"></i>{{ __('My Orders') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ route('favourites.index') }}"><i class="fas fa-heart me-2 small opacity-75 text-danger"></i>{{ __('My Favourites') }}</a></li>
                                 <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="fas fa-user-gear me-2 small opacity-75"></i>{{ __('Profile') }}</a></li>
                                 @if (Auth::user()->role == 'admin')
                                     <li><a class="dropdown-item fw-bold text-warning" href="{{ route('dashboard') }}"><i class="fas fa-terminal me-2 small"></i>{{ __('Admin Panel') }}</a></li>

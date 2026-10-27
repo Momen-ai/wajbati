@@ -39,6 +39,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store')->middleware('throttle:checkout');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+
+    // Favourites (Phase 5)
+    Route::get('/favourites', [\App\Http\Controllers\Front\FavouriteController::class, 'index'])->name('favourites.index');
+    Route::post('/favourites/meals/{meal}/toggle', [\App\Http\Controllers\Front\FavouriteController::class, 'toggleMeal'])->name('favourites.meal.toggle');
+    Route::post('/favourites/chefs/{chef}/toggle', [\App\Http\Controllers\Front\FavouriteController::class, 'toggleChef'])->name('favourites.chef.toggle');
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
