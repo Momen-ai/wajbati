@@ -12,8 +12,8 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $adminEmail = env('ADMIN_EMAIL');
-        $adminPassword = env('ADMIN_PASSWORD');
+        $adminEmail = env('ADMIN_EMAIL') ?: getenv('ADMIN_EMAIL');
+        $adminPassword = env('ADMIN_PASSWORD') ?: getenv('ADMIN_PASSWORD');
 
         if (app()->isProduction()) {
             if (empty($adminEmail) || empty($adminPassword)) {

@@ -19,6 +19,10 @@ test('database seeder in production never creates demo users', function () {
 
     putenv('ADMIN_EMAIL=prod-admin@wajbati.com');
     putenv('ADMIN_PASSWORD=SuperSecretProdPassword123!');
+    $_ENV['ADMIN_EMAIL'] = 'prod-admin@wajbati.com';
+    $_ENV['ADMIN_PASSWORD'] = 'SuperSecretProdPassword123!';
+    $_SERVER['ADMIN_EMAIL'] = 'prod-admin@wajbati.com';
+    $_SERVER['ADMIN_PASSWORD'] = 'SuperSecretProdPassword123!';
 
     $seeder = new DatabaseSeeder;
     $seeder->run();
