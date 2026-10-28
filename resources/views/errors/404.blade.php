@@ -1,29 +1,27 @@
 @extends('layouts.frontend')
 
 @section('content')
-<div class="container min-vh-100 d-flex align-items-center justify-content-center">
-    <div class="text-center">
-        <div class="position-relative mb-5">
-            <h1 class="display-1 fw-900 opacity-25" style="letter-spacing: 20px;">404</h1>
-            <div class="position-absolute top-50 start-50 translate-middle w-100">
-                <i class="fas fa-search fa-4x text-primary-custom opacity-75"></i>
+<div class="container min-vh-100 d-flex align-items-center justify-content-center py-5">
+    <div class="text-center" style="max-width: 580px;">
+        <div class="position-relative mb-4">
+            <span class="display-1 fw-bold text-primary opacity-20 d-block" style="font-size: clamp(6rem, 15vw, 10rem); letter-spacing: -0.05em; line-height: 1;">404</span>
+            <div class="position-absolute top-50 start-50 translate-middle">
+                <div class="rounded-circle d-flex align-items-center justify-content-center text-primary border border-primary border-opacity-30 shadow-lg"
+                     style="width: 80px; height: 80px; background: var(--surface-1);">
+                    <i class="fas fa-search fa-2x"></i>
+                </div>
             </div>
         </div>
-        <h2 class="fw-bold text-light mb-3">{{ __('Page Not Found') }}</h2>
-        <p class="text-muted mb-5 mx-auto" style="max-width: 500px;">{{ __('The page you are looking for does not exist or has been moved.') }}</p>
-        <div class="d-flex gap-3 justify-content-center">
-            <a href="{{ route('home') }}" class="btn btn-primary rounded-pill px-5 py-2 grow-on-hover">
+        <h1 class="h2 fw-bold text-light mb-3">{{ __('Page Not Found') }}</h1>
+        <p class="text-secondary mb-4 leading-relaxed">{{ __('The page you are looking for does not exist or has been moved.') }}</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{{ route('home') }}" class="btn btn-primary rounded-pill px-5 py-2 fw-semibold shadow-lg" data-magnetic>
                 <i class="fas fa-home me-2"></i>{{ __('Back to Home') }}
             </a>
-            <a href="{{ route('meals.index') }}" class="btn btn-outline-primary rounded-pill px-5 py-2">
+            <a href="{{ route('meals.index') }}" class="btn btn-outline-primary rounded-pill px-5 py-2 fw-semibold" data-magnetic>
                 {{ __('Browse Meals') }}
             </a>
         </div>
     </div>
 </div>
-
-<style>
-    .grow-on-hover:hover { transform: scale(1.05); }
-    .display-1 { font-size: 8rem; }
-</style>
 @endsection

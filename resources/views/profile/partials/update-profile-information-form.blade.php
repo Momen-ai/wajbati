@@ -1,10 +1,10 @@
 <section>
     <header>
-        <h2 class="text-lg font-medium text-gray-900">
+        <h2 class="h5 fw-bold text-light mb-1">
             {{ __('Profile Information') }}
         </h2>
 
-        <p class="mt-1 text-sm text-gray-600">
+        <p class="text-secondary small mb-4">
             {{ __("Update your account's profile information and email address.") }}
         </p>
     </header>
@@ -13,57 +13,51 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
+    <form method="post" action="{{ route('profile.update') }}" class="mt-4 space-y-4" enctype="multipart/form-data">
         @csrf
         @method('patch')
 
         @if($user->role === 'chef')
-            <div class="flex items-center gap-4 mb-6">
-                <div class="shrink-0">
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <div class="flex-shrink-0">
                     @if($user->image)
-                        <img class="h-20 w-20 object-cover rounded-full" src="{{ asset('storage/' . $user->image->image_path) }}" alt="{{ $user->name }}">
+                        <img class="rounded-circle object-fit-cover border border-primary border-opacity-30" style="width: 72px; height: 72px;" src="{{ asset('storage/' . $user->image->image_path) }}" alt="{{ $user->name }}">
                     @else
-                        <div class="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
-                            <i class="fas fa-camera text-gray-400 text-2xl"></i>
+                        <div class="rounded-circle d-flex align-items-center justify-content-center text-secondary border border-secondary border-opacity-20" style="width: 72px; height: 72px; background: var(--surface-2);">
+                            <i class="fas fa-camera fa-lg"></i>
                         </div>
                     @endif
                 </div>
-                <label class="block">
-                    <span class="sr-only">{{ __('Choose profile photo') }}</span>
-                    <input type="file" name="image" class="block w-full text-sm text-slate-500
-                        file:mr-4 file:py-2 file:px-4
-                        file:rounded-full file:border-0
-                        file:text-sm file:font-semibold
-                        file:bg-indigo-50 file:text-indigo-700
-                        hover:file:bg-indigo-100
-                    "/>
-                </label>
+                <div>
+                    <label class="form-label text-secondary small fw-medium mb-1">{{ __('Profile Photo') }}</label>
+                    <input type="file" name="image" class="form-control form-control-sm text-light border-secondary border-opacity-25" style="background: var(--surface-2);"/>
+                </div>
             </div>
         @endif
 
-        <div>
+        <div class="mb-3">
             <x-input-label for="name" :value="__('Name')" />
             <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
-        <div>
+        <div class="mb-3">
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
             @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
                 <div>
-                    <p class="text-sm mt-2 text-gray-800">
+                    <p class="small mt-2 text-warning">
                         {{ __('Your email address is unverified.') }}
 
-                        <button form="send-verification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <button form="send-verification" class="text-primary text-decoration-underline ms-1">
                             {{ __('Click here to re-send the verification email.') }}
                         </button>
                     </p>
 
                     @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 font-medium text-sm text-green-600">
+                        <p class="mt-2 fw-medium small text-success">
                             {{ __('A new verification link has been sent to your email address.') }}
                         </p>
                     @endif
@@ -71,36 +65,36 @@
             @endif
         </div>
 
-        <div>
+        <div class="mb-3">
             <x-input-label for="phone" :value="__('Phone')" />
             <x-text-input id="phone" name="phone" type="text" class="mt-1 block w-full" :value="old('phone', $user->phone)" autocomplete="tel" />
             <x-input-error class="mt-2" :messages="$errors->get('phone')" />
         </div>
 
         @if($user->role === 'chef')
-            <hr class="my-6">
-            <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Kitchen Information') }}</h3>
+            <hr class="border-secondary border-opacity-20 my-4">
+            <h5 class="fw-bold text-light mb-3">{{ __('Kitchen Information') }}</h5>
 
-            <div>
+            <div class="mb-3">
                 <x-input-label for="kitchen_name" :value="__('Kitchen Name')" />
                 <x-text-input id="kitchen_name" name="kitchen_name" type="text" class="mt-1 block w-full" :value="old('kitchen_name', $user->kitchen_name)" :placeholder="__('e.g. Grandma\'s Kitchen')" />
                 <x-input-error class="mt-2" :messages="$errors->get('kitchen_name')" />
             </div>
 
-            <div>
+            <div class="mb-3">
                 <x-input-label for="address" :value="__('Address')" />
                 <x-text-input id="address" name="address" type="text" class="mt-1 block w-full" :value="old('address', $user->address)" :placeholder="__('Kitchen Location')" />
                 <x-input-error class="mt-2" :messages="$errors->get('address')" />
             </div>
 
-            <div>
+            <div class="mb-3">
                 <x-input-label for="bio" :value="__('About You / Bio')" />
-                <textarea id="bio" name="bio" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" rows="4" placeholder="{{ __('Tell customers about your kitchen and specialty...') }}">{{ old('bio', $user->bio) }}</textarea>
+                <textarea id="bio" name="bio" class="mt-1 block w-full rounded-3 px-3 py-2 text-light border border-secondary border-opacity-25" style="background: var(--surface-2); outline: none;" rows="4" placeholder="{{ __('Tell customers about your kitchen and specialty...') }}">{{ old('bio', $user->bio) }}</textarea>
                 <x-input-error class="mt-2" :messages="$errors->get('bio')" />
             </div>
         @endif
 
-        <div class="flex items-center gap-4">
+        <div class="d-flex align-items-center gap-3 pt-2">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 
             @if (session('status') === 'profile-updated')
@@ -109,7 +103,7 @@
                     x-show="show"
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600"
+                    class="text-success small mb-0"
                 >{{ __('Saved.') }}</p>
             @endif
         </div>

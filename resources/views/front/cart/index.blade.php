@@ -2,70 +2,85 @@
 
 @section('content')
 <div class="container py-5">
-  <div class="d-flex align-items-center mb-4">
-      <h2 class="fw-bold mb-0 me-3 text-light">{{ __('Shopping Cart') }}</h2>
-      <span class="badge bg-secondary text-light rounded-pill border">{{ $count }} {{ __('items') }}</span>
+  <div class="d-flex align-items-center justify-content-between mb-4">
+      <div class="d-flex align-items-center gap-3">
+          <h1 class="h2 fw-bold mb-0 text-light">{{ __('Shopping Cart') }}</h1>
+          <span class="badge rounded-pill px-3 py-1 bg-primary bg-opacity-10 text-primary border border-primary border-opacity-20 fw-bold">
+              {{ $count }} {{ __('items') }}
+          </span>
+      </div>
   </div>
 
   @if($byChef->isNotEmpty())
-  <div class="row g-4">
+  <div class="row g-4 g-lg-5">
     <!-- Cart Items Grouped by Chef -->
     <div class="col-lg-8">
       @foreach($byChef as $chefId => $chefGroup)
-      <div class="card shadow-card border border-secondary border-opacity-10 mb-4">
-        <div class="card-header bg-secondary bg-opacity-25 py-3 d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-bold text-light">
-                <i class="fas fa-utensils me-2 text-primary"></i>{{ $chefGroup['chef']->name ?? __('Chef') }}
-            </h5>
-            <span class="badge bg-primary rounded-pill">
+      <div class="card p-0 rounded-4 border border-secondary border-opacity-10 mb-4 overflow-hidden shadow-sm" style="background: var(--surface-1);">
+        <div class="card-header py-3 px-4 d-flex justify-content-between align-items-center border-bottom border-secondary border-opacity-10" style="background: var(--surface-2);">
+            <div class="d-flex align-items-center gap-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center text-primary" style="width: 32px; height: 32px; background: var(--surface-1);">
+                    <i class="fas fa-hat-chef small"></i>
+                </div>
+                <h5 class="mb-0 fw-bold text-light">
+                    {{ $chefGroup['chef']->kitchen_name ?? $chefGroup['chef']->name ?? __('Chef') }}
+                </h5>
+            </div>
+            <span class="badge rounded-pill px-3 py-1 bg-secondary bg-opacity-25 text-light small border border-secondary border-opacity-10">
                 {{ __('Subtotal') }}: {{ money($chefGroup['subtotal']) }} + {{ __('Delivery') }}: {{ money($chefGroup['delivery_fee']) }}
             </span>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-dark table-hover align-middle mb-0">
-                    <thead class="bg-secondary">
-                        <tr>
-                            <th class="border-0 p-3 ps-4" style="width: 40%;">{{ __('Meal') }}</th>
-                            <th class="border-0 p-3">{{ __('Price') }}</th>
-                            <th class="border-0 p-3">{{ __('Quantity') }}</th>
-                            <th class="border-0 p-3 text-end pe-4">{{ __('Total') }}</th>
-                            <th class="border-0 p-3"></th>
+                <table class="table align-middle mb-0 text-light" style="--bs-table-bg: transparent;">
+                    <thead>
+                        <tr class="text-secondary small text-uppercase" style="border-bottom: 1px solid var(--border-subtle);">
+                            <th class="p-3 ps-4" style="width: 42%;">{{ __('Meal') }}</th>
+                            <th class="p-3">{{ __('Price') }}</th>
+                            <th class="p-3 text-center">{{ __('Quantity') }}</th>
+                            <th class="p-3 text-end pe-4">{{ __('Total') }}</th>
+                            <th class="p-3"></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($chefGroup['items'] as $item)
                         @php $meal = $item['meal']; @endphp
-                        <tr data-id="{{ $meal->id }}">
+                        <tr data-id="{{ $meal->id }}" style="border-bottom: 1px solid var(--border-subtle);">
                             <td class="p-3 ps-4">
-                                <div class="d-flex align-items-center">
-                                    @if($meal->image)
-                                    <img src="{{ asset('storage/' . $meal->image->image_path) }}" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
-                                    @else
-                                    <img src="{{ asset('assets/images/placeholder.svg') }}" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
-                                    @endif
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-3 overflow-hidden flex-shrink-0" style="width: 56px; height: 56px; background: var(--surface-2);">
+                                        @if($meal->image)
+                                            <img src="{{ asset('storage/' . $meal->image->image_path) }}" class="w-100 h-100 object-fit-cover" alt="{{ $meal->name }}">
+                                        @else
+                                            <img src="{{ asset('assets/images/placeholder.svg') }}" class="w-100 h-100 object-fit-cover" alt="{{ $meal->name }}">
+                                        @endif
+                                    </div>
                                     <div>
-                                        <h6 class="mb-0 fw-bold text-light">{{ $meal->name }}</h6>
-                                        <small class="text-light opacity-75">{{ $chefGroup['chef']->name ?? __('Chef') }}</small>
+                                        <h6 class="mb-1 fw-bold text-light">{{ $meal->name }}</h6>
+                                        <small class="text-secondary">{{ $chefGroup['chef']->kitchen_name ?? $chefGroup['chef']->name ?? __('Chef') }}</small>
                                     </div>
                                 </div>
                             </td>
-                            <td class="p-3 fw-bold price">{{ money($item['price']) }}</td>
-                            <td class="p-3">
-                                <div class="input-group input-group-sm" style="width: 120px;">
-                                    <input type="number" value="{{ $item['quantity'] }}" min="1" max="20" class="form-control bg-secondary text-light border-secondary text-center quantity-input">
+                            <td class="p-3 fw-semibold text-light price">{{ money($item['price']) }}</td>
+                            <td class="p-3 text-center">
+                                <div class="input-group input-group-sm mx-auto" style="width: 100px;">
+                                    <input type="number" value="{{ $item['quantity'] }}" min="1" max="20"
+                                        class="form-control text-center text-light border-secondary border-opacity-25 quantity-input"
+                                        style="background: var(--surface-2);">
                                 </div>
                             </td>
-                            <td class="p-3 text-end pe-4 fw-bold row-total">{{ money($item['line_total']) }}</td>
+                            <td class="p-3 text-end pe-4 fw-bold text-primary row-total">{{ money($item['line_total']) }}</td>
                             <td class="p-3 text-end">
-                                <button class="btn btn-link text-danger p-0 remove-from-cart" title="{{ __('Remove') }}"><i class="fas fa-trash-alt"></i></button>
+                                <button class="btn btn-sm btn-link text-danger p-0 remove-from-cart" title="{{ __('Remove') }}">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
-                    <tfoot class="border-top border-secondary">
-                        <tr>
-                            <td colspan="3" class="p-3 ps-4 text-light opacity-75 small">
+                    <tfoot>
+                        <tr style="border-top: 1px solid var(--border-subtle);">
+                            <td colspan="3" class="p-3 ps-4 text-secondary small">
                                 {{ __('Chef Order Delivery Fee') }}: {{ money($chefGroup['delivery_fee']) }}
                             </td>
                             <td colspan="2" class="p-3 pe-4 text-end fw-bold text-primary">
@@ -80,7 +95,9 @@
       @endforeach
 
       <div class="d-flex justify-content-between mb-4">
-          <a href="{{ route('meals.index') }}" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i> {{ __('Continue Shopping') }}</a>
+          <a href="{{ route('meals.index') }}" class="btn btn-outline-primary rounded-pill px-4">
+              <i class="fas fa-arrow-left me-2"></i> {{ __('Continue Shopping') }}
+          </a>
       </div>
     </div>
 
@@ -88,28 +105,28 @@
     <div class="col-lg-4">
       <form action="{{ route('orders.store') }}" method="POST">
       @csrf
-      <div class="card shadow-card border border-secondary border-opacity-10 p-4 position-sticky" style="top: 90px; background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(10px);">
+      <div class="card p-4 rounded-4 border border-secondary border-opacity-10 position-sticky shadow-lg" style="top: 90px; background: var(--surface-1);">
           <h5 class="fw-bold mb-4 text-light">{{ __('Order Summary') }}</h5>
           
-          <div class="d-flex justify-content-between mb-2 text-light">
+          <div class="d-flex justify-content-between mb-2 text-secondary">
               <span>{{ __('Subtotal') }}</span>
-              <span id="cart-total">{{ money($subtotal) }}</span>
+              <span class="text-light fw-medium" id="cart-total">{{ money($subtotal) }}</span>
           </div>
-          <div class="d-flex justify-content-between mb-2 text-light">
+          <div class="d-flex justify-content-between mb-3 text-secondary">
               <span>{{ __('Delivery Fee') }} ({{ count($byChef) }} {{ count($byChef) > 1 ? __('kitchens') : __('kitchen') }})</span>
-              <span>{{ money($totalDeliveryFee) }}</span>
+              <span class="text-light fw-medium">{{ money($totalDeliveryFee) }}</span>
           </div>
-          <hr class="text-light opacity-25">
+          <hr class="border-secondary border-opacity-15 my-3">
           <div class="d-flex justify-content-between mb-4">
               <span class="fw-bold h5 mb-0 text-light">{{ __('Total') }}</span>
-              <span class="fw-bold h5 text-primary mb-0" id="grand-total">{{ money($total) }}</span>
+              <span class="fw-bold h4 text-primary mb-0" id="grand-total">{{ money($total) }}</span>
           </div>
 
           @auth
           @if(auth()->user()->addresses->count() > 0)
           <div class="mb-3">
-              <label class="form-label small fw-bold text-light">{{ __('Choose Saved Address') }}</label>
-              <select name="address_id" id="address_select" class="form-select bg-secondary text-light border border-secondary border-opacity-10 py-2">
+              <label class="form-label small fw-semibold text-secondary">{{ __('Choose Saved Address') }}</label>
+              <select name="address_id" id="address_select" class="form-select text-light border border-secondary border-opacity-25 py-2" style="background: var(--surface-2);">
                   <option value="">-- {{ __('Use New Address') }} --</option>
                   @foreach(auth()->user()->addresses as $addr)
                       <option value="{{ $addr->id }}">{{ ucfirst($addr->type) }}: {{ $addr->address }}</option>
@@ -120,44 +137,49 @@
           @endauth
 
           <div class="mb-3" id="manual_address_box">
-              <label class="form-label small fw-bold text-light">{{ __('Delivery Address') }}</label>
-              <textarea name="address" id="manual_address" class="form-control bg-secondary text-light border border-secondary border-opacity-10" placeholder="{{ __('Street, Building, Apartment...') }}" rows="2"></textarea>
+              <label class="form-label small fw-semibold text-secondary">{{ __('Delivery Address') }}</label>
+              <textarea name="address" id="manual_address" class="form-control text-light border border-secondary border-opacity-25"
+                  style="background: var(--surface-2);" placeholder="{{ __('Street, Building, Apartment...') }}" rows="2"></textarea>
           </div>
           
           <div class="mb-3">
-              <label class="form-label small fw-bold text-light">{{ __('Phone Number') }}</label>
-              <input type="text" name="phone" class="form-control bg-secondary text-light border border-secondary border-opacity-10" required placeholder="05xxxxxxxx" value="{{ auth()->user()->phone ?? '' }}">
+              <label class="form-label small fw-semibold text-secondary">{{ __('Phone Number') }}</label>
+              <input type="text" name="phone" class="form-control text-light border border-secondary border-opacity-25"
+                  style="background: var(--surface-2);" required placeholder="05xxxxxxxx" value="{{ auth()->user()->phone ?? '' }}">
           </div>
 
           <div class="mb-4">
-              <label class="form-label small fw-bold text-light">{{ __('Payment Method') }}</label>
-              <div class="d-flex gap-2">
-                  <div class="w-100">
-                      <input type="radio" class="btn-check" name="payment_method" id="cash" value="cash" checked>
-                      <label class="btn btn-outline-primary w-100" for="cash">
-                          <i class="fas fa-money-bill-wave me-1"></i> {{ __('Cash on Delivery') }}
+              <label class="form-label small fw-semibold text-secondary">{{ __('Payment Method') }}</label>
+              <div class="p-3 rounded-3 border border-primary border-opacity-25 d-flex align-items-center justify-content-between" style="background: var(--primary-soft);">
+                  <div class="d-flex align-items-center gap-2">
+                      <input type="radio" name="payment_method" id="cash" value="cash" checked class="form-check-input">
+                      <label class="text-light fw-semibold mb-0" for="cash">
+                          <i class="fas fa-money-bill-wave text-primary me-1"></i> {{ __('Cash on Delivery') }}
                       </label>
                   </div>
+                  <span class="badge bg-success bg-opacity-20 text-success rounded-pill px-2 py-1 small">{{ __('Available') }}</span>
               </div>
           </div>
 
-          <button type="submit" class="btn btn-success btn-lg w-100 shadow-sm mb-3">
+          <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold shadow-lg mb-3" data-magnetic>
               {{ __('Place Order') }} <i class="fas fa-check-circle ms-2"></i>
           </button>
           
           <div class="text-center">
-              <span class="text-light small"><i class="fas fa-lock me-1"></i> {{ __('Secure Checkout') }}</span>
+              <span class="text-secondary small"><i class="fas fa-shield-check text-primary me-1"></i> {{ __('Secure Checkout') }}</span>
           </div>
       </div>
       </form>
     </div>
   </div>
   @else
-  <div class="col-12 text-center py-5">
-      <div class="mb-3 text-light"><i class="fas fa-shopping-basket fa-4x opacity-50"></i></div>
-      <h3 class="text-light">{{ __('Your cart is empty') }}</h3>
-      <p class="text-light mb-4">{{ __('Looks like you haven\'t added any meals yet.') }}</p>
-      <a href="{{ route('meals.index') }}" class="btn btn-primary px-4 py-2">{{ __('Discover Meals') }}</a>
+  <div class="col-12 py-5">
+      <x-ui.empty-state
+          icon="fa-shopping-basket"
+          :title="__('Your cart is empty')"
+          :message="__('Looks like you haven\'t added any meals yet.')"
+          :actionUrl="route('meals.index')"
+          :actionText="__('Discover Meals')" />
   </div>
   @endif
 </div>
