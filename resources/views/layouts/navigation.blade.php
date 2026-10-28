@@ -1,141 +1,123 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('home') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+<!-- Mobile Sidebar Backdrop -->
+<div x-show="sidebarOpen"
+     @click="sidebarOpen = false"
+     x-transition:enter="transition-opacity ease-linear duration-300"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition-opacity ease-linear duration-300"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     class="position-fixed top-0 start-0 w-100 h-100 bg-black bg-opacity-75 d-lg-none"
+     style="z-index: 1040; backdrop-filter: blur(4px);"
+     x-cloak>
+</div>
+
+<!-- Sidebar Container -->
+<aside :class="sidebarOpen ? 'd-flex' : 'd-none d-lg-flex'"
+       class="flex-column flex-shrink-0 bg-surface-1 border-end border-subtle min-vh-100 position-fixed position-lg-sticky top-0 start-0 z-index-1050"
+       style="width: 260px; z-index: 1050; transition: transform var(--duration-normal) var(--ease-out);">
+
+    <!-- Sidebar Brand -->
+    <div class="p-3 border-bottom border-subtle d-flex align-items-center justify-content-between">
+        <a href="{{ route('home') }}" class="d-flex align-items-center gap-2 text-decoration-none">
+            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                 style="width: 38px; height: 38px;">
+                <i class="fas fa-utensils"></i>
+            </div>
+            <span class="fs-5 fw-bold text-primary tracking-tight">{{ __('Wajbati') }}</span>
+        </a>
+
+        <!-- Mobile Close Button -->
+        <button type="button" @click="sidebarOpen = false" class="btn btn-sm text-secondary d-lg-none" aria-label="Close sidebar">
+            <i class="fas fa-times fs-5"></i>
+        </button>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="p-3 flex-grow-1 overflow-y-auto">
+        <div class="text-secondary small fw-bold text-uppercase px-3 mb-2" style="font-size: 0.7rem; letter-spacing: 0.05em;">
+            {{ __('Navigation') }}
+        </div>
+
+        <nav class="nav nav-pills flex-column gap-1">
+            <!-- Dashboard -->
+            <a href="{{ route('dashboard') }}"
+               class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-main {{ request()->routeIs('dashboard') ? 'bg-primary-soft text-primary fw-bold border-start border-3 border-primary' : 'hover-bg-surface-2' }}">
+                <i class="fas fa-chart-line text-primary" style="width: 20px;"></i>
+                <span>{{ __('Dashboard') }}</span>
+            </a>
+
+            <!-- Categories -->
+            <a href="{{ route('dashboard.category.index') }}"
+               class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-main {{ request()->routeIs('dashboard.category.*') ? 'bg-primary-soft text-primary fw-bold border-start border-3 border-primary' : 'hover-bg-surface-2' }}">
+                <i class="fas fa-th-large text-primary" style="width: 20px;"></i>
+                <span>{{ __('Categories') }}</span>
+            </a>
+
+            <!-- Meals -->
+            <a href="{{ route('dashboard.meals.index') }}"
+               class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-main {{ request()->routeIs('dashboard.meals.*') ? 'bg-primary-soft text-primary fw-bold border-start border-3 border-primary' : 'hover-bg-surface-2' }}">
+                <i class="fas fa-hamburger text-primary" style="width: 20px;"></i>
+                <span>{{ __('Meals') }}</span>
+            </a>
+
+            <!-- Orders -->
+            <a href="{{ route('dashboard.orders.index') }}"
+               class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-main {{ request()->routeIs('dashboard.orders.*') ? 'bg-primary-soft text-primary fw-bold border-start border-3 border-primary' : 'hover-bg-surface-2' }}">
+                <i class="fas fa-shopping-bag text-primary" style="width: 20px;"></i>
+                <span>{{ __('Orders') }}</span>
+            </a>
+
+            <!-- Ratings -->
+            <a href="{{ route('dashboard.ratings.index') }}"
+               class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-main {{ request()->routeIs('dashboard.ratings.*') ? 'bg-primary-soft text-primary fw-bold border-start border-3 border-primary' : 'hover-bg-surface-2' }}">
+                <i class="fas fa-star text-primary" style="width: 20px;"></i>
+                <span>{{ __('Rating') }}</span>
+            </a>
+
+            <!-- Contacts -->
+            <a href="{{ route('dashboard.contacts.index') }}"
+               class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-main {{ request()->routeIs('dashboard.contacts.*') ? 'bg-primary-soft text-primary fw-bold border-start border-3 border-primary' : 'hover-bg-surface-2' }}">
+                <i class="fas fa-envelope text-primary" style="width: 20px;"></i>
+                <span>{{ __('Contacts') }}</span>
+            </a>
+
+            @auth
+                @if (auth()->user()->role === 'admin')
+                    <div class="text-secondary small fw-bold text-uppercase px-3 mt-3 mb-2" style="font-size: 0.7rem; letter-spacing: 0.05em;">
+                        {{ __('Administration') }}
+                    </div>
+
+                    <!-- Users -->
+                    <a href="{{ route('dashboard.users.index') }}"
+                       class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-main {{ request()->routeIs('dashboard.users.*') ? 'bg-primary-soft text-primary fw-bold border-start border-3 border-primary' : 'hover-bg-surface-2' }}">
+                        <i class="fas fa-users text-primary" style="width: 20px;"></i>
+                        <span>{{ __('Users') }}</span>
                     </a>
-                </div>
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
+                    <!-- Chef Applications -->
+                    <a href="{{ route('dashboard.chef-applications.index') }}"
+                       class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-main {{ request()->routeIs('dashboard.chef-applications.*') ? 'bg-primary-soft text-primary fw-bold border-start border-3 border-primary' : 'hover-bg-surface-2' }}">
+                        <i class="fas fa-user-check text-primary" style="width: 20px;"></i>
+                        <span>{{ __('Chef Applications') }}</span>
+                    </a>
 
-                    <x-nav-link :href="route('dashboard.category.index')" :active="request()->routeIs('dashboard.category.*')">
-                        {{ __('Categories') }}
-                    </x-nav-link>
-
-                    @auth
-                        @if (auth()->user()->role === 'admin')
-                            <x-nav-link :href="route('dashboard.users.index')" :active="request()->routeIs('dashboard.users.*')">
-                                {{ __('Users') }}
-                            </x-nav-link>
-                        @endif
-                    @endauth
-
-
-                    <x-nav-link :href="route('dashboard.meals.index')" :active="request()->routeIs('dashboard.meals.*')">
-                        {{ __('Meals') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('dashboard.orders.index')" :active="request()->routeIs('dashboard.orders.*')">
-                        {{ __('Orders') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('dashboard.ratings.index')" :active="request()->routeIs('dashboard.ratings.*')">
-                        {{ __('Rating') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('dashboard.contacts.index')" :active="request()->routeIs('dashboard.contacts.*')">
-                        {{ __('Contacts') }}
-                    </x-nav-link>
-
-                </div>
-
-
-
-            </div>
-
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button
-                            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
-
-                        <!-- Authentication -->
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-
-                            <x-dropdown-link :href="route('logout')"
-                                onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </form>
-                    </x-slot>
-                </x-dropdown>
-            </div>
-
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open"
-                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{ 'hidden': open, 'inline-flex': !open }" class="inline-flex"
-                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{ 'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round"
-                            stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-        </div>
+                    <!-- Audit Log -->
+                    <a href="{{ route('dashboard.audit-log.index') }}"
+                       class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-main {{ request()->routeIs('dashboard.audit-log.*') ? 'bg-primary-soft text-primary fw-bold border-start border-3 border-primary' : 'hover-bg-surface-2' }}">
+                        <i class="fas fa-history text-primary" style="width: 20px;"></i>
+                        <span>{{ __('Audit Log') }}</span>
+                    </a>
+                @endif
+            @endauth
+        </nav>
     </div>
 
-    <!-- Responsive Navigation Menu -->
-    <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-        </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
-
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                        onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </form>
-            </div>
-        </div>
+    <!-- Sidebar Footer -->
+    <div class="p-3 border-top border-subtle">
+        <a href="{{ route('home') }}" class="btn btn-outline-primary btn-sm w-100 rounded-pill py-2 d-flex align-items-center justify-content-center gap-2">
+            <i class="fas fa-external-link-alt small"></i>
+            <span>{{ __('Back to Store') }}</span>
+        </a>
     </div>
-</nav>
+</aside>

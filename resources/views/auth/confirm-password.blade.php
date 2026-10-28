@@ -11,7 +11,6 @@
     @else
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
-    <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
 </head>
 
 <body>
