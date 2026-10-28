@@ -1,8 +1,17 @@
 @props([
     'chef',
+    'isFavorited' => false,
 ])
 
-<div {{ $attributes->merge(['class' => 'spotlight-card text-center p-4 h-100 d-flex flex-column align-items-center justify-content-between']) }} data-spotlight>
+<div {{ $attributes->merge(['class' => 'spotlight-card text-center p-4 h-100 d-flex flex-column align-items-center justify-content-between position-relative']) }} data-spotlight>
+    @if($isFavorited)
+        <form action="{{ route('favourites.chef.toggle', $chef) }}" method="POST" class="position-absolute top-0 end-0 m-3" style="z-index: 2;">
+            @csrf
+            <button type="submit" class="btn btn-sm bg-surface-2 text-danger rounded-circle border border-subtle shadow-sm d-flex align-items-center justify-content-center p-0" style="width: 28px; height: 28px;" title="{{ __('Remove') }}">
+                <i class="fas fa-heart small"></i>
+            </button>
+        </form>
+    @endif
     <div class="w-100 d-flex flex-column align-items-center">
         <!-- Chef Avatar -->
         <div class="position-relative mb-3">

@@ -38,134 +38,54 @@
                             onerror="this.src='{{ asset('assets/images/placeholder.svg') }}'" alt="Delicious Food"
                             class="position-relative"
                             style="z-index:1;max-width:100%;height:auto;filter:drop-shadow(0 20px 30px rgba(0,0,0,0.15))">
-
-                        {{-- <div class="bg-white p-3 rounded-4 shadow-sm position-absolute bottom-0 start-0 mb-4 d-none d-md-block"
-                            style="z-index:2; min-width: 160px; text-align: {{ app()->getLocale() == 'ar' ? 'right' : 'left' }};">
-                            <div class="d-flex align-items-center mb-2">
-                                <div class="bg-success rounded-circle p-1 {{ app()->getLocale() == 'ar' ? 'ms-2' : 'me-2' }}"><i
-                                        class="fas fa-check text-white small"></i></div>
-                                <small class="fw-bold">{{ __('Fresh Daily') }}</small>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <div class="bg-warning rounded-circle p-1 {{ app()->getLocale() == 'ar' ? 'ms-2' : 'me-2' }}"><i class="fas fa-star text-white small"></i>
-                                </div>
-                                <small class="fw-bold">{{ __('4.9/5 Rating') }}</small>
-                            </div>
-                        </div> --}}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Categories -->
+    <!-- Categories Section -->
     <div class="container mb-5">
-        <h3 class="fw-bold mb-4 text-center">{{ __('Explore Categories') }}</h3>
-        <div class="row justify-content-center g-4">
+        <x-ui.section-heading
+            :title="__('Explore Categories')"
+            :subtitle="__('Browse by dish categories and homemade specialties')" />
+
+        <div class="row justify-content-center g-3 g-md-4">
             @foreach ($categories as $category)
                 <div class="col-6 col-md-3">
-                    <a href="{{ route('meals.index', ['category' => $category->id]) }}" class="text-decoration-none">
-                        <div class="card shadow-card bg-secondary text-center p-4 h-100 hover-lift border border-secondary border-opacity-10">
-                            <div class="category-icon text-primary mb-3">
-                                <i class="fas fa-utensils fa-2x"></i> <!-- Or category icon if exists -->
-                            </div>
-                            <h6 class="fw-bold text-light">{{ $category->name }}</h6>
-                            <small class="text-light opacity-75">{{ $category->meals_count }} {{ __('Meals') }}</small>
-                        </div>
-                    </a>
+                    <x-ui.category-card :category="$category" />
                 </div>
             @endforeach
         </div>
     </div>
 
-    <!-- Popular Meals -->
+    <!-- Popular Meals Section -->
     <div class="container mb-5">
-        <div class="d-flex justify-content-between align-items-end mb-4">
-            <div>
-                <h2 class="mb-1">{{ __('Popular Meals') }}</h2>
-                <p class="text-light mb-0">{{ __("Our customers' favorites this week") }}</p>
-            </div>
-            <a href="{{ route('meals.index') }}" class="btn btn-link text-decoration-none fw-bold">{{ __('View All') }} <i
-                    class="fas fa-arrow-right ms-1"></i></a>
-        </div>
+        <x-ui.section-heading
+            :title="__('Popular Meals')"
+            :subtitle="__('Our customers\' favorites this week')"
+            :viewAllUrl="route('meals.index')" />
 
-        <div class="row g-4">
+        <div class="row g-3 g-md-4">
             @foreach ($popularMeals as $meal)
-                <div class="col-6 col-lg-4">
-                    <div class="card shadow-card border border-secondary border-opacity-10 h-100 meal-card">
-                        <div class="meal-card-img-wrapper">
-                            @if ($meal->image)
-                                <img src="{{ asset('storage/' . $meal->image->image_path) }}" alt="{{ $meal->name }}">
-                            @else
-                                <img src="{{ asset('assets/images/placeholder.svg') }}" alt="{{ $meal->name }}">
-                            @endif
-                            <span class="card-badge text-primary-custom">{{ $meal->category->name ?? __('General') }}</span>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="fw-bold mb-0 text-truncate">{{ $meal->name }}</h5>
-                                <span class="fw-bold text-primary">{{ money($meal->price) }}</span>
-                            </div>
-                            <p class="text-light small mb-1 text-truncate">{{ Str::limit($meal->description, 60) }}</p>
-                            <div class="d-flex align-items-center gap-3 text-light small mb-2 opacity-75">
-                                @if($meal->number_persons)
-                                    <span><i class="fas fa-users me-1 text-primary"></i>{{ $meal->number_persons }} {{ __('persons') }}</span>
-                                @endif
-                                @if($meal->prep_time_minutes)
-                                    <span><i class="fas fa-clock me-1 text-primary"></i>{{ $meal->prep_time_minutes }} {{ __('min') }}</span>
-                                @endif
-                            </div>
-                            <div class="mb-3 text-warning small">
-                                @php $avg = round($meal->ratings_avg_star ?? 0); @endphp
-                                @for ($i = 1; $i <= 5; $i++)
-                                    <i class="{{ $i <= $avg ? 'fas' : 'far' }} fa-star"></i>
-                                @endfor
-                                <span class="text-light ms-1" style="font-size: 0.7rem;">({{ $meal->ratings_count ?? 0 }})</span>
-                            </div>
-
-                            <div class="d-flex align-items-center justify-content-between border-top border-secondary border-secondary pt-3 mt-auto">
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-user-circle fa-lg text-light me-2"></i>
-                                    <small class="fw-bold text-light">{{ $meal->chef->name ?? __('Chef') }}</small>
-                                </div>
-                                <a href="{{ route('meals.show', $meal->id) }}"
-                                    class="btn btn-sm btn-outline-primary rounded-pill px-3">{{ __('View') }}</a>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <x-ui.meal-card :meal="$meal" />
                 </div>
             @endforeach
         </div>
     </div>
 
-    <!-- Featured Chefs -->
+    <!-- Featured Chefs Section -->
     <div class="container mb-5 pb-5">
-        <div class="d-flex justify-content-between align-items-end mb-4">
-            <div>
-                <h2 class="mb-1">{{ __('Meet Our Talented Chefs') }}</h2>
-                <p class="text-light mb-0">{{ __('Local families sharing their culinary heritage') }}</p>
-            </div>
-            <a href="{{ route('chefs.index') }}" class="btn btn-link text-decoration-none fw-bold">{{ __('View All') }} <i
-                    class="fas fa-arrow-right ms-1"></i></a>
-        </div>
+        <x-ui.section-heading
+            :title="__('Meet Our Talented Chefs')"
+            :subtitle="__('Local families sharing their culinary heritage')"
+            :viewAllUrl="route('chefs.index')" />
 
-        <div class="row g-4">
+        <div class="row g-3 g-md-4">
             @foreach ($chefs as $chef)
                 <div class="col-6 col-md-3">
-                    <div class="card shadow-card border border-secondary border-opacity-10 text-center p-4 h-100 hover-lift">
-                        <div class="position-relative mx-auto mb-3">
-                            @if($chef->image)
-                                <img src="{{ asset('storage/' . $chef->image->image_path) }}" class="rounded-circle shadow object-fit-cover" style="width:100px; height:100px;" alt="{{ $chef->name }}">
-                            @else
-                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mx-auto shadow" style="width:100px; height:100px;">
-                                    <i class="fas fa-user-chef fa-2x text-light"></i>
-                                </div>
-                            @endif
-                        </div>
-                        <h6 class="fw-bold mb-1 text-light">{{ $chef->kitchen_name ?? $chef->name }}</h6>
-                        <small class="text-light d-block mb-3">{{ $chef->address ?? __('Local Chef') }}</small>
-                        <a href="{{ route('chefs.show', $chef->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">{{ __('View Kitchen') }}</a>
-                    </div>
+                    <x-ui.chef-card :chef="$chef" />
                 </div>
             @endforeach
         </div>

@@ -27,8 +27,15 @@
             {{ $meal->category->name ?? __('General') }}
         </span>
 
-        <!-- Availability or Prep time badge -->
-        @if(!$meal->is_available)
+        <!-- Favorite or Availability or Prep time badge -->
+        @if($isFavorited)
+            <form action="{{ route('favourites.meal.toggle', $meal) }}" method="POST" class="position-absolute top-0 end-0 m-3" style="z-index: 2;">
+                @csrf
+                <button type="submit" class="btn btn-sm bg-surface-2 text-danger rounded-circle border border-subtle shadow-sm d-flex align-items-center justify-content-center p-0" style="width: 32px; height: 32px;" title="{{ __('Remove') }}">
+                    <i class="fas fa-heart"></i>
+                </button>
+            </form>
+        @elseif(!$meal->is_available)
             <span class="position-absolute top-0 end-0 m-3 badge badge-danger shadow-sm">
                 {{ __('Unavailable') }}
             </span>

@@ -2,160 +2,193 @@
 
 @section('content')
 <div class="container py-5">
-    <div class="row mb-4">
-        <div class="col-12 d-flex justify-content-between align-items-center">
-            <div>
-                <h2 class="fw-bold text-light mb-1">{{ __('Welcome back') }}, {{ Auth::user()->name }}!</h2>
-                <p class="text-light mb-0">{{ __("Here's what's happening with your kitchen today.") }}</p>
-            </div>
-            <a href="{{ route('chef.orders.export') }}" class="btn btn-outline-success rounded-pill btn-sm">
+    <!-- Header -->
+    <x-ui.page-header
+        :title="__('Welcome back') . ', ' . Auth::user()->name . '!'"
+        :subtitle="__('Here\'s what\'s happening with your kitchen today.')">
+        <x-slot name="actions">
+            <a href="{{ route('chef.earnings') }}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                <i class="fas fa-wallet me-1"></i>{{ __('Earnings') }}
+            </a>
+            <a href="{{ route('chef.orders.export') }}" class="btn btn-primary btn-sm rounded-pill px-3">
                 <i class="fas fa-file-csv me-1"></i>{{ __('Export Report') }}
             </a>
-        </div>
-    </div>
+        </x-slot>
+    </x-ui.page-header>
 
-    <!-- Stats Cards -->
-    <div class="row g-4 mb-5">
-        <div class="col-md-3">
-            <div class="card shadow-card border border-secondary border-opacity-10 rounded-4 p-3 text-center hover-lift">
-                <div class="rounded-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                    <i class="fas fa-utensils"></i>
-                </div>
-                <h3 class="fw-bold mb-0 text-light">{{ $totalMeals }}</h3>
-                <small class="text-light opacity-50 small text-uppercase fw-600">{{ __('Total Meals') }}</small>
-            </div>
+    <!-- Stats Hierarchy -->
+    <div class="row g-4 mb-4">
+        <!-- Hero: Completed Orders -->
+        <div class="col-12 col-md-6 col-xl-3">
+            <x-ui.stat-card
+                icon="fas fa-check-circle"
+                :label="__('Completed Orders')"
+                :value="$completedOrders"
+                :numericValue="$completedOrders"
+                :trend="$growth['revenue']"
+                :trendUp="!str_contains($growth['revenue'], '-')"
+                :isHero="true"
+                class="h-100" />
         </div>
-        <div class="col-md-3">
-            <div class="card shadow-card border border-secondary border-opacity-10 rounded-4 p-3 text-center hover-lift">
-                <div class="rounded-circle bg-warning bg-opacity-10 text-warning mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                    <i class="fas fa-shopping-bag"></i>
-                </div>
-                <h3 class="fw-bold mb-0 text-light">{{ $totalOrders }}</h3>
-                <small class="text-light opacity-50 small text-uppercase fw-600">{{ __('Total Orders') }}</small>
-            </div>
+
+        <!-- Total Orders -->
+        <div class="col-6 col-md-6 col-xl-3">
+            <x-ui.stat-card
+                icon="fas fa-shopping-bag"
+                :label="__('Total Orders')"
+                :value="$totalOrders"
+                :numericValue="$totalOrders"
+                class="h-100" />
         </div>
-        <div class="col-md-3">
-            <div class="card shadow-card border border-secondary border-opacity-10 rounded-4 p-3 text-center hover-lift">
-                <div class="rounded-circle bg-success bg-opacity-10 text-success mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                    <i class="fas fa-wallet"></i>
-                </div>
-                <div class="d-flex align-items-center justify-content-center">
-                    <h3 class="fw-bold mb-0 text-light me-2">{{ $growth['revenue'] }}</h3>
-                </div>
-                <small class="text-light opacity-50 small text-uppercase fw-600">{{ __('Revenue Growth') }}</small>
-            </div>
+
+        <!-- Total Meals -->
+        <div class="col-6 col-md-6 col-xl-3">
+            <x-ui.stat-card
+                icon="fas fa-utensils"
+                :label="__('Total Meals')"
+                :value="$totalMeals"
+                :numericValue="$totalMeals"
+                class="h-100" />
         </div>
-        <div class="col-md-3">
-            <div class="card shadow-card border border-secondary border-opacity-10 rounded-4 p-3 text-center hover-lift">
-                <div class="rounded-circle bg-info bg-opacity-10 text-info mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <h3 class="fw-bold mb-0 text-light">{{ $completedOrders }}</h3>
-                <small class="text-light opacity-50 small text-uppercase fw-600">{{ __('Completed Orders') }}</small>
-            </div>
+
+        <!-- Pending Orders -->
+        <div class="col-12 col-md-6 col-xl-3">
+            <x-ui.stat-card
+                icon="fas fa-clock"
+                :label="__('Pending Orders')"
+                :value="$pendingOrders"
+                :numericValue="$pendingOrders"
+                class="h-100" />
         </div>
     </div>
 
     <!-- Chart Section -->
-    <div class="row mb-5">
+    <div class="row g-4 mb-4">
         <div class="col-12">
-            <div class="card shadow-card border border-secondary border-opacity-10 rounded-4 p-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="fw-bold text-light m-0">{{ __('Monthly Earnings') }}</h5>
-                    <div class="text-muted small">{{ __('Real-time revenue tracking') }}</div>
+            <div class="spotlight-card p-4 rounded-4" data-spotlight>
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-4">
+                    <div>
+                        <h5 class="fw-bold text-main mb-1">{{ __('Monthly Earnings') }}</h5>
+                        <span class="text-secondary small">{{ __('Real-time revenue tracking') }}</span>
+                    </div>
+                    <span class="badge badge-primary">{{ __('Earnings') }}</span>
                 </div>
-                <div style="height: 250px;">
+                <div style="height: 280px; position: relative;">
                     <canvas id="chefRevenueChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Recent Orders & Actions -->
     <div class="row g-4">
-        <!-- Recent Orders -->
-        <div class="col-lg-8">
-            <div class="card shadow-card border border-secondary border-opacity-10 rounded-4 h-100">
-                <div class="card-header bg-card border-bottom border-secondary border-opacity-10 pt-4 px-4 d-flex justify-content-between align-items-center">
-                    <h5 class="fw-bold mb-0 text-light">{{ __('Recent Orders') }}</h5>
-                    <a href="{{ route('chef.orders.index') }}" class="btn btn-sm btn-outline-primary rounded-pill">{{ __('View All') }}</a>
+        <!-- Recent Orders Table -->
+        <div class="col-12 col-lg-8">
+            <div class="spotlight-card p-4 rounded-4 h-100 d-flex flex-column" data-spotlight>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold text-main mb-0">{{ __('Recent Orders') }}</h5>
+                    <a href="{{ route('chef.orders.index') }}" class="btn btn-link text-primary text-decoration-none small fw-semibold p-0">
+                        {{ __('View All') }} <i class="fas fa-arrow-{{ app()->getLocale() == 'ar' ? 'left' : 'right' }} ms-1"></i>
+                    </a>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-dark table-hover align-middle mb-0">
-                            <thead class="bg-secondary">
+
+                <div class="table-responsive flex-grow-1">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>{{ __('Order ID') }}</th>
+                                <th>{{ __('Customer') }}</th>
+                                <th>{{ __('Total') }}</th>
+                                <th>{{ __('Status') }}</th>
+                                <th class="text-end">{{ __('Action') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($recentOrders as $order)
                                 <tr>
-                                    <th class="ps-4 border-0">{{ __('Order ID') }}</th>
-                                    <th class="border-0">{{ __('Customer') }}</th>
-                                    <th class="border-0">{{ __('Total') }}</th>
-                                    <th class="border-0">{{ __('Status') }}</th>
-                                    <th class="border-0 pe-4 text-end">{{ __('Action') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($recentOrders as $order)
-                                <tr>
-                                    <td class="ps-4">#{{ $order->id }}</td>
-                                    <td>{{ $order->user->name }}</td>
-                                    <td class="fw-bold">{{ money($order->total) }}</td>
+                                    <td class="text-secondary fw-semibold">#{{ $order->id }}</td>
+                                    <td class="text-main fw-semibold">{{ $order->user->name ?? __('Guest') }}</td>
+                                    <td class="fw-bold text-primary">{{ money($order->total) }}</td>
                                     <td>
-                                        <span class="badge rounded-pill bg-{{ $order->status == 'pending' ? 'warning' : ($order->status == 'completed' ? 'success' : 'primary') }}">
-                                            {{ __($order->status) }}
-                                        </span>
+                                        @php
+                                            $badgeType = match($order->status) {
+                                                'completed', 'delivered' => 'success',
+                                                'pending' => 'warning',
+                                                'cancelled', 'rejected' => 'danger',
+                                                default => 'primary'
+                                            };
+                                        @endphp
+                                        <x-ui.badge :type="$badgeType">
+                                            {{ __(ucfirst(str_replace('_', ' ', $order->status))) }}
+                                        </x-ui.badge>
                                     </td>
-                                    <td class="text-end pe-4">
-                                        <a href="{{ route('chef.orders.show', $order->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">{{ __('Details') }}</a>
+                                    <td class="text-end">
+                                        <a href="{{ route('chef.orders.show', $order->id) }}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                            {{ __('Details') }}
+                                        </a>
                                     </td>
                                 </tr>
-                                @empty
+                            @empty
                                 <tr>
-                                    <td colspan="5" class="text-center py-4 text-light">{{ __('No orders found.') }}</td>
+                                    <td colspan="5" class="text-center py-4 text-secondary">
+                                        {{ __('No records found') }}
+                                    </td>
                                 </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
-        <!-- Quick Actions -->
-        <div class="col-lg-4">
-            <div class="card shadow-card border border-secondary border-opacity-10 rounded-4 mb-4">
-                <div class="card-body p-4 text-center">
-                    <div class="mb-3">
-                        <i class="fas fa-plus-circle fa-3x text-primary opacity-25"></i>
+        <!-- Quick Side Actions -->
+        <div class="col-12 col-lg-4">
+            <div class="d-flex flex-column gap-4 h-100">
+                <!-- Add Meal Card -->
+                <div class="spotlight-card p-4 rounded-4 text-center" data-spotlight>
+                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-inline-flex align-items-center justify-content-center mb-3"
+                         style="width: 56px; height: 56px;">
+                        <i class="fas fa-plus fs-4"></i>
                     </div>
-                    <h5 class="fw-bold text-light">{{ __('Growing your menu?') }}</h5>
-                    <p class="text-light small">{{ __('Add your latest delicious creations to attract more customers.') }}</p>
-                    <a href="{{ route('chef.meals.create') }}" class="btn btn-primary w-100 rounded-pill shadow">{{ __('Add New Meal') }}</a>
+                    <h5 class="fw-bold text-main mb-1">{{ __('Growing your menu?') }}</h5>
+                    <p class="text-secondary small mb-3">{{ __('Add your latest delicious creations to attract more customers.') }}</p>
+                    <a href="{{ route('chef.meals.create') }}" class="btn btn-primary rounded-pill w-100">
+                        <i class="fas fa-plus me-1"></i>{{ __('Add New Meal') }}
+                    </a>
                 </div>
-            </div>
-            
-            <div class="card shadow-card border border-secondary border-opacity-10 rounded-4">
-                <div class="card-body p-4">
-                    <h5 class="fw-bold mb-3 text-light">{{ __('Kitchen Profile') }}</h5>
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-secondary text-light me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                            <i class="fas fa-store text-light"></i>
+
+                <!-- Kitchen Profile Info -->
+                <div class="spotlight-card p-4 rounded-4 flex-grow-1" data-spotlight>
+                    <h5 class="fw-bold text-main mb-3">{{ __('Kitchen Profile') }}</h5>
+                    <div class="d-flex align-items-center gap-3 mb-3 p-2 rounded-3 bg-surface-2 border border-subtle">
+                        <div class="rounded-circle bg-primary-soft text-primary d-flex align-items-center justify-content-center fw-bold fs-5"
+                             style="width: 48px; height: 48px;">
+                            <i class="fas fa-store"></i>
                         </div>
-                        <div>
-                            <div class="fw-bold text-truncate text-light" style="max-width: 150px;">{{ Auth::user()->kitchen_name ?? __('My Kitchen') }}</div>
-                            <small class="text-light">{{ __('Chef Account') }}</small>
+                        <div style="min-width: 0;">
+                            <div class="fw-bold text-main text-truncate">{{ Auth::user()->kitchen_name ?? __('My Kitchen') }}</div>
+                            <small class="text-secondary">{{ __('Chef Account') }}</small>
                         </div>
                     </div>
-                    <a href="{{ route('profile.edit') }}" class="btn btn-outline-primary w-100 rounded-pill btn-sm">{{ __('Edit Profile') }}</a>
+                    <a href="{{ route('profile.edit') }}" class="btn btn-outline-primary btn-sm rounded-pill w-100">
+                        <i class="fas fa-user-edit me-1"></i>{{ __('Edit Profile') }}
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('chefRevenueChart').getContext('2d');
-        const gradient = ctx.createLinearGradient(0, 0, 0, 250);
-        gradient.addColorStop(0, 'rgba(255, 122, 24, 0.2)');
-        gradient.addColorStop(1, 'rgba(255, 122, 24, 0)');
+        const chartCanvas = document.getElementById('chefRevenueChart');
+        if (!chartCanvas) return;
+
+        const ctx = chartCanvas.getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 280);
+        gradient.addColorStop(0, 'rgba(255, 122, 24, 0.35)');
+        gradient.addColorStop(1, 'rgba(255, 122, 24, 0.0)');
 
         new Chart(ctx, {
             type: 'line',
@@ -169,18 +202,37 @@
                     backgroundColor: gradient,
                     fill: true,
                     tension: 0.4,
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: '#ff7a18',
-                    pointRadius: 4
+                    pointBackgroundColor: '#ff7a18',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#161616',
+                        titleColor: '#f0f0f0',
+                        bodyColor: '#ff7a18',
+                        borderColor: 'rgba(255, 255, 255, 0.1)',
+                        borderWidth: 1,
+                        padding: 10
+                    }
+                },
                 scales: {
-                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
-                    x: { grid: { display: false } }
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.04)' },
+                        ticks: { color: '#a0a0a0', font: { family: 'Cairo, Inter, sans-serif' } }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255, 255, 255, 0.04)' },
+                        ticks: { color: '#a0a0a0', font: { family: 'Cairo, Inter, sans-serif' } }
+                    }
                 }
             }
         });

@@ -84,59 +84,16 @@
             <div class="row g-4">
                 @forelse($meals as $meal)
                     <div class="col-md-6 col-xl-4 mb-4">
-                        <div class="card shadow-card border border-secondary border-opacity-10 h-100 meal-card hover-lift">
-                            <div class="meal-card-img-wrapper">
-                                @if ($meal->image)
-                                    <img src="{{ asset('storage/' . $meal->image->image_path) }}" class="card-img-top" alt="{{ $meal->name }}">
-                                @else
-                                    <img src="{{ asset('assets/images/placeholder.svg') }}" alt="{{ $meal->name }}">
-                                @endif
-                                <span class="card-badge">{{ $meal->category->name ?? __('Meal') }}</span>
-                            </div>
-
-                            <div class="card-body d-flex flex-column p-4">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <h5 class="fw-bold text-light m-0">{{ $meal->name }}</h5>
-                                    <span class="text-primary-custom fw-800">{{ money($meal->price) }}</span>
-                                </div>
-
-                                <div class="d-flex align-items-center gap-3 text-light small mb-2 opacity-75">
-                                    @if($meal->number_persons)
-                                        <span><i class="fas fa-users me-1 text-primary"></i>{{ $meal->number_persons }} {{ __('persons') }}</span>
-                                    @endif
-                                    @if($meal->prep_time_minutes)
-                                        <span><i class="fas fa-clock me-1 text-primary"></i>{{ $meal->prep_time_minutes }} {{ __('min') }}</span>
-                                    @endif
-                                </div>
-
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="text-warning small me-2">
-                                        @php $avg = $meal->ratings_avg_star ?: 0; @endphp
-                                        @for ($i = 1; $i <= 5; $i++)
-                                            <i class="{{ $i <= $avg ? 'fas' : 'far' }} fa-star"></i>
-                                        @endfor
-                                    </div>
-                                    <span class="text-muted small">({{ $meal->ratings_count ?: 0 }})</span>
-                                </div>
-
-                                <p class="text-muted small mb-4 line-clamp-2">
-                                    <i class="fas fa-user-circle me-1 text-primary-custom opacity-50"></i> {{ __('Chef') }} {{ $meal->chef->name ?? __('Home Cook') }}
-                                </p>
-
-                                <a href="{{ route('meals.show', $meal->id) }}" class="btn btn-primary mt-auto rounded-pill py-2">
-                                    {{ __('View Details') }} <i class="fas fa-arrow-right ms-2 scale-75"></i>
-                                </a>
-                            </div>
-                        </div>
+                        <x-ui.meal-card :meal="$meal" />
                     </div>
                 @empty
-                    <div class="col-12 text-center py-5">
-                        <div class="glass-panel py-5 px-4 w-100">
-                            <i class="fas fa-search-minus fa-3x text-muted mb-4 opacity-50"></i>
-                            <h4 class="text-light">{{ __('No meals found!') }}</h4>
-                            <p class="text-muted">{{ __('Try adjusting your filters or search terms.') }}</p>
-                            <a href="{{ route('meals.index') }}" class="btn btn-outline-primary rounded-pill mt-3">{{ __('Reset All Filters') }}</a>
-                        </div>
+                    <div class="col-12 py-5">
+                        <x-ui.empty-state
+                            icon="fas fa-search-minus"
+                            :title="__('No meals found!')"
+                            :description="__('Try adjusting your filters or search terms.')"
+                            :actionText="__('Reset All Filters')"
+                            :actionUrl="route('meals.index')" />
                     </div>
                 @endforelse
             </div>
