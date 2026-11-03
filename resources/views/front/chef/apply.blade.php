@@ -1,7 +1,73 @@
 @extends('layouts.frontend')
 
 @section('content')
-<div class="container py-5">
+    <!-- MOBILE VIEW (<768px): Chef Application -->
+    <div class="d-md-none px-3 pt-3 pb-5 has-bottom-bar" style="background: #0a0a0a; min-height: 100vh;">
+        <div class="text-center mb-3">
+            <div class="rounded-circle d-inline-flex align-items-center justify-content-center text-primary mb-2 border border-primary border-opacity-30"
+                 style="width: 52px; height: 52px; background: var(--surface-2);">
+                <i class="fas fa-kitchen-set fa-lg"></i>
+            </div>
+            <h1 class="h5 fw-bold text-light mb-1">{{ __('Apply to Become a Chef') }}</h1>
+            <p class="text-secondary small mb-0">{{ __('Share your culinary passion and creations with food lovers in your community.') }}</p>
+        </div>
+
+        @if($existing)
+            <div class="p-3 rounded-4 border border-warning border-opacity-25 bg-warning bg-opacity-10 text-warning text-center small">
+                <i class="fas fa-clock me-1"></i> {{ __('You already have a pending chef application submitted on :date. We are reviewing it and will notify you soon.', ['date' => $existing->created_at->format('Y-m-d')]) }}
+            </div>
+        @else
+            <div class="p-4 rounded-4 border border-secondary border-opacity-10 shadow-lg" style="background: var(--surface-1);">
+                <form action="{{ route('chef.apply.store') }}" method="POST">
+                    @csrf
+                    <div class="d-flex flex-column gap-3">
+                        <div>
+                            <label class="form-label text-light fw-semibold small mb-1">{{ __('Kitchen Name') }}</label>
+                            <input type="text" name="kitchen_name" class="form-control text-light border border-secondary border-opacity-25"
+                                style="background: var(--surface-2); font-size: 16px;" value="{{ old('kitchen_name') }}" placeholder="{{ __('e.g. Mama\'s Kitchen') }}" required>
+                            @error('kitchen_name')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="form-label text-light fw-semibold small mb-1">{{ __('Phone Number') }}</label>
+                            <input type="text" name="phone" class="form-control text-light border border-secondary border-opacity-25"
+                                style="background: var(--surface-2); font-size: 16px;" value="{{ old('phone', auth()->user()->phone) }}" placeholder="{{ __('Enter phone number') }}" required>
+                            @error('phone')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="form-label text-light fw-semibold small mb-1">{{ __('Address / Location') }}</label>
+                            <input type="text" name="address" class="form-control text-light border border-secondary border-opacity-25"
+                                style="background: var(--surface-2); font-size: 16px;" value="{{ old('address') }}" placeholder="{{ __('City, Area') }}" required>
+                            @error('address')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="form-label text-light fw-semibold small mb-1">{{ __('Bio / About Your Cooking') }}</label>
+                            <textarea name="bio" rows="3" class="form-control text-light border border-secondary border-opacity-25"
+                                style="background: var(--surface-2); font-size: 16px;" placeholder="{{ __('Tell customers about your cooking style...') }}">{{ old('bio') }}</textarea>
+                            @error('bio')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2.5 rounded-pill fw-bold shadow-lg mt-1">
+                            {{ __('Submit Application') }} <i class="fas fa-paper-plane ms-2"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        @endif
+    </div>
+
+    <!-- DESKTOP VIEW (>=768px): Strictly Unchanged -->
+    <div class="container py-5 d-none d-md-block">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
             <div class="card p-4 p-md-5 rounded-4 border border-secondary border-opacity-10 shadow-lg" style="background: var(--surface-1);">
@@ -11,7 +77,7 @@
                         <i class="fas fa-kitchen-set fa-2x"></i>
                     </div>
                     <h2 class="h3 fw-bold text-light mb-1">{{ __('Apply to Become a Chef') }}</h2>
-                    <p class="text-secondary small mb-0">{{ __('Share your passion for home cooking with food lovers in your community.') }}</p>
+                    <p class="text-secondary small mb-0">{{ __('Share your culinary passion and creations with food lovers in your community.') }}</p>
                 </div>
 
                 @if($existing)

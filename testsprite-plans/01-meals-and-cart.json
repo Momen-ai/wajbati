@@ -1,0 +1,41 @@
+{
+  "$schema": "https://raw.githubusercontent.com/TestSprite/testsprite-cli/v0.16.0/schemas/plan.schema.json",
+  "projectId": "6e9694e4-4284-4f13-88d9-e8c76c44e3d6",
+  "type": "frontend",
+  "name": "Suite 1: Browsing, Search and Cart Flow",
+  "planSteps": [
+    {
+      "type": "action",
+      "description": "Navigate to the home page /"
+    },
+    {
+      "type": "assertion",
+      "description": "The home page loads and the Wajbati brand name is visible"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to the meals catalog at /meals"
+    },
+    {
+      "type": "action",
+      "description": "Click on the first available meal item to view its details"
+    },
+    {
+      "type": "assertion",
+      "description": "The meal detail page loads showing the meal title and price"
+    },
+    {
+      "type": "action",
+      "description": "Click the Add to Cart button"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to /cart"
+    },
+    {
+      "type": "assertion",
+      "description": "The shopping cart page displays the selected meal"
+    }
+  ]
+}
+

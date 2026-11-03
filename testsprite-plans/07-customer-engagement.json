@@ -1,0 +1,52 @@
+{
+  "$schema": "https://raw.githubusercontent.com/TestSprite/testsprite-cli/v0.16.0/schemas/plan.schema.json",
+  "projectId": "6e9694e4-4284-4f13-88d9-e8c76c44e3d6",
+  "type": "frontend",
+  "name": "Suite 7: Customer Favorites and Engagement",
+  "planSteps": [
+    {
+      "type": "action",
+      "description": "Navigate to /login"
+    },
+    {
+      "type": "action",
+      "description": "Fill the login field with customer@wajbati.local and password field with Password123!"
+    },
+    {
+      "type": "action",
+      "description": "Submit the login form"
+    },
+    {
+      "type": "assertion",
+      "description": "The customer is authenticated and redirected away from login"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to the meals catalog at /meals"
+    },
+    {
+      "type": "action",
+      "description": "Click on the first available meal item to open its details"
+    },
+    {
+      "type": "assertion",
+      "description": "The meal detail page loads displaying meal info and reviews section"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to /favourites"
+    },
+    {
+      "type": "assertion",
+      "description": "The favourites page renders with My Favourites heading and favourite sections"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to /orders"
+    },
+    {
+      "type": "assertion",
+      "description": "The orders page loads showing the My Orders heading and either past orders or the empty orders state message"
+    }
+  ]
+}

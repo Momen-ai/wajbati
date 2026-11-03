@@ -12,9 +12,9 @@
                     {{ __('By accessing or using Wajbati, you agree to comply with our terms, community standards, and applicable local food preparation regulations.') }}
                 </p>
 
-                <h5 class="fw-bold text-primary mb-2">2. {{ __('Home Kitchen Quality & Hygiene') }}</h5>
+                <h5 class="fw-bold text-primary mb-2">2. {{ __('Kitchen Quality & Hygiene Standards') }}</h5>
                 <p class="text-secondary mb-4 small lh-lg">
-                    {{ __('All participating home chefs commit to maintaining strict hygiene, fresh ingredients, and accurate allergy descriptions for every dish on the menu.') }}
+                    {{ __('All participating chefs and kitchens commit to maintaining strict hygiene, fresh ingredients, and accurate allergy descriptions for every dish on the menu.') }}
                 </p>
 
                 <h5 class="fw-bold text-primary mb-2">3. {{ __('Orders & Cancellations') }}</h5>

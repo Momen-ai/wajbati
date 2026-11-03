@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateCartRequest;
 use App\Services\CartService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CartController extends Controller

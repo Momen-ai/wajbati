@@ -1,0 +1,792 @@
+[
+  {
+    "id": "TC001",
+    "title": "Place an order from the cart",
+    "description": "A registered customer can complete checkout from the cart and see the order created with pending status.",
+    "category": "Checkout and Order History",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /cart"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to checkout"
+      },
+      {
+        "type": "action",
+        "description": "Select a delivery address"
+      },
+      {
+        "type": "action",
+        "description": "Select a payment method"
+      },
+      {
+        "type": "action",
+        "description": "Submit the order"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a confirmation that the order was placed is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the order has pending status"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC002",
+    "title": "Register a new customer account",
+    "description": "A new visitor can complete registration and start an authenticated session.",
+    "category": "Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /register"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the name field with a new customer name"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email or phone field with a new unique email"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with a valid password"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password confirmation field with the same valid password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is signed in"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the authenticated area is available"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC003",
+    "title": "Log in with valid credentials",
+    "description": "A returning user can sign in with valid credentials and reach the authenticated session.",
+    "category": "Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email or phone field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is signed in"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the authenticated area is available"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC004",
+    "title": "Add a meal to the cart from its detail page",
+    "description": "A guest can open a meal detail page and add the meal to the cart successfully.",
+    "category": "Add to Cart and Cart Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /meals"
+      },
+      {
+        "type": "action",
+        "description": "Open a meal detail page"
+      },
+      {
+        "type": "action",
+        "description": "Add the meal to the cart"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a success confirmation is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the cart contains the added meal"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC005",
+    "title": "Open a meal detail page from the catalog",
+    "description": "A visitor can open a meal from the catalog and view its detail page.",
+    "category": "Meal Discovery and Filtering",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /meals"
+      },
+      {
+        "type": "action",
+        "description": "Select a meal card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the meal detail page is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify meal details are shown"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC006",
+    "title": "Review order history and open an order",
+    "description": "A registered customer can view order history and open an order to see tracking and receipt details.",
+    "category": "Checkout and Order History",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /orders"
+      },
+      {
+        "type": "action",
+        "description": "Open an order"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify order status tracking is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify receipt details are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC007",
+    "title": "Change order status from dashboard",
+    "description": "A chef can open an incoming order from the dashboard and update its fulfillment status.",
+    "category": "Chef Dashboard",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dev-login/chef"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /chef/dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Open an incoming order"
+      },
+      {
+        "type": "action",
+        "description": "Change the order status"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated fulfillment state is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC008",
+    "title": "Search meals from the home page",
+    "description": "A visitor can search on the home page and see matching meals update in the results.",
+    "category": "Meal Discovery and Filtering",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the search field with a meal keyword"
+      },
+      {
+        "type": "action",
+        "description": "Submit the search"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify matching meals are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify irrelevant meals are not shown"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC009",
+    "title": "Review cart items grouped by chef",
+    "description": "A user can open the cart and see items organized by chef before checkout.",
+    "category": "Add to Cart and Cart Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /cart"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify cart items are grouped by chef"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify cart totals are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC010",
+    "title": "Update kitchen capacity",
+    "description": "A chef can change kitchen capacity from the dashboard and see the updated value reflected.",
+    "category": "Chef Dashboard",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dev-login/chef"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /chef/dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Update the kitchen capacity"
+      },
+      {
+        "type": "action",
+        "description": "Save the capacity change"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated kitchen capacity is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC011",
+    "title": "Access chef dashboard directly after login",
+    "description": "A chef can sign in and reach the dashboard from the login page.",
+    "category": "Chef Dashboard",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /chef/dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify daily order metrics are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC012",
+    "title": "Increase an item quantity in the cart",
+    "description": "A user can increase a cart item quantity and see the cart totals update accordingly.",
+    "category": "Add to Cart and Cart Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /cart"
+      },
+      {
+        "type": "action",
+        "description": "Increase an item quantity"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the item quantity is increased"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the cart totals update"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC013",
+    "title": "Search the meal catalog",
+    "description": "A visitor can search the catalog and see the meal list narrow to relevant results.",
+    "category": "Meal Discovery and Filtering",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /meals"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the search field with a meal keyword"
+      },
+      {
+        "type": "action",
+        "description": "Submit the search"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify matching meals are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the catalog results are narrowed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC014",
+    "title": "View chef dashboard metrics",
+    "description": "A chef can open the dashboard and review current order activity and kitchen status.",
+    "category": "Chef Dashboard",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dev-login/chef"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /chef/dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify daily order metrics are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify current kitchen status is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC015",
+    "title": "Decrease an item quantity in the cart",
+    "description": "A user can decrease a cart item quantity and see the cart totals update accordingly.",
+    "category": "Add to Cart and Cart Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /cart"
+      },
+      {
+        "type": "action",
+        "description": "Decrease an item quantity"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the item quantity is decreased"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the cart totals update"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC016",
+    "title": "Remove an item from the cart",
+    "description": "A user can remove a cart item and see it disappear from the cart view.",
+    "category": "Add to Cart and Cart Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /cart"
+      },
+      {
+        "type": "action",
+        "description": "Remove an item from the cart"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the item no longer appears in the cart"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the cart totals update"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC017",
+    "title": "View meal ingredients and chef information",
+    "description": "A visitor can inspect a meal's ingredients, dietary information, preparation time, and chef details on the detail page.",
+    "category": "Meal Discovery and Filtering",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /meals"
+      },
+      {
+        "type": "action",
+        "description": "Select a meal card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify ingredients are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify nutritional and chef information are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC018",
+    "title": "Filter meals by category",
+    "description": "A visitor can choose a category and see the catalog update to meals in that category.",
+    "category": "Meal Discovery and Filtering",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /meals"
+      },
+      {
+        "type": "action",
+        "description": "Select a meal category filter"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify meals from the selected category are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify meals from other categories are hidden"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC019",
+    "title": "Compare statuses across multiple orders",
+    "description": "A registered customer can open the order history and compare the current status of previously placed orders.",
+    "category": "Checkout and Order History",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /orders"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify multiple orders are listed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify current order statuses are visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC020",
+    "title": "Browse chefs and open a profile",
+    "description": "A visitor can browse the chef directory and open an individual chef profile.",
+    "category": "Chef Directory and Profiles",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /chefs"
+      },
+      {
+        "type": "action",
+        "description": "Select a chef profile"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the chef profile page is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the chef bio and meal list are shown"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC021",
+    "title": "Review admin overview dashboard",
+    "description": "An administrator can open the platform overview and review the main system metrics and summaries.",
+    "category": "Admin Dashboard",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dev-login/admin"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the administrative overview dashboard is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify platform metrics and summaries are displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC022",
+    "title": "Update profile and address information",
+    "description": "An authenticated customer can open their profile, update personal or address details, and save the changes.",
+    "category": "Customer Profile Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /profile"
+      },
+      {
+        "type": "action",
+        "description": "Update personal details or address information"
+      },
+      {
+        "type": "action",
+        "description": "Save the changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated profile information is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a success confirmation is visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC023",
+    "title": "Continue from a chef profile to a meal detail page",
+    "description": "A visitor can open a chef profile and navigate from one of the chef's meals to a meal detail page.",
+    "category": "Chef Directory and Profiles",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /chefs"
+      },
+      {
+        "type": "action",
+        "description": "Select a chef profile"
+      },
+      {
+        "type": "action",
+        "description": "Select one of the chef's meals"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the meal detail page is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the selected chef's meal details are shown"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC024",
+    "title": "Access admin dashboard directly after login",
+    "description": "An administrator can sign in and reach the administrative dashboard from the login page.",
+    "category": "Admin Dashboard",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the administrative overview dashboard is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC025",
+    "title": "See the empty cart guidance",
+    "description": "A user with no cart items can open the cart and see the empty-state guidance and browsing prompt.",
+    "category": "Add to Cart and Cart Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /cart"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an empty state message is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a browse meals call to action is visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC026",
+    "title": "Show login validation feedback for invalid credentials",
+    "description": "A user entering invalid login details sees inline validation feedback and remains on the sign-in form.",
+    "category": "Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email or phone field with an invalid value"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with an invalid password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify inline validation feedback is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the sign-in form remains visible"
+      }
+    ],
+    "priority": "Low"
+  }
+]

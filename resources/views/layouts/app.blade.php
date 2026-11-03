@@ -17,14 +17,14 @@
     @stack('styles')
 </head>
 <body class="bg-surface-0 text-main min-vh-100" x-data="{ sidebarOpen: false }">
-    <div class="d-flex min-vh-100">
+    <div class="app-shell min-vh-100">
         <!-- Sidebar Navigation -->
         @include('layouts.navigation')
 
-        <!-- Main Content Area -->
-        <div class="flex-grow-1 d-flex flex-column min-vh-100" style="min-width: 0;">
+        <!-- Main Content Column (Grid Column 2, Offset from Fixed Sidebar) -->
+        <div class="app-main-column">
             <!-- Top Bar -->
-            <header class="navbar navbar-expand bg-surface-1 border-bottom border-subtle px-3 px-lg-4 py-2 sticky-top">
+            <header class="navbar navbar-expand app-topbar px-3 px-lg-4 py-2">
                 <div class="d-flex align-items-center gap-3 w-100 justify-content-between">
                     <!-- Left: Mobile Toggle & Storefront Link -->
                     <div class="d-flex align-items-center gap-2">
@@ -93,7 +93,7 @@
             @endisset
 
             <!-- Page Content -->
-            <main class="flex-grow-1 p-3 p-md-4 p-lg-5">
+            <main class="app-main-content">
                 {{ $slot }}
             </main>
         </div>

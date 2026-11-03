@@ -1,0 +1,49 @@
+{
+  "$schema": "https://raw.githubusercontent.com/TestSprite/testsprite-cli/v0.16.0/schemas/plan.schema.json",
+  "projectId": "6e9694e4-4284-4f13-88d9-e8c76c44e3d6",
+  "type": "frontend",
+  "name": "Suite 2: Authentication and Route Protection",
+  "planSteps": [
+    {
+      "type": "action",
+      "description": "Navigate to /login"
+    },
+    {
+      "type": "action",
+      "description": "Fill the login field with invaliduser@example.com and password field with wrongpassword"
+    },
+    {
+      "type": "action",
+      "description": "Submit the login form"
+    },
+    {
+      "type": "assertion",
+      "description": "An authentication error message or invalid feedback is displayed on the login page"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to /login"
+    },
+    {
+      "type": "action",
+      "description": "Fill the login field with customer@wajbati.local and password field with Password123!"
+    },
+    {
+      "type": "action",
+      "description": "Submit the login form"
+    },
+    {
+      "type": "assertion",
+      "description": "The user is authenticated and redirected away from login"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to the protected route /profile"
+    },
+    {
+      "type": "assertion",
+      "description": "The profile management page is visible with user details"
+    }
+  ]
+}
+

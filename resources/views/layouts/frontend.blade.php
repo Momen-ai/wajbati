@@ -7,9 +7,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Wajbati - The ultimate platform connecting home-based chefs with food lovers. Taste the home, everywhere.">
-    <meta property="og:title" content="Wajbati - Homemade Meals Platform">
-    <meta property="og:description" content="Order fresh, delicious, and homemade meals from talented local chefs.">
+    <meta name="description" content="Wajbati - The premier marketplace connecting independent chefs, kitchens, and culinary artisans with food lovers. Exceptional flavors, everywhere.">
+    <meta property="og:title" content="Wajbati - Independent Chefs & Kitchens Platform">
+    <meta property="og:description" content="Order fresh, delicious, and handcrafted meals from talented independent chefs and kitchens.">
     <meta property="og:image" content="{{ asset('assets/images/og-image.jpg') }}">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta name="twitter:card" content="summary_large_image">
@@ -31,22 +31,48 @@
 </head>
 
 <body>
+    <!-- Solid color base layer below canvas (stacking floor) -->
+    <div id="hero-bg-layer" class="hero-bg-layer"></div>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
-        <div class="container">
+    <!-- Background Canvas & Scrim for Pages with Sequences -->
+    @stack('background')
+
+    <!-- Page Content Wrapper (position: relative; z-index: 1 sits above fixed canvas & scrim) -->
+    <div class="page-content-wrapper position-relative has-bottom-bar" style="z-index: 1;">
+        <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top shadow-sm py-2">
+        <div class="container d-flex align-items-center justify-content-between">
             <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
-                <div class="rounded-circle bg-primary-custom d-flex align-items-center justify-content-center text-light me-2 animate-pulse"
-                    style="width:42px;height:42px">
-                    <i class="fas fa-utensils"></i>
+                <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center text-dark me-2 shadow-sm"
+                    style="width:34px;height:34px; color: #1b0e03 !important;">
+                    <i class="fas fa-utensils" style="font-size: 15px;"></i>
                 </div>
-                <span class="brand-text">{{ __('Wajbati') }}</span>
+                <span class="brand-text fw-bold text-light" style="font-size: 1.25rem; letter-spacing: -0.02em;">{{ __('Wajbati') }}</span>
             </a>
-            
-            <button class="navbar-toggler border-0 p-2 shadow-none" type="button"
-                data-bs-toggle="collapse" data-bs-target="#mainNav">
-                <span class="navbar-toggler-icon-custom"></span>
-            </button>
+
+            <!-- Mobile Quick Actions (<992px) as defined in spec -->
+            <div class="d-flex align-items-center gap-2 d-lg-none">
+                @auth
+                <a href="{{ route('profile.edit') }}" class="btn btn-sm d-flex align-items-center justify-content-center rounded-circle border border-subtle text-secondary"
+                   style="width: 40px; height: 40px; background: #151515;" aria-label="{{ __('Notifications') }}">
+                    <i class="fa-regular fa-bell" style="font-size: 16px;"></i>
+                </a>
+                @endauth
+                <a href="{{ route('cart.index') }}" class="btn btn-sm d-flex align-items-center justify-content-center rounded-circle border border-subtle text-secondary position-relative"
+                   style="width: 40px; height: 40px; background: #151515;" aria-label="{{ __('Cart') }}">
+                    <i class="fas fa-shopping-bag" style="font-size: 16px;"></i>
+                    @if(count(session('cart', [])) > 0)
+                        <span class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-primary border border-dark"
+                              style="font-size: 10px; font-weight: 800; color: #1b0e03 !important; min-width: 18px; height: 18px; padding: 2px 4px;">
+                            {{ count(session('cart', [])) }}
+                        </span>
+                    @endif
+                </a>
+                <button class="navbar-toggler border-0 p-2 shadow-none" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#mainNav" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon-custom"></span>
+                </button>
+            </div>
 
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
@@ -215,7 +241,7 @@
                         </div>
                         <span class="fw-bold h4 m-0 text-light">{{ __('Wajbati') }}</span>
                     </a>
-                    <p class="text-secondary small mb-4 lh-base">{{ __('Connecting food lovers with home chefs. Experience the taste of home, anytime, anywhere. Support local families and enjoy fresh meals.') }}</p>
+                    <p class="text-secondary small mb-4 lh-base">{{ __('Connecting food lovers with passionate chefs and independent kitchens. Experience authentic flavors, anytime, anywhere. Discover distinctive culinary creations.') }}</p>
                     <div class="social-links d-flex gap-2">
                         <a href="#" class="rounded-circle text-secondary p-2 border border-secondary border-opacity-10 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: var(--surface-2);"><i class="fab fa-facebook-f"></i></a>
                         <a href="#" class="rounded-circle text-secondary p-2 border border-secondary border-opacity-10 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: var(--surface-2);"><i class="fab fa-instagram"></i></a>
@@ -254,7 +280,7 @@
             </div>
             <div class="border-top border-secondary border-opacity-10 pt-4 text-center small text-secondary">
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-                    <p class="m-0">&copy; {{ date('Y') }} {{ __('Wajbati Inc. Built with love for home food.') }}</p>
+                    <p class="m-0">&copy; {{ date('Y') }} {{ __('Wajbati Inc. Built with passion for exceptional culinary craft.') }}</p>
                     <div class="d-flex gap-3 h5 m-0 opacity-40">
                         <i class="fab fa-cc-visa"></i>
                         <i class="fab fa-cc-mastercard"></i>
@@ -264,6 +290,10 @@
             </div>
         </div>
     </footer>
+
+    <!-- Mobile Bottom Tab Bar (<768px) -->
+    <x-ui.bottom-tab-bar />
+    </div>
     <!-- Scripts -->
     @stack('scripts')
 </body>

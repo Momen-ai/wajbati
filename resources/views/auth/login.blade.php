@@ -25,7 +25,7 @@
                 style="background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.6));"></div>
             <div class="position-absolute bottom-0 start-0 p-5 text-light">
                 <h2 class="display-4 fw-bold text-light mb-3">{{ __('Welcome Back!') }}</h2>
-                <p class="lead mb-0">{{ __('Order your favorite homemade meals with just a few clicks.') }}</p>
+                <p class="lead mb-0">{{ __('Order your favorite signature meals with just a few clicks.') }}</p>
             </div>
         </div>
 

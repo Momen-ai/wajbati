@@ -18,9 +18,13 @@
         @method('patch')
 
         @if($user->role === 'chef')
+            @php
+                $user->loadMissing('image');
+                $userHasImage = $user->relationLoaded('image') && $user->image && $user->image->image_path;
+            @endphp
             <div class="d-flex align-items-center gap-3 mb-4">
                 <div class="flex-shrink-0">
-                    @if($user->image)
+                    @if($userHasImage)
                         <img class="rounded-circle object-fit-cover border border-primary border-opacity-30" style="width: 72px; height: 72px;" src="{{ asset('storage/' . $user->image->image_path) }}" alt="{{ $user->name }}">
                     @else
                         <div class="rounded-circle d-flex align-items-center justify-content-center text-secondary border border-secondary border-opacity-20" style="width: 72px; height: 72px; background: var(--surface-2);">

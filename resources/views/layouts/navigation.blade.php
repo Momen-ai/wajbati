@@ -13,9 +13,9 @@
 </div>
 
 <!-- Sidebar Container -->
-<aside :class="sidebarOpen ? 'd-flex' : 'd-none d-lg-flex'"
-       class="flex-column flex-shrink-0 bg-surface-1 border-end border-subtle min-vh-100 position-fixed position-lg-sticky top-0 start-0 z-index-1050"
-       style="width: 260px; z-index: 1050; transition: transform var(--duration-normal) var(--ease-out);">
+<aside :class="{ 'show-drawer': sidebarOpen }"
+       class="app-sidebar flex-column flex-shrink-0 bg-surface-1 border-end border-subtle d-flex"
+       id="adminSidebar">
 
     <!-- Sidebar Brand -->
     <div class="p-3 border-bottom border-subtle d-flex align-items-center justify-content-between">

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://raw.githubusercontent.com/TestSprite/testsprite-cli/v0.16.0/schemas/plan.schema.json",
+  "projectId": "6e9694e4-4284-4f13-88d9-e8c76c44e3d6",
+  "type": "frontend",
+  "name": "Suite 5: Chef Meal Management and Menu Operations",
+  "planSteps": [
+    {
+      "type": "action",
+      "description": "Navigate to /dev-login/chef to authenticate as chef"
+    },
+    {
+      "type": "assertion",
+      "description": "The chef dashboard loads showing the chef header or kitchen overview metrics"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to /chef/meals"
+    },
+    {
+      "type": "assertion",
+      "description": "The chef meals list renders with existing meals"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to /chef/meals/create"
+    },
+    {
+      "type": "assertion",
+      "description": "The meal creation form is visible with name, category, and price fields"
+    },
+    {
+      "type": "action",
+      "description": "Submit the form without filling required fields"
+    },
+    {
+      "type": "assertion",
+      "description": "Validation feedback prevents submission or shows required field indicators"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to /chef/meals/3/edit to edit an existing meal"
+    },
+    {
+      "type": "assertion",
+      "description": "The meal edit form displays with the prefilled meal details"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to /chef/earnings"
+    },
+    {
+      "type": "assertion",
+      "description": "The chef earnings metrics page loads successfully"
+    }
+  ]
+}
+

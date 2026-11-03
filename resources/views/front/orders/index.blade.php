@@ -1,7 +1,70 @@
 @extends('layouts.frontend')
 
 @section('content')
-<div class="container py-5">
+    <!-- MOBILE VIEW (<768px): Customer Orders -->
+    <div class="d-md-none px-3 pt-3 pb-5 has-bottom-bar" style="background: #0a0a0a; min-height: 100vh;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="fw-bolder text-light mb-0" style="font-size: 26px; letter-spacing: -0.02em;">
+                {{ __('My Orders') }}
+            </h1>
+            <span class="badge rounded-pill px-3 py-1 bg-primary-soft text-primary fw-bold" style="font-size: 0.8rem;">
+                {{ $orders->total() }} {{ __('orders') }}
+            </span>
+        </div>
+
+        <div class="d-flex flex-column gap-3">
+            @forelse($orders as $order)
+                <div class="p-3 rounded-4 border border-secondary border-opacity-10 shadow-sm" style="background: var(--surface-1);">
+                    <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom border-secondary border-opacity-10">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="fw-bold text-light small">#{{ $order->id }}</span>
+                            <span class="text-secondary small">·</span>
+                            <span class="text-secondary small">{{ $order->created_at->format('Y-m-d') }}</span>
+                        </div>
+                        <x-ui.badge :status="$order->status" />
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <h6 class="fw-bold text-light mb-0 text-truncate" style="font-size: 0.95rem; max-width: 65%;">
+                            {{ $order->items->first()?->meal?->name ?? __('Meal') }}
+                            @if($order->items->count() > 1)
+                                <small class="text-secondary fw-normal">(+{{ $order->items->count() - 1 }})</small>
+                            @endif
+                        </h6>
+                        <span class="fw-bold text-primary">{{ money($order->total) }}</span>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between pt-2 border-top border-secondary border-opacity-10">
+                        <span class="text-secondary small text-truncate" style="max-width: 55%;">
+                            <i class="fas fa-hat-chef text-primary me-1"></i>
+                            {{ $order->chef->kitchen_name ?? $order->chef->name ?? __('Chef') }}
+                        </span>
+                        <a href="{{ route('orders.show', $order->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1" style="font-size: 0.8rem;">
+                            {{ __('Details') }} <i class="fas fa-chevron-{{ app()->getLocale() == 'ar' ? 'left' : 'right' }} ms-1 small"></i>
+                        </a>
+                    </div>
+                </div>
+            @empty
+                <div class="py-5 text-center">
+                    <x-ui.empty-state
+                        icon="fa-receipt"
+                        :title="__('No orders found.')"
+                        :message="__('You haven\'t placed any orders yet. Discover delicious home-cooked meals now!')"
+                        :actionUrl="route('meals.index')"
+                        :actionText="__('Browse Meals')" />
+                </div>
+            @endforelse
+        </div>
+
+        @if($orders->hasPages())
+            <div class="mt-4 d-flex justify-content-center">
+                {{ $orders->links('pagination::bootstrap-5') }}
+            </div>
+        @endif
+    </div>
+
+    <!-- DESKTOP VIEW (>=768px): Strictly Unchanged -->
+    <div class="container py-5 d-none d-md-block">
     <div class="d-flex align-items-center justify-content-between mb-4">
         <div>
             <h1 class="h2 fw-bold text-light mb-1">{{ __('My Orders') }}</h1>

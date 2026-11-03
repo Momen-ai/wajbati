@@ -9,7 +9,7 @@
 
                 <h5 class="fw-bold text-primary mb-2">1. {{ __('Information We Collect') }}</h5>
                 <p class="text-secondary mb-4 small lh-lg">
-                    {{ __('We collect your name, email address, delivery addresses, and phone numbers when you register or place an order. For home chefs, kitchen details and menus are also collected to facilitate local commerce.') }}
+                    {{ __('We collect your name, email address, delivery addresses, and phone numbers when you register or place an order. For chefs and kitchens, business details and menus are also collected to facilitate local commerce.') }}
                 </p>
 
                 <h5 class="fw-bold text-primary mb-2">2. {{ __('How We Use Your Information') }}</h5>

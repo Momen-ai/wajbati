@@ -11,7 +11,8 @@
 
                     <div class="card-body">
 
-                        @if ($meal->image)
+                        @php $meal->loadMissing('image'); @endphp
+                        @if ($meal->relationLoaded('image') && $meal->image)
                             <img src="{{ asset('storage/' . $meal->image->image_path) }}" class="img-thumbnail"
                                 style="max-width: 300px">
                         @else

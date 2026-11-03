@@ -76,16 +76,23 @@
 
                     <div style="height: 320px; position: relative;">
                         <canvas id="revenueChart"></canvas>
+                        @if(array_sum($chartData['values']) == 0)
+                            <div class="position-absolute top-50 start-50 translate-middle text-center pe-none">
+                                <span class="badge bg-surface-2 text-secondary border border-subtle px-3 py-2 rounded-pill small">
+                                    <i class="fas fa-chart-line me-1 text-primary"></i> {{ __('No revenue recorded for this period yet') }}
+                                </span>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Content Row: Recent Orders & Newest Users -->
-        <div class="row g-4">
+        <div class="row g-4 align-items-start">
             <!-- Recent Transactions Table -->
             <div class="col-12 col-xl-8">
-                <div class="spotlight-card p-4 rounded-4 h-100 d-flex flex-column" data-spotlight>
+                <div class="spotlight-card p-4 rounded-4 d-flex flex-column" data-spotlight>
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="fw-bold text-main mb-0">{{ __('Recent Transactions') }}</h5>
                         <a href="{{ route('dashboard.orders.index') }}" class="btn btn-link text-primary text-decoration-none small fw-semibold p-0">
@@ -149,7 +156,7 @@
 
             <!-- Newest Users -->
             <div class="col-12 col-xl-4">
-                <div class="spotlight-card p-4 rounded-4 h-100 d-flex flex-column" data-spotlight>
+                <div class="spotlight-card p-4 rounded-4 d-flex flex-column" data-spotlight>
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="fw-bold text-main mb-0">{{ __('New Registrations') }}</h5>
                         <span class="badge bg-surface-2 text-secondary border border-subtle">
@@ -248,13 +255,17 @@
                             }
                         },
                         y: {
+                            beginAtZero: true,
+                            min: 0,
+                            suggestedMax: 100,
                             grid: {
                                 color: 'rgba(255, 255, 255, 0.04)',
                                 drawBorder: false
                             },
                             ticks: {
                                 color: '#a0a0a0',
-                                font: { family: 'Cairo, Inter, sans-serif' }
+                                font: { family: 'Cairo, Inter, sans-serif' },
+                                precision: 0
                             }
                         }
                     }

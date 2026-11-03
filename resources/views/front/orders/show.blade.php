@@ -1,7 +1,130 @@
 @extends('layouts.frontend')
 
 @section('content')
-<div class="container py-5">
+    <!-- MOBILE VIEW (<768px): Order Details & Tracking -->
+    <div class="d-md-none px-3 pt-3 pb-5 has-bottom-bar" style="background: #0a0a0a; min-height: 100vh;">
+        <!-- Top Nav Bar -->
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <a href="{{ route('orders.index') }}"
+               class="btn d-inline-flex align-items-center justify-content-center rounded-circle border border-secondary border-opacity-25"
+               style="width: 40px; height: 40px; background: rgba(21, 21, 21, 0.75); color: #f2f2f2;">
+                <i class="fas fa-chevron-{{ app()->getLocale() == 'ar' ? 'right' : 'left' }}"></i>
+            </a>
+            <span class="fw-bold text-light small">{{ __('Order') }} #{{ $order->id }}</span>
+            <span style="width: 40px;"></span>
+        </div>
+
+        @php
+            $isCancelledOrRejected = in_array($order->status, ['cancelled', 'rejected']);
+            $currentStep = match($order->status) {
+                'pending' => 1,
+                'accepted', 'preparing' => 2,
+                'ready_for_delivery', 'prepared', 'out_for_delivery' => 3,
+                'delivered', 'completed' => 4,
+                default => 1,
+            };
+
+            $mobileSteps = [
+                1 => ['label' => __('Order Placed'), 'icon' => 'fa-receipt'],
+                2 => ['label' => __('Preparing'), 'icon' => 'fa-fire-burner'],
+                3 => ['label' => __('On the Way'), 'icon' => 'fa-moped'],
+                4 => ['label' => __('Delivered'), 'icon' => 'fa-box-check'],
+            ];
+        @endphp
+
+        <!-- Tracking Timeline Card -->
+        <div class="p-3 rounded-4 border border-secondary border-opacity-10 mb-3 shadow-sm" style="background: var(--surface-1);">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h6 class="fw-bold text-light mb-0" style="font-size: 0.95rem;">{{ __('Order Tracking') }}</h6>
+                    <small class="text-secondary" style="font-size: 0.72rem;">{{ $order->created_at->format('M d, Y H:i') }}</small>
+                </div>
+                <x-ui.badge :status="$order->status" />
+            </div>
+
+            @if($isCancelledOrRejected)
+                <div class="alert p-3 rounded-3 border border-danger border-opacity-25 bg-danger bg-opacity-10 text-danger d-flex align-items-center gap-2 mb-0 small">
+                    <i class="fas fa-times-circle"></i>
+                    <span>{{ __('Order is cancelled or rejected') }}</span>
+                </div>
+            @else
+                <div class="d-flex justify-content-between text-center pt-2">
+                    @foreach($mobileSteps as $stepNum => $step)
+                        @php
+                            $isCompleted = $currentStep >= $stepNum;
+                            $isCurrent = $currentStep === $stepNum;
+                        @endphp
+                        <div class="flex-grow-1">
+                            <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-1"
+                                 style="width: 36px; height: 36px;
+                                        background: {{ $isCompleted ? 'var(--primary)' : 'var(--surface-2)' }};
+                                        color: {{ $isCompleted ? '#1b0e03' : 'var(--text-muted)' }};">
+                                <i class="fas {{ $step['icon'] }} small" style="font-size: 0.75rem;"></i>
+                            </div>
+                            <span class="d-block fw-semibold {{ $isCompleted ? 'text-light' : 'text-secondary opacity-60' }}" style="font-size: 0.68rem;">
+                                {{ $step['label'] }}
+                            </span>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+
+        <!-- Order Items Card -->
+        <div class="p-3 rounded-4 border border-secondary border-opacity-10 mb-3" style="background: var(--surface-1);">
+            <h6 class="fw-bold text-light mb-3" style="font-size: 0.95rem;">{{ __('Order Items') }} ({{ $order->items->count() }})</h6>
+            <div class="d-flex flex-column gap-2">
+                @foreach($order->items as $item)
+                    <div class="d-flex align-items-center justify-content-between p-2 rounded-3 border border-secondary border-opacity-10" style="background: var(--surface-2);">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-3 overflow-hidden flex-shrink-0" style="width: 48px; height: 48px; background: var(--surface-1);">
+                                @if($item->meal && $item->meal->relationLoaded('image') && $item->meal->image)
+                                    <img src="{{ asset('storage/' . $item->meal->image->image_path) }}" class="w-100 h-100 object-fit-cover" alt="{{ $item->meal->name }}">
+                                @else
+                                    <img src="{{ asset('assets/images/placeholder.svg') }}" class="w-100 h-100 object-fit-cover" alt="Meal">
+                                @endif
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-light mb-0 small text-truncate" style="max-width: 130px;">{{ $item->meal->name ?? __('Meal') }}</h6>
+                                <small class="text-secondary" style="font-size: 0.72rem;">{{ money($item->price) }} × {{ $item->quantity }}</small>
+                            </div>
+                        </div>
+                        <span class="fw-bold text-primary small">{{ money($item->price * $item->quantity) }}</span>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <!-- Order Summary Card -->
+        <div class="p-3 rounded-4 border border-secondary border-opacity-10 mb-4" style="background: var(--surface-1);">
+            <h6 class="fw-bold text-light mb-3" style="font-size: 0.95rem;">{{ __('Order Summary') }}</h6>
+            <div class="d-flex justify-content-between mb-2 small text-secondary">
+                <span>{{ __('Subtotal') }}</span>
+                <span class="text-light fw-medium">{{ money($order->total - $order->delivery_fee) }}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2 small text-secondary">
+                <span>{{ __('Delivery Fee') }}</span>
+                <span class="text-light fw-medium">{{ money($order->delivery_fee) }}</span>
+            </div>
+            <hr class="border-secondary border-opacity-15 my-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="fw-bold text-light">{{ __('Total') }}</span>
+                <span class="fw-bold text-primary h5 mb-0">{{ money($order->total) }}</span>
+            </div>
+        </div>
+
+        @if($order->status === 'completed' || $order->status === 'delivered')
+            <form action="{{ route('orders.reorder', $order->id) }}" method="POST">
+                @csrf
+                <button type="submit" class="btn btn-primary w-100 rounded-pill py-2.5 fw-bold shadow-lg">
+                    <i class="fas fa-redo me-1"></i> {{ __('Reorder Items') }}
+                </button>
+            </form>
+        @endif
+    </div>
+
+    <!-- DESKTOP VIEW (>=768px): Strictly Unchanged -->
+    <div class="container py-5 d-none d-md-block">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-secondary hover-text-primary">{{ __('Home') }}</a></li>
@@ -98,7 +221,7 @@
                                     <td class="p-3 ps-4">
                                         <div class="d-flex align-items-center gap-3">
                                             <div class="rounded-3 overflow-hidden flex-shrink-0" style="width: 50px; height: 50px; background: var(--surface-2);">
-                                                @if($item->meal && $item->meal->image)
+                                                @if($item->meal && $item->meal->relationLoaded('image') && $item->meal->image)
                                                     <img src="{{ asset('storage/' . $item->meal->image->image_path) }}" class="w-100 h-100 object-fit-cover" alt="{{ $item->meal->name }}">
                                                 @else
                                                     <img src="{{ asset('assets/images/placeholder.svg') }}" class="w-100 h-100 object-fit-cover" alt="Meal">

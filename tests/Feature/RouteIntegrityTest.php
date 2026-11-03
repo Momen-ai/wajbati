@@ -47,4 +47,49 @@ class RouteIntegrityTest extends TestCase
             "Found broken route actions pointing to non-existent methods:\n".implode("\n", $missingActions)
         );
     }
+
+    public function test_all_route_calls_in_blade_views_exist(): void
+    {
+        $allRoutes = Route::getRoutes();
+        $routeNames = [];
+        foreach ($allRoutes as $r) {
+            if ($r->getName()) {
+                $routeNames[$r->getName()] = true;
+            }
+        }
+
+        $missingRoutes = [];
+        $orphanedViews = [
+            'create.blade.php', // admin/contacts/create and admin/ratings/create (unrouted scaffolding)
+            'edit.blade.php',   // admin/ratings/edit (unrouted scaffolding)
+        ];
+        $viewIterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(resource_path('views')));
+
+        foreach ($viewIterator as $file) {
+            if ($file->isFile() && str_ends_with($file->getFilename(), '.blade.php')) {
+                // Check if file is in admin contacts/ratings create/edit which are unrouted legacy views
+                $relPath = str_replace('\\', '/', $file->getPathname());
+                if (str_contains($relPath, 'admin/contacts/create.blade.php') ||
+                    str_contains($relPath, 'admin/ratings/create.blade.php') ||
+                    str_contains($relPath, 'admin/ratings/edit.blade.php')) {
+                    continue;
+                }
+
+                $content = file_get_contents($file->getPathname());
+                // Match route(...) but ignore $request->route(...)
+                if (preg_match_all("/(?<!->)route\s*\(\s*['\"]([a-zA-Z0-9._-]+)['\"]/", $content, $matches)) {
+                    foreach ($matches[1] as $calledRoute) {
+                        if (! isset($routeNames[$calledRoute])) {
+                            $missingRoutes[] = $file->getFilename().' calls undefined route ['.$calledRoute.']';
+                        }
+                    }
+                }
+            }
+        }
+
+        $this->assertEmpty(
+            $missingRoutes,
+            "Found blade views calling non-existent route names:\n".implode("\n", $missingRoutes)
+        );
+    }
 }

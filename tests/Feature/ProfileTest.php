@@ -12,6 +12,33 @@ test('profile page is displayed', function () {
     $response->assertOk();
 });
 
+test('profile page is displayed for chef without lazy loading violation', function () {
+    \Illuminate\Database\Eloquent\Model::preventLazyLoading(true);
+    $chef = User::factory()->chef()->create();
+    $chef = User::find($chef->id);
+
+    $response = $this
+        ->actingAs($chef)
+        ->get('/profile');
+
+    $response->assertOk();
+});
+
+test('test meal card chef image does not throw lazy loading violation', function () {
+    \Illuminate\Database\Eloquent\Model::preventLazyLoading(true);
+    $chef1 = User::factory()->chef()->create();
+    $chef2 = User::factory()->chef()->create();
+    \App\Models\Meal::factory()->create(['chef_id' => $chef1->id]);
+    \App\Models\Meal::factory()->create(['chef_id' => $chef2->id]);
+
+    // Query meals like HomeController does: with(['image', 'chef', 'category'])
+    $meals = \App\Models\Meal::with(['image', 'chef', 'category'])->get();
+
+    // Render meal-card component
+    $view = $this->blade('<x-ui.meal-card :meal="$meal" />', ['meal' => $meals->first()]);
+    $this->assertNotEmpty($view);
+});
+
 test('profile information can be updated', function () {
     $user = User::factory()->create();
 
