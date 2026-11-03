@@ -41,7 +41,7 @@
     <div class="page-content-wrapper position-relative has-bottom-bar" style="z-index: 1;">
         <!-- Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top shadow-sm py-2">
-        <div class="container d-flex align-items-center justify-content-between">
+        <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
                 <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center text-dark me-2 shadow-sm"
                     style="width:34px;height:34px; color: #1b0e03 !important;">

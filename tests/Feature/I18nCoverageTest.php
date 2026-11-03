@@ -240,4 +240,26 @@ class I18nCoverageTest extends TestCase
 
         return $keys;
     }
+
+    /**
+     * Test switching language sets session and cookie and sets app locale.
+     */
+    public function test_language_switch_sets_session_and_cookie_and_middleware_applies_it(): void
+    {
+        $response = $this->get(route('lang.switch', 'en'));
+        $response->assertRedirect();
+        $response->assertSessionHas('locale', 'en');
+        $response->assertCookie('locale', 'en');
+
+        // Test with cookie on subsequent request
+        $contactResponse = $this->withCookie('locale', 'en')->get(route('contact'));
+        $contactResponse->assertOk();
+        $this->assertEquals('en', app()->getLocale());
+
+        // Switch back to ar
+        $responseAr = $this->get(route('lang.switch', 'ar'));
+        $responseAr->assertRedirect();
+        $responseAr->assertSessionHas('locale', 'ar');
+        $responseAr->assertCookie('locale', 'ar');
+    }
 }

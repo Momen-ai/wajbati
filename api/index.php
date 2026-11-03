@@ -1,5 +1,10 @@
 <?php
 
+// Prevent any deprecations or warnings from outputting before HTTP headers
+ini_set('display_errors', '0');
+ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+
 // 1. Prepare writable storage directories in /tmp for Vercel Serverless environment
 $dirs = [
     '/tmp/storage/framework/views',

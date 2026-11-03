@@ -32,6 +32,7 @@
     "APP_ENV": "production",
     "APP_DEBUG": "false",
     "APP_KEY": "base64:xX7wzO49ws8/E+vkwe9+0YQFUOb5nz+wZccXF1e/i5c=",
+    "APP_URL": "https://wajbati-blue.vercel.app",
     "APP_CONFIG_CACHE": "/tmp/config.php",
     "APP_EVENTS_CACHE": "/tmp/events.php",
     "APP_PACKAGES_CACHE": "/tmp/packages.php",

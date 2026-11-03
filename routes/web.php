@@ -10,12 +10,13 @@ use App\Http\Controllers\Front\OrderController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/lang/{locale}', function ($locale) {
+Route::get('/lang/{locale}', function (\Illuminate\Http\Request $request, $locale) {
     if (in_array($locale, ['ar', 'en'])) {
         session(['locale' => $locale]);
+        cookie()->queue(cookie()->make('locale', $locale, 60 * 24 * 365, '/', null, false, false));
     }
 
-    return back();
+    return redirect()->back(fallback: route('home'));
 })->name('lang.switch');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
