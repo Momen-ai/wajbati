@@ -1,0 +1,13 @@
+.git
+.github
+.agent
+.agents
+.testsprite
+testsprite*
+tests
+docs
+node_modules
+Homestead.json
+Homestead.yaml
+Thumbs.db
+*.log
