@@ -3,8 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Favourite;
 use App\Models\Image;
 use App\Models\Meal;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\OrderStatusHistory;
 use App\Models\Rating;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -19,231 +23,156 @@ class DemoSeeder extends Seeder
             throw new RuntimeException('DemoSeeder cannot be executed in production environment.');
         }
 
+        // Clean old dummy data safely via Eloquent forceDelete
+        OrderItem::query()->delete();
+        OrderStatusHistory::query()->delete();
+        Order::query()->delete();
+        Rating::query()->delete();
+        Favourite::query()->delete();
+        Image::where('imageable_type', Meal::class)->delete();
+        Meal::withTrashed()->forceDelete();
+        User::withTrashed()->where('role', 'chef')->whereNotIn('email', [
+            'khalil@wajbati.com',
+            'ahmed@wajbati.com',
+            'sarah@wajbati.com',
+            'mohammed@wajbati.com',
+        ])->forceDelete();
+
         // Standard categories
         $traditionalCat = Category::firstOrCreate(['name' => 'Traditional']);
         $orientalCat = Category::firstOrCreate(['name' => 'Oriental']);
         $sweetsCat = Category::firstOrCreate(['name' => 'Sweets']);
         $fastFoodCat = Category::firstOrCreate(['name' => 'Fast Food']);
+        $westernCat = Category::firstOrCreate(['name' => 'Western']);
 
         $demoPassword = env('DEMO_PASSWORD', 'Password123!');
 
-        // Available meal images in public storage
-        $sampleImages = [
-            'meals/0dd1b168-be58-419b-bfc7-46a71046a6a0.jpg',
-            'meals/2n1k1cJMc92hyIDbhqGhYems0pii7Le5z1MNfJSB.jpg',
-            'meals/4EXaDrc6N8H31w3PlPQshYcIeWeKQDwZl8LXVWB4.jpg',
-            'meals/9Q3TXib9DenK1QlzqjQ27Ny86u4wFbXxreS712fd.jpg',
-            'meals/C2J9ap9FCBZLSX3gYmVDy3X49QvpuJH1mvELz9bv.jpg',
-            'meals/cjS4VO6LEpvqtoG4v6YgdQfF5jg65recYYrGpneU.jpg',
-            'meals/cTFlmDD302PkSoX6VlGPpEN3vs2pd7UWmJBCKZhz.jpg',
-            'meals/DqJAthoLlUdRLsmd6ohZPX6l1fANimoHucHWgxy1.jpg',
-            'meals/E1TSzP5MAWxBa3EJ2nNc4BJZoL2Nkehn4pI5h8Zd.jpg',
-            'meals/e5mP2HMbn17u2hegXrCznmwnCWuEiiBH5mVenpqE.jpg',
-            'meals/E8k1G6KJm9q1BB3xd3bVfIeP26WmnMjT2pg6EuQF.jpg',
-            'meals/EJ1MZTK1aoLm4ZHgl0xPYmpP8CrnvRM2nji4tsQv.jpg',
-            'meals/ep2NOc55DQU4Vdf5gXXycroPhTst7UYaCob3Pcts.jpg',
-            'meals/f3LE3pHTcaWtikLu8hSUf2k3gpZq4jEBOCByAwW5.jpg',
-            'meals/HRxKBvqPsAA8x5Vqj1sRCod5C4zFY4eLuje8FyMA.jpg',
-            'meals/HTLNuKsEwWabiFHijoJXuod2TbUI0YlMtmOVrR2U.jpg',
-        ];
-        $imgIndex = 0;
-
-        // 6 Active Palestinian Home Chefs + 1 Coming Soon Chef
+        // 4 Authentic Palestinian Home Chefs & 7 Handcrafted Meals
         $chefsData = [
             [
-                'name' => 'Fatima Al-Ghazawi',
-                'email' => 'fatima@wajbati.local',
-                'kitchen_name' => 'Mama Fatima Kitchen',
+                'name' => 'خليل',
+                'email' => 'khalil@wajbati.com',
+                'kitchen_name' => 'مطبخ خليل التراثي',
                 'phone' => '0599111222',
-                'address' => 'Gaza, Al-Rimal',
-                'bio' => 'Authentic Gazan home cooking, fresh spices, and slow-cooked traditional dishes made with love.',
+                'address' => 'القدس - البلدة القديمة',
+                'bio' => 'شيف متخصص في تحضير الأكلات التراثية والمخبوزات البلدية على خبز الطابون بزيت الزيتون الفلسطيني الأصيل والبهارات المورثة.',
                 'meals' => [
                     [
-                        'name' => 'Traditional Maqluba with Chicken',
+                        'name' => 'مسخن فلسطيني بلدي على خبز الطابون',
                         'category_id' => $traditionalCat->id,
-                        'description' => 'A famous Palestinian upside-down dish layered with spiced rice, fried cauliflower, eggplant, and tender chicken.',
+                        'description' => 'دجاج محمر متبل بالسماق البلدي الصافي وزيت الزيتون، يقدم فوق خبز الطابون الطازج مع بصل مكرمل بالكامل ومزين باللوز المحمص والصنوبر مع اللبن الرائب.',
                         'price' => 45.00,
                         'number_persons' => 4,
-                        'prep_time_minutes' => 45,
+                        'prep_time_minutes' => 60,
                         'is_available' => true,
+                        'image_path' => 'meals/musakhan.jpg',
+                        'review' => 'مسخن على أصوله، نكهة السماق وزيت الزيتون والخبز الطابون تحفة فنية!',
                     ],
                     [
-                        'name' => 'Gazan Sumaghiyyeh',
+                        'name' => 'محاشي مشكلة على الطريقة البيتية',
                         'category_id' => $traditionalCat->id,
-                        'description' => 'A traditional Gazan celebratory delicacy made with ground sumac, chard, beef cubes, tahini, and chickpeas.',
+                        'description' => 'تشكيلة بيتية فاخرة تضم الكوسا والباذنجان والبصل والفليفلة المحشوة بأرز متبل ولحم مفروم طازج ومطهوة بصلصة طماطم شهية وغنية بالنعناع والثوم.',
                         'price' => 38.00,
                         'number_persons' => 3,
-                        'prep_time_minutes' => 40,
+                        'prep_time_minutes' => 75,
                         'is_available' => true,
-                    ],
-                    [
-                        'name' => 'Stuffed Vine Leaves & Zucchini (Warak Dawali)',
-                        'category_id' => $orientalCat->id,
-                        'description' => 'Rolled grape leaves and baby courgettes stuffed with fragrant herb rice and minced lamb, slow simmered.',
-                        'price' => 50.00,
-                        'number_persons' => 4,
-                        'prep_time_minutes' => 60,
-                        'is_available' => true,
+                        'image_path' => 'meals/mahshi.jpg',
+                        'review' => 'محاشي دايبة دوب وتسبيكة الصلصة ممتازة جداً، شغل بيتي نظيف.',
                     ],
                 ],
             ],
             [
-                'name' => 'Youssef Al-Qudsi',
-                'email' => 'youssef@wajbati.local',
-                'kitchen_name' => 'Jerusalem Heritage Kitchen',
+                'name' => 'أحمد',
+                'email' => 'ahmed@wajbati.com',
+                'kitchen_name' => 'مشاوي ومطبخ الشيف أحمد',
                 'phone' => '0599222333',
-                'address' => 'Jerusalem, Old City',
-                'bio' => 'Carrying forward generational recipes from the alleys of old Jerusalem with premium Palestinian olive oil.',
+                'address' => 'نابلس - شارع رفيديا',
+                'bio' => 'خبير المشاوي والأطباق الشرقية السريعة المحضرة على الفحم الطبيعي بتتبيلات سرية ولحوم بلدية طازجة يومياً.',
                 'meals' => [
                     [
-                        'name' => 'Palestinian Musakhan Roll Platter',
-                        'category_id' => $traditionalCat->id,
-                        'description' => 'Taboon bread rolls filled with shredded sumac chicken, caramelized Jenin red onions, and toasted pine nuts.',
-                        'price' => 42.00,
-                        'number_persons' => 3,
+                        'name' => 'شيش كباب مشوي مع خضار مشوية',
+                        'category_id' => $orientalCat->id,
+                        'description' => 'أسياخ لحم بلدي مفروم ومتبل بالخلطة الشرقية، مشوية على الفحم مع تشكيلة من الخضار المشوية كالكوسا والفليفلة والبصل وشرائح الليمون.',
+                        'price' => 50.00,
+                        'number_persons' => 2,
                         'prep_time_minutes' => 35,
                         'is_available' => true,
+                        'image_path' => 'meals/shish-kebab.png',
+                        'review' => 'الكباب طري ومتبل بامتياز وريحة الشواء على الفحم واضحة ولذيذة.',
                     ],
                     [
-                        'name' => 'Shish Barak in Garlicky Yogurt',
-                        'category_id' => $orientalCat->id,
-                        'description' => 'Handmade beef dumplings simmered in hot velvety yogurt sauce infused with garlic, mint, and toasted pine nuts.',
-                        'price' => 48.00,
-                        'number_persons' => 3,
-                        'prep_time_minutes' => 45,
-                        'is_available' => true,
-                    ],
-                ],
-            ],
-            [
-                'name' => 'Mariam Al-Khalili',
-                'email' => 'mariam@wajbati.local',
-                'kitchen_name' => 'Hebron Traditional Kitchen',
-                'phone' => '0599333444',
-                'address' => 'Hebron, Ein Sara',
-                'bio' => 'Specializing in hearty family gatherings, slow-simmered stews, and authentic Khalili Qidreh.',
-                'meals' => [
-                    [
-                        'name' => 'Hebronite Qidreh with Lamb',
-                        'category_id' => $traditionalCat->id,
-                        'description' => 'Spiced spiced rice baked in copper pots with chickpeas, whole garlic cloves, and fall-apart local lamb.',
-                        'price' => 65.00,
-                        'number_persons' => 4,
-                        'prep_time_minutes' => 60,
-                        'is_available' => true,
-                    ],
-                    [
-                        'name' => 'Creamy Hummus with Sautéed Lamb',
-                        'category_id' => $orientalCat->id,
-                        'description' => 'Silk-smooth handmade hummus topped with warm spiced minced lamb, olive oil, and roasted almonds.',
-                        'price' => 25.00,
+                        'name' => 'أجنحة دجاج حارة ومقرمشة مشوية',
+                        'category_id' => $fastFoodCat->id,
+                        'description' => 'أجنحة دجاج مشوية على اللهب بصلصة حارة وتوابل مدخنة، تقدم مع صلصة الشطة الحرفية وشرائح الليمون وديب مقرمش.',
+                        'price' => 28.00,
                         'number_persons' => 2,
-                        'prep_time_minutes' => 20,
+                        'prep_time_minutes' => 30,
                         'is_available' => true,
+                        'image_path' => 'meals/spicy-wings.jpg',
+                        'review' => 'الأجنحة حارة ومقرمشة، الصوص الحار رهيب ومضبوط 100%.',
                     ],
                 ],
             ],
             [
-                'name' => 'Nader Al-Nabulsi',
-                'email' => 'nader@wajbati.local',
-                'kitchen_name' => 'Nablus Sweet & Pastry Heritage',
-                'phone' => '0599444555',
-                'address' => 'Nablus, Rafidia',
-                'bio' => 'Master of authentic Nabulsi cheeses, warm Kunafa, and golden olive oil pastries.',
+                'name' => 'سارة',
+                'email' => 'sarah@wajbati.com',
+                'kitchen_name' => 'مطبخ وبيك هاوس سارة',
+                'phone' => '0599333444',
+                'address' => 'رام الله - حي الطيرة',
+                'bio' => 'مطبخ عصري يقدم المخبوزات والبيتزا الإيطالية المخبوزة في الفرن الحجري، بالإضافة للسلطات الصحية والوجبات الخفيفة الطازجة.',
                 'meals' => [
                     [
-                        'name' => 'Original Nabulsi Knafeh (Khishneh)',
-                        'category_id' => $sweetsCat->id,
-                        'description' => 'Crisp shredded kataifi crust over stretchy melted Nabulsi sweet cheese, soaked in orange blossom syrup.',
+                        'name' => 'بيتزا مارغريتا إيطالية حجرية',
+                        'category_id' => $fastFoodCat->id,
+                        'description' => 'عجينة نابوليتانية إيطالية مخمرة طبيعياً ومخبوزة على الحجر، مغطاة بصلصة الطماطم الطازجة وجبنة الموزاريلا وأوراق الريحان مع زيت زيتون بكر.',
                         'price' => 32.00,
-                        'number_persons' => 4,
+                        'number_persons' => 2,
                         'prep_time_minutes' => 25,
                         'is_available' => true,
+                        'image_path' => 'meals/margherita-pizza.jpg',
+                        'review' => 'بيتزا نابولية حقيقية! أطراف العجينة هشة وخفيفة والجبنة ممتازة.',
                     ],
                     [
-                        'name' => 'Mini Fatayer Trio (Spinach, Cheese, Zaatar)',
-                        'category_id' => $fastFoodCat->id,
-                        'description' => 'Dozen golden baked pastry triangles filled with tangy wild spinach, akawi cheese, and fresh green thyme.',
-                        'price' => 28.00,
-                        'number_persons' => 3,
-                        'prep_time_minutes' => 30,
-                        'is_available' => true,
-                    ],
-                ],
-            ],
-            [
-                'name' => 'Salma Al-Jalili',
-                'email' => 'salma@wajbati.local',
-                'kitchen_name' => 'Galilee Home Flavors',
-                'phone' => '0599555666',
-                'address' => 'Jenin, Al-Basateen',
-                'bio' => 'Farm-to-table home specialties using wild mountain herbs, fresh labneh, and seasonal greens.',
-                'meals' => [
-                    [
-                        'name' => 'Palestinian Freekeh with Roasted Chicken',
-                        'category_id' => $traditionalCat->id,
-                        'description' => 'Smoky green roasted wheat cooked in rich broth, topped with spiced tender chicken and golden nuts.',
-                        'price' => 44.00,
-                        'number_persons' => 3,
-                        'prep_time_minutes' => 40,
-                        'is_available' => true,
-                    ],
-                    [
-                        'name' => 'Mutabbal & Fresh Garden Tabbouleh',
-                        'category_id' => $orientalCat->id,
-                        'description' => 'Smoked charred eggplant dip with tahini alongside finely chopped parsley, mint, and bulgur salad.',
-                        'price' => 22.00,
-                        'number_persons' => 2,
+                        'name' => 'سلطة سيزر بصدور الدجاج المشوية',
+                        'category_id' => $westernCat->id,
+                        'description' => 'شرائح صدور دجاج متبلة ومشوية تقدم فوق طبقة غنية من الخس المقرمش، جبنة البارميزان الإيطالية، طماطم كرزية وخبز محمص مع صلصة سيزر خاصة.',
+                        'price' => 26.00,
+                        'number_persons' => 1,
                         'prep_time_minutes' => 20,
                         'is_available' => true,
+                        'image_path' => 'meals/caesar-salad.jpg',
+                        'review' => 'سلطة فريش والدجاج مشوي وطري جداً، الدريسنج خفيف ولذيذ.',
                     ],
                 ],
             ],
             [
-                'name' => 'Ahmad Al-Bahr',
-                'email' => 'ahmad@wajbati.local',
-                'kitchen_name' => 'Jaffa Sea Kitchen',
-                'phone' => '0599666777',
-                'address' => 'Gaza, Port Road',
-                'bio' => 'Coastal seafood traditions prepared with daily fresh catch, cumin, and caramelized onions.',
+                'name' => 'محمد',
+                'email' => 'mohammed@wajbati.com',
+                'kitchen_name' => 'حلويات الشيف محمد',
+                'phone' => '0599444555',
+                'address' => 'نابلس - الدوار الرئيسي',
+                'bio' => 'صانع حلويات شرقية متخصص في الكنافة النابلسية بالسمن البلدي والجبنة البلدية الأصلية والمخبوزات الحلوة المحلاة بالقطر الفاخر.',
                 'meals' => [
                     [
-                        'name' => 'Coastal Sayadieh with Fish Fillet',
-                        'category_id' => $traditionalCat->id,
-                        'description' => 'Fragrant cumin-caramelized brown rice topped with pan-seared sea bass fillet and roasted almonds.',
-                        'price' => 55.00,
-                        'number_persons' => 3,
-                        'prep_time_minutes' => 45,
-                        'is_available' => true,
-                    ],
-                    [
-                        'name' => 'Spicy Gazan Shrimp Clay Pot (Zibdiyyeh)',
-                        'category_id' => $orientalCat->id,
-                        'description' => 'Succulent fresh shrimps baked in red clay bowl with tomatoes, hot green peppers, garlic, and dill seeds.',
-                        'price' => 58.00,
+                        'name' => 'كنافة نابلسية خشنة بالجبنة البلدية',
+                        'category_id' => $sweetsCat->id,
+                        'description' => 'كنافة نابلسية خشنة ذهبية ومقرمشة، محشوة بالجبنة البلدية العكاوية المذابة والمحلاة، تسقى بالقطر المعطر بماء الورد وتزين بالفستق الحلبي الفاخر.',
+                        'price' => 22.00,
                         'number_persons' => 2,
-                        'prep_time_minutes' => 30,
+                        'prep_time_minutes' => 25,
                         'is_available' => true,
+                        'image_path' => 'meals/knafeh.jpg',
+                        'review' => 'كنافة نابلسية أصلية ما بتتقاوم! الجبنة بتمط ومقرمشة وسكرها معتدل.',
                     ],
                 ],
-            ],
-            // Chef with 0 dishes to test "Coming Soon" state and sorting
-            [
-                'name' => 'Samer Al-Khatib',
-                'email' => 'samer@wajbati.local',
-                'kitchen_name' => 'Samer Modern Kitchen',
-                'phone' => '0599888999',
-                'address' => 'Ramallah, Al-Masyoun',
-                'bio' => 'New culinary artist preparing fresh modern Mediterranean fusion meals. Menu launching soon!',
-                'meals' => [],
             ],
         ];
 
-        // Seed a customer for ratings
+        // Seed a verified customer for initial authentic reviews
         $customer = User::firstOrCreate(
             ['email' => 'customer@wajbati.local'],
             [
-                'name' => 'Omar Customer',
+                'name' => 'عمر الزبون',
                 'password' => Hash::make($demoPassword),
                 'phone' => '0599000111',
                 'email_verified_at' => now(),
@@ -278,22 +207,18 @@ class DemoSeeder extends Seeder
                     ]
                 );
 
-                // Attach sample image
-                if (isset($sampleImages[$imgIndex % count($sampleImages)])) {
-                    $imgPath = $sampleImages[$imgIndex % count($sampleImages)];
-                    Image::updateOrCreate(
-                        [
-                            'imageable_id' => $meal->id,
-                            'imageable_type' => Meal::class,
-                        ],
-                        [
-                            'image_path' => $imgPath,
-                        ]
-                    );
-                    $imgIndex++;
-                }
+                // Attach exact meal image
+                Image::updateOrCreate(
+                    [
+                        'imageable_id' => $meal->id,
+                        'imageable_type' => Meal::class,
+                    ],
+                    [
+                        'image_path' => $mData['image_path'],
+                    ]
+                );
 
-                // Attach sample rating
+                // Attach realistic rating & review
                 Rating::updateOrCreate(
                     [
                         'user_id' => $customer->id,
@@ -301,8 +226,8 @@ class DemoSeeder extends Seeder
                     ],
                     [
                         'chef_id' => $chef->id,
-                        'star' => rand(4, 5),
-                        'body' => 'Delicious and truly authentic home-cooked flavor! Will definitely order again.',
+                        'star' => 5,
+                        'body' => $mData['review'],
                     ]
                 );
             }
