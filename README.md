@@ -1,6 +1,6 @@
-# Wajbati (وجباتي) — Home Cooked Food Delivery Platform 🍽️
+# Wajbati (وجباتي) — Culinary Marketplace & Food Delivery Platform 🍽️
 
-Wajbati is a production-hardened multi-vendor home-food marketplace platform built with **Laravel 12 (PHP 8.2 / 8.3)**, **Bootstrap 5 (RTL/LTR)**, and **Vite**. It connects local home chefs and families with customers seeking fresh, authentic, homemade meals.
+Wajbati is a production-hardened multi-vendor culinary marketplace platform built with **Laravel 12 (PHP 8.2 / 8.3)**, **Bootstrap 5 (RTL/LTR)**, and **Vite**. It connects independent chefs, cloud kitchens, and restaurants with customers seeking fresh, authentic, and handcrafted signature meals.
 
 ---
 

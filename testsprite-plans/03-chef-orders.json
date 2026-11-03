@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/TestSprite/testsprite-cli/v0.16.0/schemas/plan.schema.json",
+  "projectId": "6e9694e4-4284-4f13-88d9-e8c76c44e3d6",
+  "type": "frontend",
+  "name": "Suite 3: Chef Portal and Orders",
+  "planSteps": [
+    {
+      "type": "action",
+      "description": "Navigate to /dev-login/chef to authenticate as a chef"
+    },
+    {
+      "type": "assertion",
+      "description": "The chef dashboard loads showing the Kitchen Overview and chef header"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to the chef orders page at /chef/orders"
+    },
+    {
+      "type": "assertion",
+      "description": "The chef orders management page renders with orders list or order table"
+    }
+  ]
+}
+

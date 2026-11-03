@@ -1,100 +1,109 @@
 <x-app-layout>
-    <div class="card shadow-sm mb-4">
+    <div class="mb-4">
+        <!-- Header -->
+        <x-ui.page-header :title="__('Users Management')">
+            <x-slot name="actions">
+                <a href="{{ route('dashboard.users.create') }}" class="btn btn-primary rounded-pill px-4 fw-semibold shadow-sm">
+                    <i class="fas fa-plus me-1"></i> {{ __('Add User') }}
+                </a>
+            </x-slot>
+        </x-ui.page-header>
 
-        {{-- Header --}}
-        <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
-            <h4 class="mb-0 fw-bold">{{ __('Users Management') }}</h4>
-
-            <div class="btn-group">
-                <a href="{{ route('dashboard.users.index') }}"
-                    class="btn btn-outline-secondary {{ request('role') == null ? 'active' : '' }}">
-                    {{ __('All') }}
-                </a>
-                <a href="{{ route('dashboard.users.index', ['role' => 'admin']) }}"
-                    class="btn btn-outline-secondary {{ request('role') == 'admin' ? 'active' : '' }}">
-                    {{ __('Admins') }}
-                </a>
-                <a href="{{ route('dashboard.users.index', ['role' => 'chef']) }}"
-                    class="btn btn-outline-secondary {{ request('role') == 'chef' ? 'active' : '' }}">
-                    {{ __('Chefs') }}
-                </a>
-                <a href="{{ route('dashboard.users.index', ['role' => 'user']) }}"
-                    class="btn btn-outline-secondary {{ request('role') == 'user' ? 'active' : '' }}">
-                    {{ __('Users') }}
-                </a>
-            </div>
-
-            <a href="{{ route('dashboard.users.create') }}" class="btn btn-success">
-                {{ __('Add User') }}
+        <!-- Role Filter Pills -->
+        <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+            <a href="{{ route('dashboard.users.index') }}"
+                class="btn btn-sm rounded-pill px-3 {{ request('role') == null ? 'btn-primary' : 'btn-outline-subtle text-secondary' }}">
+                {{ __('All') }}
+            </a>
+            <a href="{{ route('dashboard.users.index', ['role' => 'admin']) }}"
+                class="btn btn-sm rounded-pill px-3 {{ request('role') == 'admin' ? 'btn-primary' : 'btn-outline-subtle text-secondary' }}">
+                {{ __('Admins') }}
+            </a>
+            <a href="{{ route('dashboard.users.index', ['role' => 'chef']) }}"
+                class="btn btn-sm rounded-pill px-3 {{ request('role') == 'chef' ? 'btn-primary' : 'btn-outline-subtle text-secondary' }}">
+                {{ __('Chefs') }}
+            </a>
+            <a href="{{ route('dashboard.users.index', ['role' => 'user']) }}"
+                class="btn btn-sm rounded-pill px-3 {{ request('role') == 'user' ? 'btn-primary' : 'btn-outline-subtle text-secondary' }}">
+                {{ __('Users') }}
             </a>
         </div>
 
-        {{-- Table --}}
-        <div class="table-responsive">
-            <table class="table table-hover align-middle text-center">
-
-                <thead class="table-dark">
-                    <tr>
-                        <th style="width: 60px">{{ __('ID') }}</th>
-                        <th>{{ __('Name') }}</th>
-                        <th>{{ __('Email') }}</th>
-                        <th>{{ __('Phone') }}</th>
-                        <th style="width: 120px">{{ __('Role') }}</th>
-                        <th style="width: 220px">{{ __('Actions') }}</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach ($users as $user)
+        <!-- Table Card -->
+        <div class="table-custom-card">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
                         <tr>
-                            <td>{{ $user->id }}</td>
-                            <td class="fw-semibold">{{ $user->name }}</td>
-                            <td>{{ $user->email }}</td>
-                            <td>{{ $user->phone }}</td>
-                            <td>
-                                <span
-                                    class="badge
-                            {{ $user->role === 'admin' ? 'bg-danger' : ($user->role === 'chef' ? 'bg-warning text-dark' : 'bg-secondary') }}">
-                                    {{ __($user->role) }}
-                                </span>
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-center gap-2">
-
-                                    <a class="btn btn-sm btn-primary"
-                                        href="{{ route('dashboard.users.edit', $user->id) }}">
-                                        {{ __('Edit') }}
-                                    </a>
-
-                                    <a class="btn btn-sm btn-outline-secondary"
-                                        href="{{ route('dashboard.users.show', $user->id) }}">
-                                        {{ __('Show') }}
-                                    </a>
-
-                                    @if ($user->role !== 'admin')
-                                        <form method="POST"
-                                            action="{{ route('dashboard.users.destroy', $user->id) }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-sm btn-danger" onclick="return confirm('{{ __('Are you sure you want to delete this user?') }}')">
-                                                {{ __('Delete') }}
-                                            </button>
-                                        </form>
-                                    @endif
-
-                                </div>
-                            </td>
+                            <th class="text-start ps-4" style="width: 80px">{{ __('ID') }}</th>
+                            <th class="text-start ps-3">{{ __('Name') }}</th>
+                            <th class="text-start ps-3">{{ __('Email') }}</th>
+                            <th class="text-start ps-3">{{ __('Phone') }}</th>
+                            <th class="text-start ps-3" style="width: 120px">{{ __('Role') }}</th>
+                            <th class="text-end pe-4" style="width: 180px">{{ __('Actions') }}</th>
                         </tr>
-                    @endforeach
-                </tbody>
+                    </thead>
+                    <tbody>
+                        @forelse ($users as $user)
+                            <tr>
+                                <td class="text-start ps-4 text-secondary fw-semibold">#{{ $user->id }}</td>
+                                <td class="text-start ps-3 fw-semibold text-main">{{ $user->name }}</td>
+                                <td class="text-start ps-3 text-secondary">{{ $user->email }}</td>
+                                <td class="text-start ps-3 text-secondary">{{ $user->phone ?? '-' }}</td>
+                                <td class="text-start ps-3">
+                                    <span class="badge {{ $user->role === 'admin' ? 'bg-danger text-white' : ($user->role === 'chef' ? 'bg-warning text-dark' : 'bg-secondary text-white') }} rounded-pill px-2.5 py-1">
+                                        {{ __($user->role) }}
+                                    </span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="d-inline-flex align-items-center justify-content-end gap-2">
+                                        <a href="{{ route('dashboard.users.show', $user->id) }}"
+                                            class="btn-action-ghost-neutral"
+                                            title="{{ __('Show') }}">
+                                            <i class="fas fa-eye"></i>
+                                            <span class="d-none d-md-inline ms-1">{{ __('Show') }}</span>
+                                        </a>
 
-            </table>
+                                        <a href="{{ route('dashboard.users.edit', $user->id) }}"
+                                            class="btn-action-ghost-neutral"
+                                            title="{{ __('Edit') }}">
+                                            <i class="fas fa-pen"></i>
+                                            <span class="d-none d-md-inline ms-1">{{ __('Edit') }}</span>
+                                        </a>
+
+                                        @if ($user->role !== 'admin')
+                                            <form method="POST" action="{{ route('dashboard.users.destroy', $user->id) }}" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="btn-action-ghost-danger"
+                                                    title="{{ __('Delete') }}"
+                                                    onclick="return confirm('{{ __('Are you sure you want to delete this user?') }}')">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                    <span class="d-none d-md-inline ms-1">{{ __('Delete') }}</span>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center text-secondary py-5">
+                                    <i class="fas fa-users fs-2 mb-2 d-block opacity-50"></i>
+                                    {{ __('No records found') }}
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            @if ($users->hasPages())
+                <div class="p-3 border-top border-subtle">
+                    {{ $users->withQueryString()->links() }}
+                </div>
+            @endif
         </div>
-
-        <div class="mt-4">
-            {{ $users->withQueryString()->links() }}
-        </div>
-
     </div>
-
 </x-app-layout>

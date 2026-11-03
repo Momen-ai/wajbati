@@ -1,79 +1,102 @@
 @extends('layouts.frontend')
 
 @section('content')
-<div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-1">{{ __('My Favourites') }}</h2>
-            <p class="text-muted small mb-0">{{ __('Your saved meals and favorite home kitchens.') }}</p>
+    <!-- MOBILE VIEW (<768px): Favourites -->
+    <div class="d-md-none px-3 pt-3 pb-5 has-bottom-bar" style="background: #0a0a0a; min-height: 100vh;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="fw-bolder text-light mb-0" style="font-size: 26px; letter-spacing: -0.02em;">
+                {{ __('My Favourites') }}
+            </h1>
         </div>
-        <a href="{{ route('meals.index') }}" class="btn btn-outline-primary btn-sm rounded-pill">
-            <i class="fas fa-search me-1"></i>{{ __('Discover Meals') }}
-        </a>
+
+        <!-- Favourite Meals Section -->
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2 class="fw-bold text-light mb-0" style="font-size: 16px;">
+                    <i class="fas fa-utensils text-primary me-1"></i> {{ __('Favourite Meals') }}
+                </h2>
+                <span class="badge rounded-pill px-2.5 py-1 bg-primary-soft text-primary fw-bold" style="font-size: 0.75rem;">
+                    {{ $favouriteMeals->count() }}
+                </span>
+            </div>
+
+            @if($favouriteMeals->isEmpty())
+                <div class="p-4 rounded-4 border border-secondary border-opacity-10 text-center my-2" style="background: var(--surface-1);">
+                    <i class="far fa-heart fa-2x text-secondary opacity-50 mb-2"></i>
+                    <p class="text-secondary small mb-0">{{ __('No favourite meals yet') }}</p>
+                </div>
+            @else
+                <div class="row g-2">
+                    @foreach($favouriteMeals as $meal)
+                        <div class="col-6">
+                            <x-ui.meal-card :meal="$meal" :isFavorited="true" />
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+
+        <!-- Favourite Chefs Section -->
+        <div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2 class="fw-bold text-light mb-0" style="font-size: 16px;">
+                    <i class="fas fa-hat-chef text-primary me-1"></i> {{ __('Favourite Chefs') }}
+                </h2>
+                <span class="badge rounded-pill px-2.5 py-1 bg-primary-soft text-primary fw-bold" style="font-size: 0.75rem;">
+                    {{ $favouriteChefs->count() }}
+                </span>
+            </div>
+
+            @if($favouriteChefs->isEmpty())
+                <div class="p-4 rounded-4 border border-secondary border-opacity-10 text-center my-2" style="background: var(--surface-1);">
+                    <i class="far fa-user fa-2x text-secondary opacity-50 mb-2"></i>
+                    <p class="text-secondary small mb-0">{{ __('No favourite chefs yet') }}</p>
+                </div>
+            @else
+                <div class="d-flex flex-column gap-2">
+                    @foreach($favouriteChefs as $chef)
+                        <x-ui.chef-card :chef="$chef" :isFavorited="true" />
+                    @endforeach
+                </div>
+            @endif
+        </div>
     </div>
 
+    <!-- DESKTOP VIEW (>=768px): Strictly Unchanged -->
+    <div class="container py-5 d-none d-md-block">
+    <x-ui.page-header
+        :title="__('My Favourites')"
+        :subtitle="__('Your saved meals and favorite kitchens.')">
+        <x-slot name="actions">
+            <a href="{{ route('meals.index') }}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                <i class="fas fa-search me-1"></i>{{ __('Discover Meals') }}
+            </a>
+        </x-slot>
+    </x-ui.page-header>
+
     <!-- Favourite Meals Section -->
-    <div class="mb-5">
-        <h4 class="fw-bold mb-3 d-flex align-items-center gap-2">
-            <i class="fas fa-utensils text-primary"></i>
-            {{ __('Favourite Meals') }}
-            <span class="badge bg-primary rounded-pill fs-6">{{ $favouriteMeals->count() }}</span>
-        </h4>
+    <div class="mb-5 pb-3">
+        <div class="d-flex align-items-center gap-2 mb-4">
+            <div class="rounded-circle bg-primary-soft text-primary d-inline-flex align-items-center justify-content-center"
+                 style="width: 36px; height: 36px;">
+                <i class="fas fa-utensils"></i>
+            </div>
+            <h4 class="fw-bold text-main mb-0">{{ __('Favourite Meals') }}</h4>
+            <span class="badge badge-primary">{{ $favouriteMeals->count() }}</span>
+        </div>
 
         @if($favouriteMeals->isEmpty())
-            <div class="card bg-dark border border-secondary border-opacity-10 rounded-4 p-4 text-center">
-                <i class="far fa-heart fa-3x text-muted mb-3 opacity-50"></i>
-                <h5 class="fw-bold">{{ __('No favourite meals yet') }}</h5>
-                <p class="text-muted small mb-3">{{ __('Explore dishes and tap the heart icon to save them here.') }}</p>
-                <div>
-                    <a href="{{ route('meals.index') }}" class="btn btn-primary rounded-pill btn-sm px-4">
-                        {{ __('Browse Meals') }}
-                    </a>
-                </div>
-            </div>
+            <x-ui.empty-state
+                icon="far fa-heart"
+                :title="__('No favourite meals yet')"
+                :description="__('Explore dishes and tap the heart icon to save them here.')"
+                :actionText="__('Browse Meals')"
+                :actionUrl="route('meals.index')" />
         @else
             <div class="row g-4">
                 @foreach($favouriteMeals as $meal)
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card h-100 border border-secondary border-opacity-10 rounded-4 overflow-hidden shadow-sm">
-                            <div class="position-relative" style="height: 180px;">
-                                <img src="{{ $meal->image ? asset('storage/' . $meal->image->url) : asset('assets/images/placeholder.svg') }}"
-                                     alt="{{ $meal->name }}"
-                                     class="w-100 h-100 object-fit-cover">
-                                <form action="{{ route('favourites.meal.toggle', $meal) }}" method="POST" class="position-absolute top-0 end-0 m-3">
-                                    @csrf
-                                    <button type="submit" class="btn btn-sm btn-light rounded-circle shadow-sm text-danger" title="{{ __('Remove') }}">
-                                        <i class="fas fa-heart"></i>
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="card-body d-flex flex-column">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <h5 class="card-title fw-bold mb-0">
-                                        <a href="{{ route('meals.show', $meal->id) }}" class="text-decoration-none text-light">
-                                            {{ $meal->name }}
-                                        </a>
-                                    </h5>
-                                    <span class="text-primary fw-bold">{{ money($meal->price) }}</span>
-                                </div>
-                                <p class="card-text text-muted small flex-grow-1">
-                                    {{ Str::limit($meal->description, 70) }}
-                                </p>
-                                <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-10">
-                                    <small class="text-muted">
-                                        <i class="fas fa-user-circle me-1"></i>{{ $meal->chef->name ?? __('Chef') }}
-                                    </small>
-                                    <form action="{{ route('cart.add') }}" method="POST">
-                                        @csrf
-                                        <input type="hidden" name="meal_id" value="{{ $meal->id }}">
-                                        <input type="hidden" name="quantity" value="1">
-                                        <button type="submit" class="btn btn-sm btn-primary rounded-pill px-3">
-                                            <i class="fas fa-plus me-1"></i>{{ __('Add to Cart') }}
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <x-ui.meal-card :meal="$meal" :isFavorited="true" />
                     </div>
                 @endforeach
             </div>
@@ -82,48 +105,27 @@
 
     <!-- Favourite Chefs Section -->
     <div>
-        <h4 class="fw-bold mb-3 d-flex align-items-center gap-2">
-            <i class="fas fa-hat-chef text-primary"></i>
-            {{ __('Favourite Chefs') }}
-            <span class="badge bg-primary rounded-pill fs-6">{{ $favouriteChefs->count() }}</span>
-        </h4>
+        <div class="d-flex align-items-center gap-2 mb-4">
+            <div class="rounded-circle bg-primary-soft text-primary d-inline-flex align-items-center justify-content-center"
+                 style="width: 36px; height: 36px;">
+                <i class="fas fa-hat-chef"></i>
+            </div>
+            <h4 class="fw-bold text-main mb-0">{{ __('Favourite Chefs') }}</h4>
+            <span class="badge badge-primary">{{ $favouriteChefs->count() }}</span>
+        </div>
 
         @if($favouriteChefs->isEmpty())
-            <div class="card bg-dark border border-secondary border-opacity-10 rounded-4 p-4 text-center">
-                <i class="far fa-user fa-3x text-muted mb-3 opacity-50"></i>
-                <h5 class="fw-bold">{{ __('No favourite chefs yet') }}</h5>
-                <p class="text-muted small mb-3">{{ __('Follow your favorite local kitchens to easily view their menu.') }}</p>
-                <div>
-                    <a href="{{ route('chefs.index') }}" class="btn btn-primary rounded-pill btn-sm px-4">
-                        {{ __('Meet Chefs') }}
-                    </a>
-                </div>
-            </div>
+            <x-ui.empty-state
+                icon="far fa-user"
+                :title="__('No favourite chefs yet')"
+                :description="__('Follow your favorite local kitchens to easily view their menu.')"
+                :actionText="__('Meet Chefs')"
+                :actionUrl="route('chefs.index')" />
         @else
             <div class="row g-4">
                 @foreach($favouriteChefs as $chef)
-                    <div class="col-md-6 col-lg-3">
-                        <div class="card text-center h-100 border border-secondary border-opacity-10 rounded-4 p-3 shadow-sm">
-                            <div class="position-relative d-inline-block mx-auto mb-3">
-                                <img src="{{ $chef->image ? asset('storage/' . $chef->image->url) : asset('assets/images/placeholder.svg') }}"
-                                     alt="{{ $chef->name }}"
-                                     class="rounded-circle object-fit-cover shadow-sm"
-                                     style="width: 80px; height: 80px;">
-                                <form action="{{ route('favourites.chef.toggle', $chef) }}" method="POST" class="position-absolute top-0 end-0">
-                                    @csrf
-                                    <button type="submit" class="btn btn-sm btn-light rounded-circle shadow-sm text-danger p-1" style="width: 26px; height: 26px; font-size: 0.75rem;" title="{{ __('Remove') }}">
-                                        <i class="fas fa-heart"></i>
-                                    </button>
-                                </form>
-                            </div>
-                            <h5 class="fw-bold mb-1">{{ $chef->name }}</h5>
-                            <p class="text-muted small mb-3">
-                                <i class="fas fa-utensils me-1"></i>{{ $chef->meals->count() }} {{ __('Meals') }}
-                            </p>
-                            <a href="{{ route('chefs.show', $chef->id) }}" class="btn btn-outline-primary btn-sm rounded-pill w-100">
-                                {{ __('View Kitchen') }}
-                            </a>
-                        </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <x-ui.chef-card :chef="$chef" :isFavorited="true" />
                     </div>
                 @endforeach
             </div>

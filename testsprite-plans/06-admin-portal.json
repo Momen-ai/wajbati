@@ -1,0 +1,56 @@
+{
+  "$schema": "https://raw.githubusercontent.com/TestSprite/testsprite-cli/v0.16.0/schemas/plan.schema.json",
+  "projectId": "6e9694e4-4284-4f13-88d9-e8c76c44e3d6",
+  "type": "frontend",
+  "name": "Suite 6: Admin Portal and Management Operations",
+  "planSteps": [
+    {
+      "type": "action",
+      "description": "Navigate to /dev-login/admin to authenticate as admin"
+    },
+    {
+      "type": "assertion",
+      "description": "The admin dashboard at /dashboard loads showing the main metrics cards"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to /dashboard/category"
+    },
+    {
+      "type": "assertion",
+      "description": "The categories management page displays the categories table and Add Category button"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to /dashboard/category/create"
+    },
+    {
+      "type": "assertion",
+      "description": "The create category form is visible with name input"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to /dashboard/chef-applications"
+    },
+    {
+      "type": "assertion",
+      "description": "The chef applications management page renders with filter pills and applications table"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to /dashboard/users?role=chef"
+    },
+    {
+      "type": "assertion",
+      "description": "The users management page displays chef accounts with role indicators"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to /dashboard/audit-log"
+    },
+    {
+      "type": "assertion",
+      "description": "The order status audit log page renders with the audit log table"
+    }
+  ]
+}

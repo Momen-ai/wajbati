@@ -1,30 +1,39 @@
 <x-app-layout>
+    <div class="mb-4">
+        <x-ui.page-header
+            :title="__('Edit Category')"
+            :subtitle="__('Update category details and preferences.')">
+            <x-slot name="actions">
+                <a href="{{ route('dashboard.category.index') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                    <i class="fas fa-arrow-{{ app()->getLocale() == 'ar' ? 'right' : 'left' }} me-1"></i> {{ __('Back to Categories') }}
+                </a>
+            </x-slot>
+        </x-ui.page-header>
 
-    <div class="flex items-center justify-between mb-4">
-        <h2>{{ __('Edit Category') }}</h2>
-    </div>
-
-
-    <div class="card">
-        <div class="card-body">
-
-            <form action="{{ route('dashboard.category.update', $category->id) }}" method="POST"
-                enctype="multipart/form-data">
+        <div class="card shadow-card p-4 rounded-4" style="max-width: 680px;">
+            <form action="{{ route('dashboard.category.update', $category->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                @method('put')
+                @method('PUT')
+
                 <!-- Name -->
-                <div class="mb-3">
-                    <label for="name" class="form-label">{{ __('Category Name') }}</label>
-                    <input type="text" id="name" name="name" class="form-control"
-                        value="{{ $category->name }}">
+                <div class="mb-4">
+                    <label for="name" class="form-label text-main fw-semibold small">{{ __('Category Name') }} <span class="text-danger">*</span></label>
+                    <input type="text" id="name" name="name" class="form-control bg-surface-2 text-main border-subtle"
+                        value="{{ old('name', $category->name) }}" required autofocus>
+                    @error('name')
+                        <div class="text-danger small mt-1">{{ $message }}</div>
+                    @enderror
                 </div>
 
-
-                <button type="submit" class="btn btn-primary px-3">{{ __('Update') }}</button>
-
-
+                <div class="d-flex align-items-center gap-2">
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 fw-semibold">
+                        <i class="fas fa-save me-1"></i> {{ __('Update') }}
+                    </button>
+                    <a href="{{ route('dashboard.category.index') }}" class="btn btn-outline-secondary rounded-pill px-3">
+                        {{ __('Cancel') }}
+                    </a>
+                </div>
             </form>
-
         </div>
     </div>
 </x-app-layout>

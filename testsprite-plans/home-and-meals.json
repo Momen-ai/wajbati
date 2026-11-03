@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/TestSprite/testsprite-cli/v0.16.0/schemas/plan.schema.json",
+  "projectId": "6e9694e4-4284-4f13-88d9-e8c76c44e3d6",
+  "type": "frontend",
+  "name": "Home page and meals catalog browsing",
+  "planSteps": [
+    {
+      "type": "action",
+      "description": "Navigate to the home page /"
+    },
+    {
+      "type": "assertion",
+      "description": "The brand name Wajbati and navigation links are visible on the page"
+    },
+    {
+      "type": "action",
+      "description": "Click on the Meals link or navigate to /meals"
+    },
+    {
+      "type": "assertion",
+      "description": "The meals catalog page loads with the search bar or meals list"
+    }
+  ]
+}
+

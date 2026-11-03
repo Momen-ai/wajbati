@@ -11,7 +11,6 @@
     @else
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
-    <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
 </head>
 
 <body>
@@ -27,7 +26,7 @@
             <div class="position-absolute bottom-0 start-0 p-5 text-light">
                 <h2 class="display-4 fw-bold text-light mb-3">{{ __('Join Our Community') }}</h2>
                 <p class="lead mb-0">
-                    {{ __('Discover authentic homemade flavors or start your own kitchen journey with us.') }}</p>
+                    {{ __('Discover authentic signature flavors or start your culinary journey with us.') }}</p>
             </div>
         </div>
 
@@ -101,7 +100,7 @@
                     <div class="form-floating mb-4">
                         <select name="role" class="form-select" id="roleSelect" aria-label="Role select">
                             <option value="user">{{ __('Customer') }}</option>
-                            <option value="chef">{{ __('Family (Chef)') }}</option>
+                            <option value="chef">{{ __('Independent Chef / Kitchen') }}</option>
                         </select>
                         <label for="roleSelect">{{ __('I want to join as') }}</label>
                     </div>

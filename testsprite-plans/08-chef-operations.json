@@ -1,0 +1,40 @@
+{
+  "$schema": "https://raw.githubusercontent.com/TestSprite/testsprite-cli/v0.16.0/schemas/plan.schema.json",
+  "projectId": "6e9694e4-4284-4f13-88d9-e8c76c44e3d6",
+  "type": "frontend",
+  "name": "Suite 8: Advanced Chef Operations and Order Details",
+  "planSteps": [
+    {
+      "type": "action",
+      "description": "Navigate to /dev-login/chef to authenticate as chef"
+    },
+    {
+      "type": "assertion",
+      "description": "The chef dashboard loads showing chef statistics and quick actions"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to /chef/earnings"
+    },
+    {
+      "type": "assertion",
+      "description": "The earnings report page loads with financial summary cards"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to the orders list at /chef/orders"
+    },
+    {
+      "type": "assertion",
+      "description": "The chef orders management page renders with orders list"
+    },
+    {
+      "type": "action",
+      "description": "Click on view details for the first order in the list"
+    },
+    {
+      "type": "assertion",
+      "description": "The order details page displays customer details and order status badge"
+    }
+  ]
+}

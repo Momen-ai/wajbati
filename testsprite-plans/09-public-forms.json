@@ -1,0 +1,40 @@
+{
+  "$schema": "https://raw.githubusercontent.com/TestSprite/testsprite-cli/v0.16.0/schemas/plan.schema.json",
+  "projectId": "6e9694e4-4284-4f13-88d9-e8c76c44e3d6",
+  "type": "frontend",
+  "name": "Suite 9: Public Pages and Contact Operations",
+  "planSteps": [
+    {
+      "type": "action",
+      "description": "Navigate to the home page /"
+    },
+    {
+      "type": "assertion",
+      "description": "The home page loads and navigation bar is displayed"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to the contact page at /contact"
+    },
+    {
+      "type": "assertion",
+      "description": "The contact page renders with name, email, subject, message fields and contact form"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to /privacy-policy"
+    },
+    {
+      "type": "assertion",
+      "description": "The privacy policy legal page is displayed"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to /terms-of-service"
+    },
+    {
+      "type": "assertion",
+      "description": "The terms of service page is displayed"
+    }
+  ]
+}

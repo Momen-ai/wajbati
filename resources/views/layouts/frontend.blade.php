@@ -7,9 +7,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Wajbati - The ultimate platform connecting home-based chefs with food lovers. Taste the home, everywhere.">
-    <meta property="og:title" content="Wajbati - Homemade Meals Platform">
-    <meta property="og:description" content="Order fresh, delicious, and homemade meals from talented local chefs.">
+    <meta name="description" content="Wajbati - The premier marketplace connecting independent chefs, kitchens, and culinary artisans with food lovers. Exceptional flavors, everywhere.">
+    <meta property="og:title" content="Wajbati - Independent Chefs & Kitchens Platform">
+    <meta property="og:description" content="Order fresh, delicious, and handcrafted meals from talented independent chefs and kitchens.">
     <meta property="og:image" content="{{ asset('assets/images/og-image.jpg') }}">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta name="twitter:card" content="summary_large_image">
@@ -26,28 +26,53 @@
     @else
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
-    <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
 
     @stack('styles')
 </head>
 
 <body>
+    <!-- Solid color base layer below canvas (stacking floor) -->
+    <div id="hero-bg-layer" class="hero-bg-layer"></div>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
-        <div class="container">
+    <!-- Background Canvas & Scrim for Pages with Sequences -->
+    @stack('background')
+
+    <!-- Page Content Wrapper (position: relative; z-index: 1 sits above fixed canvas & scrim) -->
+    <div class="page-content-wrapper position-relative has-bottom-bar" style="z-index: 1;">
+        <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top shadow-sm py-2">
+        <div class="container d-flex align-items-center justify-content-between">
             <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
-                <div class="rounded-circle bg-primary-custom d-flex align-items-center justify-content-center text-light me-2 animate-pulse"
-                    style="width:42px;height:42px">
-                    <i class="fas fa-utensils"></i>
+                <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center text-dark me-2 shadow-sm"
+                    style="width:34px;height:34px; color: #1b0e03 !important;">
+                    <i class="fas fa-utensils" style="font-size: 15px;"></i>
                 </div>
-                <span class="brand-text">{{ __('Wajbati') }}</span>
+                <span class="brand-text fw-bold text-light" style="font-size: 1.25rem; letter-spacing: -0.02em;">{{ __('Wajbati') }}</span>
             </a>
-            
-            <button class="navbar-toggler border-0 p-2 shadow-none" type="button"
-                data-bs-toggle="collapse" data-bs-target="#mainNav">
-                <span class="navbar-toggler-icon-custom"></span>
-            </button>
+
+            <!-- Mobile Quick Actions (<992px) as defined in spec -->
+            <div class="d-flex align-items-center gap-2 d-lg-none">
+                @auth
+                <a href="{{ route('profile.edit') }}" class="btn btn-sm d-flex align-items-center justify-content-center rounded-circle border border-subtle text-secondary"
+                   style="width: 40px; height: 40px; background: #151515;" aria-label="{{ __('Notifications') }}">
+                    <i class="fa-regular fa-bell" style="font-size: 16px;"></i>
+                </a>
+                @endauth
+                <a href="{{ route('cart.index') }}" class="btn btn-sm d-flex align-items-center justify-content-center rounded-circle border border-subtle text-secondary position-relative"
+                   style="width: 40px; height: 40px; background: #151515;" aria-label="{{ __('Cart') }}">
+                    <i class="fas fa-shopping-bag" style="font-size: 16px;"></i>
+                    @if(count(session('cart', [])) > 0)
+                        <span class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-primary border border-dark"
+                              style="font-size: 10px; font-weight: 800; color: #1b0e03 !important; min-width: 18px; height: 18px; padding: 2px 4px;">
+                            {{ count(session('cart', [])) }}
+                        </span>
+                    @endif
+                </a>
+                <button class="navbar-toggler border-0 p-2 shadow-none" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#mainNav" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon-custom"></span>
+                </button>
+            </div>
 
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
@@ -69,31 +94,31 @@
                                 </span>
                             @endif
                         </a>
-                        <div class="dropdown-menu dropdown-menu-end dropdown-notif border-0 shadow-lg mt-3 p-0 overflow-hidden" style="width: 320px; border-radius: 15px;">
-                            <div class="p-3 bg-dark border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
-                                <h6 class="m-0 fw-700 small uppercase tracking-wider text-light">{{ __('Notifications') }}</h6>
+                        <div class="dropdown-menu dropdown-menu-end dropdown-notif shadow-lg mt-3 p-0 overflow-hidden" style="width: 320px; border-radius: 16px; background: var(--surface-1); border: 1px solid var(--border-subtle);">
+                            <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center" style="background: var(--surface-2);">
+                                <h6 class="m-0 fw-bold small text-uppercase text-light">{{ __('Notifications') }}</h6>
                                 <form action="{{ route('notifications.mark-as-read') }}" method="POST" class="m-0">
                                     @csrf
-                                    <button type="submit" class="btn btn-link p-0 small text-decoration-none text-primary-custom" style="font-size: 0.75rem">{{ __('Mark all read') }}</button>
+                                    <button type="submit" class="btn btn-link p-0 small text-decoration-none text-primary fw-semibold" style="font-size: 0.75rem">{{ __('Mark all read') }}</button>
                                 </form>
                             </div>
                             <div class="notif-list" style="max-height: 350px; overflow-y: auto;">
                                 @forelse(auth()->user()->unreadNotifications as $notification)
-                                    <a href="{{ route('orders.show', $notification->data['order_id'] ?? '') }}" class="dropdown-item d-flex p-3 border-bottom border-secondary border-opacity-10 bg-dark hover-opacity-75">
+                                    <a href="{{ route('orders.show', $notification->data['order_id'] ?? '') }}" class="dropdown-item d-flex p-3 border-bottom border-secondary border-opacity-10 hover-opacity-75" style="background: var(--surface-1);">
                                         <div class="me-3">
-                                            <div class="rounded-circle bg-primary-custom bg-opacity-10 text-primary-custom d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center text-primary" style="width: 40px; height: 40px; background: var(--surface-2);">
                                                 <i class="fas fa-shopping-bag"></i>
                                             </div>
                                         </div>
                                         <div>
                                             <p class="mb-1 small text-light">{{ $notification->data['message'] }}</p>
-                                            <span class="text-muted" style="font-size: 0.7rem;">{{ $notification->created_at->diffForHumans() }}</span>
+                                            <span class="text-secondary" style="font-size: 0.7rem;">{{ $notification->created_at->diffForHumans() }}</span>
                                         </div>
                                     </a>
                                 @empty
                                     <div class="p-4 text-center">
-                                        <i class="fas fa-bell-slash text-muted mb-2 opacity-25 fa-2x"></i>
-                                        <p class="text-muted small m-0">{{ __('No new notifications') }}</p>
+                                        <i class="fas fa-bell-slash text-secondary mb-2 opacity-40 fa-2x"></i>
+                                        <p class="text-secondary small m-0">{{ __('No new notifications') }}</p>
                                     </div>
                                 @endforelse
                             </div>
@@ -104,7 +129,7 @@
                     <li class="nav-item me-3">
                         <a class="nav-link position-relative px-2" href="{{ route('cart.index') }}">
                             <i class="fa fa-shopping-bag fa-lg"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-count border border-dark border-2">
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-count border border-dark border-2" style="background: var(--primary) !important;">
                                 {{ count(session('cart', [])) }}
                             </span>
                         </a>
@@ -205,55 +230,58 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-darker text-light border-top border-secondary border-opacity-10 pt-5 pb-3 mt-5">
+    <footer class="text-light border-top border-secondary border-opacity-10 pt-5 pb-4 mt-5" style="background: var(--surface-1);">
         <div class="container">
-            <div class="row g-5 mb-5">
+            <div class="row g-4 g-lg-5 mb-5">
                 <div class="col-lg-4">
-                    <a class="navbar-brand d-flex align-items-center mb-4 text-light" href="#">
-                        <i class="fas fa-utensils text-primary-custom me-2 fa-lg"></i>
-                        <span class="fw-bold h4 m-0">{{ __('Wajbati') }}</span>
+                    <a class="navbar-brand d-flex align-items-center mb-3 text-light" href="{{ route('home') }}">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center text-primary border border-primary border-opacity-25 me-2"
+                             style="width: 38px; height: 38px; background: var(--surface-2);">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <span class="fw-bold h4 m-0 text-light">{{ __('Wajbati') }}</span>
                     </a>
-                    <p class="text-muted small mb-4">{{ __('Connecting food lovers with home chefs. Experience the taste of home, anytime, anywhere. Support local families and enjoy fresh meals.') }}</p>
-                    <div class="social-links d-flex gap-3">
-                        <a href="#" class="rounded-circle bg-secondary bg-opacity-10 text-muted p-2 hover-lift border border-secondary border-opacity-10" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="rounded-circle bg-secondary bg-opacity-10 text-muted p-2 hover-lift border border-secondary border-opacity-10" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="rounded-circle bg-secondary bg-opacity-10 text-muted p-2 hover-lift border border-secondary border-opacity-10" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="rounded-circle bg-secondary bg-opacity-10 text-muted p-2 hover-lift border border-secondary border-opacity-10" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;"><i class="fab fa-whatsapp"></i></a>
+                    <p class="text-secondary small mb-4 lh-base">{{ __('Connecting food lovers with passionate chefs and independent kitchens. Experience authentic flavors, anytime, anywhere. Discover distinctive culinary creations.') }}</p>
+                    <div class="social-links d-flex gap-2">
+                        <a href="#" class="rounded-circle text-secondary p-2 border border-secondary border-opacity-10 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: var(--surface-2);"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="rounded-circle text-secondary p-2 border border-secondary border-opacity-10 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: var(--surface-2);"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="rounded-circle text-secondary p-2 border border-secondary border-opacity-10 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: var(--surface-2);"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="rounded-circle text-secondary p-2 border border-secondary border-opacity-10 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: var(--surface-2);"><i class="fab fa-whatsapp"></i></a>
                     </div>
                 </div>
                 <div class="col-6 col-md-3 col-lg-2">
-                    <h6 class="fw-700 mb-4 text-primary-custom small text-uppercase tracking-wider">{{ __('Explore') }}</h6>
-                    <ul class="list-unstyled small">
-                        <li class="mb-3"><a href="{{ route('home') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Home') }}</a></li>
-                        <li class="mb-3"><a href="{{ route('meals.index') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Browse Meals') }}</a></li>
-                        <li class="mb-3"><a href="{{ route('chefs.index') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Meet Chefs') }}</a></li>
-                        <li class="mb-3"><a href="{{ route('contact') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Contact Us') }}</a></li>
+                    <h6 class="fw-bold mb-3 text-primary small text-uppercase" style="letter-spacing: 0.05em;">{{ __('Explore') }}</h6>
+                    <ul class="list-unstyled small mb-0">
+                        <li class="mb-2"><a href="{{ route('home') }}" class="text-secondary hover-text-primary">{{ __('Home') }}</a></li>
+                        <li class="mb-2"><a href="{{ route('meals.index') }}" class="text-secondary hover-text-primary">{{ __('Browse Meals') }}</a></li>
+                        <li class="mb-2"><a href="{{ route('chefs.index') }}" class="text-secondary hover-text-primary">{{ __('Meet Chefs') }}</a></li>
+                        <li class="mb-2"><a href="{{ route('contact') }}" class="text-secondary hover-text-primary">{{ __('Contact Us') }}</a></li>
                     </ul>
                 </div>
                 <div class="col-6 col-md-3 col-lg-2">
-                    <h6 class="fw-700 mb-4 text-primary-custom small text-uppercase tracking-wider">{{ __('Account') }}</h6>
-                    <ul class="list-unstyled small">
-                        <li class="mb-3"><a href="{{ route('orders.index') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Track Orders') }}</a></li>
-                        <li class="mb-3"><a href="{{ route('profile.edit') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Settings') }}</a></li>
-                        <li class="mb-3"><a href="{{ route('privacy') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Privacy Policy') }}</a></li>
-                        <li class="mb-3"><a href="{{ route('terms') }}" class="text-decoration-none text-muted hover-text-primary">{{ __('Terms of Service') }}</a></li>
+                    <h6 class="fw-bold mb-3 text-primary small text-uppercase" style="letter-spacing: 0.05em;">{{ __('Account') }}</h6>
+                    <ul class="list-unstyled small mb-0">
+                        <li class="mb-2"><a href="{{ route('orders.index') }}" class="text-secondary hover-text-primary">{{ __('Track Orders') }}</a></li>
+                        <li class="mb-2"><a href="{{ route('profile.edit') }}" class="text-secondary hover-text-primary">{{ __('Settings') }}</a></li>
+                        <li class="mb-2"><a href="{{ route('privacy') }}" class="text-secondary hover-text-primary">{{ __('Privacy Policy') }}</a></li>
+                        <li class="mb-2"><a href="{{ route('terms') }}" class="text-secondary hover-text-primary">{{ __('Terms of Service') }}</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-4">
-                    <h6 class="fw-700 mb-4 text-primary-custom small text-uppercase tracking-wider">{{ __('Stay Gourmet') }}</h6>
-                    <p class="text-muted small mb-4">{{ __('Join our newsletter to get weekly recipes and special offers.') }}</p>
-                    <form action="{{ route('newsletter.subscribe') }}" method="POST" class="input-group mb-3">
+                    <h6 class="fw-bold mb-3 text-primary small text-uppercase" style="letter-spacing: 0.05em;">{{ __('Stay Gourmet') }}</h6>
+                    <p class="text-secondary small mb-3">{{ __('Join our newsletter to get weekly recipes and special offers.') }}</p>
+                    <form action="{{ route('newsletter.subscribe') }}" method="POST" class="input-group mb-2">
                         @csrf
-                        <input type="email" name="email" class="form-control bg-secondary bg-opacity-10 border-secondary border-opacity-10 text-light py-2 px-3" placeholder="{{ __('Email Address') }}" required>
-                        <button class="btn btn-primary px-3" type="submit"><i class="fas fa-paper-plane"></i></button>
+                        <input type="email" name="email" class="form-control text-light border-secondary border-opacity-25" style="background: var(--surface-2);" placeholder="{{ __('Email Address') }}" required>
+                        <button class="btn btn-primary px-4 fw-bold" type="submit" data-magnetic><i class="fas fa-paper-plane"></i></button>
                     </form>
-                    <p class="text-muted" style="font-size: 0.65rem;">{{ __('By subscribing, you agree to our Terms and Privacy Policy.') }}</p>
+                    <p class="text-secondary small" style="font-size: 0.72rem;">{{ __('By subscribing, you agree to our Terms and Privacy Policy.') }}</p>
                 </div>
             </div>
-            <div class="border-top border-secondary border-opacity-10 pt-4 text-center small text-muted">
+            <div class="border-top border-secondary border-opacity-10 pt-4 text-center small text-secondary">
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-                    <p class="m-0">&copy; {{ date('Y') }} {{ __('Wajbati Inc. Built with love for home food.') }}</p>
-                    <div class="payment-icons opacity-50 d-flex gap-3 h5 m-0">
+                    <p class="m-0">&copy; {{ date('Y') }} {{ __('Wajbati Inc. Built with passion for exceptional culinary craft.') }}</p>
+                    <div class="d-flex gap-3 h5 m-0 opacity-40">
                         <i class="fab fa-cc-visa"></i>
                         <i class="fab fa-cc-mastercard"></i>
                         <i class="fab fa-cc-paypal"></i>
@@ -262,6 +290,10 @@
             </div>
         </div>
     </footer>
+
+    <!-- Mobile Bottom Tab Bar (<768px) -->
+    <x-ui.bottom-tab-bar />
+    </div>
     <!-- Scripts -->
     @stack('scripts')
 </body>

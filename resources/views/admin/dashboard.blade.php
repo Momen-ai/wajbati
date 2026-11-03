@@ -1,233 +1,107 @@
 <x-app-layout>
-    <style>
-
-        :root {
-            --primary: #6366f1;
-            --primary-soft: #eef2ff;
-            --secondary: #64748b;
-            --success: #10b981;
-            --success-soft: #ecfdf5;
-            --warning: #f59e0b;
-            --warning-soft: #fffbeb;
-            --danger: #ef4444;
-            --danger-soft: #fef2f2;
-            --dark: #0f172a;
-            --surface: #ffffff;
-            --background: #f8fafc;
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--background);
-            color: var(--dark);
-        }
-
-        .premium-card {
-            background: var(--surface);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            border-radius: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .premium-card:hover {
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-            transform: translateY(-4px);
-        }
-
-        .icon-box {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.3s ease;
-        }
-
-        .premium-card:hover .icon-box {
-            transform: scale(1.1) rotate(-5deg);
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--secondary);
-            font-weight: 500;
-        }
-
-        .stat-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--dark);
-            letter-spacing: -0.02em;
-        }
-
-        .growth-tag {
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 99px;
-            margin-inline-start: 8px;
-        }
-
-        [dir="rtl"] .fa-arrow-right {
-            transform: scaleX(-1);
-            display: inline-block;
-        }
-
-        .growth-up { background: var(--success-soft); color: var(--success); }
-
-        .table-premium thead th {
-            background: #fcfcfd;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-weight: 600;
-            color: var(--secondary);
-            border-bottom: 1px solid #f1f5f9;
-            padding: 16px 24px;
-        }
-
-        .table-premium tbody td {
-            padding: 16px 24px;
-            font-size: 0.875rem;
-            vertical-align: middle;
-            border-bottom: 1px solid #f8fafc;
-        }
-
-        .avatar-initial {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            background: linear-gradient(135deg, var(--primary), #818cf8);
-            color: white;
-        }
-
-        .badge-premium {
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.75rem;
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .gradient-text {
-            background: linear-gradient(135deg, var(--primary), #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: rgb(60, 1, 223);
-        }
-    </style>
-
-    <div class="container-fluid py-5 px-lg-5">
+    <div class="container-fluid py-4 px-lg-4">
         <!-- Header -->
-        <div class="d-flex justify-content-between align-items-end mb-5 animate-fade-in">
-            <div>
-                <h1 class="fw-bold tracking-tight mb-2">{{ __('Welcome Back') }}, <span class="gradient-text">{{ Auth::user()->name }}</span></h1>
-                <p class="text-secondary mb-0">{{ __("Here's a premium overview of your Wajbati platform performance.") }}</p>
-            </div>
-            <div class="d-none d-md-block">
-                <button class="btn btn-white premium-card py-2 px-4 fw-600 border-0 shadow-sm">
-                    <i class="fas fa-download me-2 text-primary"></i> {{ __('Export Report') }}
-                </button>
-            </div>
-        </div>
+        <x-ui.page-header
+            :title="__('Welcome Back') . ', ' . Auth::user()->name"
+            :subtitle="__('Here\'s a premium overview of your Wajbati platform performance.')">
+            <x-slot name="actions">
+                <a href="{{ route('dashboard.orders.export-csv') }}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                    <i class="fas fa-file-csv me-1"></i>{{ __('Export Report') }}
+                </a>
+            </x-slot>
+        </x-ui.page-header>
 
-        <!-- Stats Grid -->
-        <div class="row g-4 mb-5">
-            <!-- Revenue -->
-            <div class="col-xl-3 col-md-6 animate-fade-in" style="animation-delay: 0.1s">
-                <div class="premium-card p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="icon-box bg-primary-soft text-primary">
-                            <i class="fas fa-wallet fa-lg"></i>
-                        </div>
-                        <span class="growth-tag growth-up">{{ $growth['revenue'] }}</span>
-                    </div>
-                    <div class="stat-label">{{ __('Total Revenue') }}</div>
-                    <div class="stat-value">{{ money($totalRevenue) }}</div>
-                </div>
+        <!-- Stats Grid with Strong Visual Hierarchy -->
+        <div class="row g-4 mb-4">
+            <!-- Hero Stat: Total Revenue -->
+            <div class="col-12 col-xl-4">
+                <x-ui.stat-card
+                    icon="fas fa-wallet"
+                    :label="__('Total Revenue')"
+                    :value="money($totalRevenue)"
+                    :trend="$growth['revenue']"
+                    :trendUp="!str_contains($growth['revenue'], '-')"
+                    :isHero="true"
+                    class="h-100" />
             </div>
 
-            <!-- Orders -->
-            <div class="col-xl-3 col-md-6 animate-fade-in" style="animation-delay: 0.2s">
-                <div class="premium-card p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="icon-box bg-success-soft text-success">
-                            <i class="fas fa-shopping-bag fa-lg"></i>
-                        </div>
-                        <span class="growth-tag growth-up">{{ $growth['orders'] }}</span>
+            <!-- Secondary Stats: 3 Cards Grid -->
+            <div class="col-12 col-xl-8">
+                <div class="row g-4 h-100">
+                    <div class="col-md-4">
+                        <x-ui.stat-card
+                            icon="fas fa-shopping-bag"
+                            :label="__('Total Orders')"
+                            :value="$ordersCount"
+                            :numericValue="$ordersCount"
+                            :trend="$growth['orders']"
+                            :trendUp="!str_contains($growth['orders'], '-')"
+                            class="h-100" />
                     </div>
-                    <div class="stat-label">{{ __('Completed Orders') }}</div>
-                    <div class="stat-value">{{ $ordersCount }}</div>
-                </div>
-            </div>
 
-            <!-- Users -->
-            <div class="col-xl-3 col-md-6 animate-fade-in" style="animation-delay: 0.3s">
-                <div class="premium-card p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="icon-box bg-warning-soft text-warning">
-                            <i class="fas fa-users fa-lg"></i>
-                        </div>
-                        <span class="growth-tag growth-up">{{ $growth['users'] }}</span>
+                    <div class="col-md-4">
+                        <x-ui.stat-card
+                            icon="fas fa-users"
+                            :label="__('Active Users')"
+                            :value="$usersCount"
+                            :numericValue="$usersCount"
+                            :trend="$growth['users']"
+                            :trendUp="!str_contains($growth['users'], '-')"
+                            class="h-100" />
                     </div>
-                    <div class="stat-label">{{ __('Active Users') }}</div>
-                    <div class="stat-value">{{ $usersCount }}</div>
-                </div>
-            </div>
 
-            <!-- Pending -->
-            <div class="col-xl-3 col-md-6 animate-fade-in" style="animation-delay: 0.4s">
-                <div class="premium-card p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="icon-box bg-danger-soft text-danger">
-                            <i class="fas fa-clock fa-lg"></i>
-                        </div>
+                    <div class="col-md-4">
+                        <x-ui.stat-card
+                            icon="fas fa-clock"
+                            :label="__('Pending Orders')"
+                            :value="$pendingOrdersCount"
+                            :numericValue="$pendingOrdersCount"
+                            class="h-100" />
                     </div>
-                    <div class="stat-label">{{ __('Pending Orders') }}</div>
-                    <div class="stat-value">{{ $pendingOrdersCount }}</div>
                 </div>
             </div>
         </div>
 
-        <div class="row g-4 mb-5">
-            <!-- Chart Container -->
-            <div class="col-xl-12 animate-fade-in" style="animation-delay: 0.5s">
-                <div class="premium-card p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="fw-700 m-0">{{ __('Revenue Analytics (Last 6 Months)') }}</h5>
-                        <div class="text-secondary small fw-600">{{ __('Earnings Overview') }}</div>
+        <!-- Chart Section -->
+        <div class="row g-4 mb-4">
+            <div class="col-12">
+                <div class="spotlight-card p-4 rounded-4" data-spotlight>
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-4">
+                        <div>
+                            <h5 class="fw-bold text-main mb-1">{{ __('Revenue Analytics (Last 6 Months)') }}</h5>
+                            <span class="text-secondary small">{{ __('Earnings Overview') }}</span>
+                        </div>
+                        <span class="badge badge-primary">{{ __('Monthly Revenue') }}</span>
                     </div>
-                    <div style="height: 300px;">
+
+                    <div style="height: 320px; position: relative;">
                         <canvas id="revenueChart"></canvas>
+                        @if(array_sum($chartData['values']) == 0)
+                            <div class="position-absolute top-50 start-50 translate-middle text-center pe-none">
+                                <span class="badge bg-surface-2 text-secondary border border-subtle px-3 py-2 rounded-pill small">
+                                    <i class="fas fa-chart-line me-1 text-primary"></i> {{ __('No revenue recorded for this period yet') }}
+                                </span>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Content Row -->
-        <div class="row g-4">
-            <!-- Recent Orders -->
-            <div class="col-xl-8 animate-fade-in" style="animation-delay: 0.6s">
-                <div class="premium-card h-100">
-                    <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
-                        <h5 class="fw-700 m-0">{{ __('Recent Transactions') }}</h5>
-                        <a href="{{ route('dashboard.orders.index') }}" class="btn btn-sm text-primary fw-600">{{ __('View All') }}</a>
+        <!-- Content Row: Recent Orders & Newest Users -->
+        <div class="row g-4 align-items-start">
+            <!-- Recent Transactions Table -->
+            <div class="col-12 col-xl-8">
+                <div class="spotlight-card p-4 rounded-4 d-flex flex-column" data-spotlight>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold text-main mb-0">{{ __('Recent Transactions') }}</h5>
+                        <a href="{{ route('dashboard.orders.index') }}" class="btn btn-link text-primary text-decoration-none small fw-semibold p-0">
+                            {{ __('View All') }} <i class="fas fa-arrow-{{ app()->getLocale() == 'ar' ? 'left' : 'right' }} ms-1"></i>
+                        </a>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-premium mb-0">
+
+                    <div class="table-responsive flex-grow-1">
+                        <table class="table table-hover align-middle mb-0">
                             <thead>
                                 <tr>
                                     <th>{{ __('Ref ID') }}</th>
@@ -238,26 +112,42 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($latestOrders as $order)
-                                <tr>
-                                    <td class="fw-600 text-secondary">#ORD-{{ $order->id }}</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-initial me-3" style="width: 32px; height: 32px; font-size: 0.75rem;">
-                                                {{ substr($order->user->name ?? 'U', 0, 1) }}
+                                @forelse($latestOrders as $order)
+                                    <tr>
+                                        <td class="text-secondary fw-semibold">#ORD-{{ $order->id }}</td>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="avatar-initial" style="width: 32px; height: 32px; font-size: 0.75rem;">
+                                                    {{ mb_substr($order->user->name ?? 'U', 0, 1) }}
+                                                </div>
+                                                <span class="fw-semibold text-main text-truncate" style="max-width: 140px;">
+                                                    {{ $order->user->name ?? __('Guest User') }}
+                                                </span>
                                             </div>
-                                            <span class="fw-600">{{ $order->user->name ?? __('Guest User') }}</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-secondary">{{ $order->chef->kitchen_name ?? __('N/A') }}</td>
-                                    <td class="fw-700">{{ money($order->total) }}</td>
-                                    <td>
-                                        <span class="badge-premium {{ $order->status == 'completed' ? 'bg-success-soft text-success' : 'bg-warning-soft text-warning' }}">
-                                            {{ __(ucfirst($order->status)) }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                @endforeach
+                                        </td>
+                                        <td class="text-secondary">{{ $order->chef->kitchen_name ?? __('N/A') }}</td>
+                                        <td class="fw-bold text-primary">{{ money($order->total) }}</td>
+                                        <td>
+                                            @php
+                                                $badgeType = match($order->status) {
+                                                    'completed', 'delivered' => 'success',
+                                                    'pending' => 'warning',
+                                                    'cancelled', 'rejected' => 'danger',
+                                                    default => 'primary'
+                                                };
+                                            @endphp
+                                            <x-ui.badge :type="$badgeType">
+                                                {{ __(ucfirst(str_replace('_', ' ', $order->status))) }}
+                                            </x-ui.badge>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4 text-secondary">
+                                            {{ __('No records found') }}
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -265,43 +155,58 @@
             </div>
 
             <!-- Newest Users -->
-            <div class="col-xl-4 animate-fade-in" style="animation-delay: 0.7s">
-                <div class="premium-card h-100">
-                    <div class="p-4 border-bottom">
-                        <h5 class="fw-700 m-0">{{ __('New Registrations') }}</h5>
+            <div class="col-12 col-xl-4">
+                <div class="spotlight-card p-4 rounded-4 d-flex flex-column" data-spotlight>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold text-main mb-0">{{ __('New Registrations') }}</h5>
+                        <span class="badge bg-surface-2 text-secondary border border-subtle">
+                            {{ count($latestUsers) }}
+                        </span>
                     </div>
-                    <div class="p-4">
-                        @foreach($latestUsers as $user)
-                        <div class="d-flex align-items-center justify-content-between mb-4 last-child-mb-0">
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-initial me-3 bg-light text-primary">
-                                    {{ substr($user->name, 0, 1) }}
+
+                    <div class="d-flex flex-column gap-3 flex-grow-1">
+                        @forelse($latestUsers as $user)
+                            <div class="d-flex align-items-center justify-content-between p-2 rounded-3 hover-bg-surface-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="avatar-initial">
+                                        {{ mb_substr($user->name, 0, 1) }}
+                                    </div>
+                                    <div style="min-width: 0;">
+                                        <div class="fw-bold text-main text-truncate" style="max-width: 130px;">{{ $user->name }}</div>
+                                        <div class="text-secondary small text-truncate" style="max-width: 130px;">{{ $user->email }}</div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <div class="fw-700 text-sm">{{ $user->name }}</div>
-                                    <div class="text-muted text-xs">{{ $user->email }}</div>
-                                </div>
+                                <x-ui.badge :type="$user->role === 'admin' ? 'danger' : ($user->role === 'chef' ? 'primary' : 'secondary')">
+                                    {{ __(ucfirst($user->role)) }}
+                                </x-ui.badge>
                             </div>
-                            <span class="badge-premium bg-light text-secondary">{{ __(ucfirst($user->role)) }}</span>
-                        </div>
-                        @endforeach
+                        @empty
+                            <p class="text-secondary text-center py-4 mb-0">{{ __('No records found') }}</p>
+                        @endforelse
                     </div>
-                    <div class="p-4 bg-light border-top text-center rounded-bottom-20">
-                        <a href="{{ route('dashboard.users.index') }}" class="text-primary text-sm fw-700 text-decoration-none">{{ __('Manage User Database') }} <i class="fas fa-arrow-right ms-1"></i></a>
+
+                    <div class="pt-3 mt-3 border-top border-subtle text-center">
+                        <a href="{{ route('dashboard.users.index') }}" class="btn btn-outline-primary btn-sm rounded-pill w-100">
+                            {{ __('Manage User Database') }}
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const ctx = document.getElementById('revenueChart').getContext('2d');
+            const chartCanvas = document.getElementById('revenueChart');
+            if (!chartCanvas) return;
+
+            const ctx = chartCanvas.getContext('2d');
             
-            // Create Gradient
+            // Orange Brand Gradient
             const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-            gradient.addColorStop(0, 'rgba(99, 102, 241, 0.2)');
-            gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+            gradient.addColorStop(0, 'rgba(255, 122, 24, 0.35)');
+            gradient.addColorStop(1, 'rgba(255, 122, 24, 0.0)');
 
             new Chart(ctx, {
                 type: 'line',
@@ -310,13 +215,13 @@
                     datasets: [{
                         label: '{{ __('Monthly Revenue') }}',
                         data: {!! json_encode($chartData['values']) !!},
-                        borderColor: '#6366f1',
+                        borderColor: '#ff7a18',
                         borderWidth: 3,
                         backgroundColor: gradient,
                         fill: true,
                         tension: 0.4,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#6366f1',
+                        pointBackgroundColor: '#ff7a18',
+                        pointBorderColor: '#ffffff',
                         pointBorderWidth: 2,
                         pointRadius: 4,
                         pointHoverRadius: 6
@@ -326,21 +231,47 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false }
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#161616',
+                            titleColor: '#f0f0f0',
+                            bodyColor: '#ff7a18',
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1,
+                            padding: 12,
+                            boxPadding: 6,
+                            usePointStyle: true
+                        }
                     },
                     scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.04)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#a0a0a0',
+                                font: { family: 'Cairo, Inter, sans-serif' }
+                            }
+                        },
                         y: {
                             beginAtZero: true,
-                            grid: { color: 'rgba(0,0,0,0.03)' },
-                            ticks: { font: { size: 11 } }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { font: { size: 11 } }
+                            min: 0,
+                            suggestedMax: 100,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.04)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#a0a0a0',
+                                font: { family: 'Cairo, Inter, sans-serif' },
+                                precision: 0
+                            }
                         }
                     }
                 }
             });
         });
     </script>
+    @endpush
 </x-app-layout>

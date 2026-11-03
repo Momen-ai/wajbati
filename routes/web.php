@@ -95,3 +95,16 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 require __DIR__.'/admin.php';
+
+if (app()->environment('local')) {
+    Route::get('/dev-login/{role}', function (string $role) {
+        $user = \App\Models\User::where('role', $role)->first();
+        if ($user) {
+            \Illuminate\Support\Facades\Auth::login($user);
+
+            return redirect()->route($role === 'admin' ? 'dashboard' : 'chef.dashboard');
+        }
+
+        return redirect()->route('login');
+    });
+}
